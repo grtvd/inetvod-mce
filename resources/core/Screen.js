@@ -13,7 +13,7 @@ function Screen()
 
 /*void*/ Screen.prototype.close = function()
 {
-	GetTheMainApp().closeScreen(this.ScreenID);
+	MainApp.getThe().closeScreen(this.ScreenID);
 }
 
 /******************************************************************************/

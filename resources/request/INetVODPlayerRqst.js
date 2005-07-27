@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function INetVODPlayerRqst_newInstance()
+INetVODPlayerRqst.newInstance = function()
 {
 	return new INetVODPlayerRqst();
 }

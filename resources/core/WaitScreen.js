@@ -3,11 +3,11 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var WaitScreen_ScreenID = "Wait001";
+WaitScreen.ScreenID = "Wait001";
 
 /******************************************************************************/
 
-function WaitScreen_newInstance()
+WaitScreen.newInstance = function()
 {
 	return new WaitScreen();
 }
@@ -16,7 +16,7 @@ function WaitScreen_newInstance()
 
 function WaitScreen()
 {
-	this.ScreenID = WaitScreen_ScreenID;
+	this.ScreenID = WaitScreen.ScreenID;
 	this.fUIObj = document.getElementById(this.ScreenID);
 	if(this.fUIObj == null)
 		throw "WaitScreen::ctor: Can't find UI object, ID(" + this.ScreenID + ")";

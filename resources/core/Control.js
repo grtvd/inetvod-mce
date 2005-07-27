@@ -15,7 +15,7 @@ function Control()
 
 /*Screen*/ Control.prototype.getScreen = function()
 {
-	return GetTheMainApp().getScreen(this.ScreenID);
+	return MainApp.getThe().getScreen(this.ScreenID);
 }
 
 /******************************************************************************/

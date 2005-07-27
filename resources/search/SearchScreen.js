@@ -1,9 +1,9 @@
 
-var SearchScreen_ScreenID = "Search006";
+SearchScreen.ScreenID = "Search006";
 
 function SearchScreen()
 {
-	this.ScreenID = SearchScreen_ScreenID;
+	this.ScreenID = SearchScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID);
 	this.fContainerControl.newControl(new ButtonControl(this.ScreenID + '_Description'));

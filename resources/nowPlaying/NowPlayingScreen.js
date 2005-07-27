@@ -3,15 +3,15 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var NowPlayingScreen_ScreenID = "Show002";
-var NowPlayingScreen_ShowListID = "Show002_ShowList";
-var NowPlayingScreen_NoShowsTextID = "Show002_NoShowsText";
+NowPlayingScreen.ScreenID = "Show002";
+NowPlayingScreen.ShowListID = "Show002_ShowList";
+NowPlayingScreen.NoShowsTextID = "Show002_NoShowsText";
 
 /******************************************************************************/
 
-function NowPlayingScreen_newInstance()
+NowPlayingScreen.newInstance = function()
 {
-	GetTheMainApp().openScreen(new NowPlayingScreen());
+	MainApp.getThe().openScreen(new NowPlayingScreen());
 }
 
 /******************************************************************************/
@@ -23,7 +23,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 
 function NowPlayingScreen()
 {
-	this.ScreenID = NowPlayingScreen_ScreenID;
+	this.ScreenID = NowPlayingScreen.ScreenID;
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 550));
@@ -31,16 +31,16 @@ function NowPlayingScreen()
 	oRowItemList.push(new ListControlRowItem("Until", 172));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-	this.fContainerControl.newControl(new ListControl(NowPlayingScreen_ShowListID,
+	this.fContainerControl.newControl(new ListControl(NowPlayingScreen.ShowListID,
 		this.ScreenID, 8, oRowItemList, new RentedShowListControl()));
-//	this.fContainerControl.newControl(new ButtonControl(NowPlayingScreen_NoShowsTextID, this.ScreenID));
+//	this.fContainerControl.newControl(new ButtonControl(NowPlayingScreen.NoShowsTextID, this.ScreenID));
 }
 
 /******************************************************************************/
 
 /*void*/ NowPlayingScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(controlID == NowPlayingScreen_ShowListID)
+	if(controlID == NowPlayingScreen.ShowListID)
 	{
 		showMsg("NowPlayingScreen.onButton()");
 		return;

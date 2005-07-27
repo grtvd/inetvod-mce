@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function ShowSearchRqst_newInstance()
+ShowSearchRqst.newInstance = function()
 {
 	return new ShowSearchRqst();
 }

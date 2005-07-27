@@ -3,16 +3,16 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var AskPINScreen_ScreenID = "Startup004";
+AskPINScreen.ScreenID = "Startup004";
 
-var AskPINScreen_PINID = "AskPINScreen_PIN";
-var AskPINScreen_ContinueID = "AskPINScreen_Continue";
+AskPINScreen.PINID = "Startup004_PIN";
+AskPINScreen.ContinueID = "Startup004_Continue";
 
 /******************************************************************************/
 
-function AskPINScreen_newInstance()
+AskPINScreen.newInstance = function()
 {
-	GetTheMainApp().openScreen(new AskPINScreen());
+	MainApp.getThe().openScreen(new AskPINScreen());
 }
 
 /******************************************************************************/
@@ -24,11 +24,11 @@ AskPINScreen.prototype.constructor = AskPINScreen;
 
 function AskPINScreen()
 {
-	this.ScreenID = AskPINScreen_ScreenID;
+	this.ScreenID = AskPINScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 150);
-	this.fContainerControl.newControl(new EditControl(AskPINScreen_PINID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(AskPINScreen_ContinueID, this.ScreenID));
+	this.fContainerControl.newControl(new EditControl(AskPINScreen.PINID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(AskPINScreen.ContinueID, this.ScreenID));
 }
 
 /******************************************************************************/
@@ -37,7 +37,7 @@ function AskPINScreen()
 {
 	var data;
 
-	data = this.fContainerControl.getControl(AskPINScreen_PINID).getText();
+	data = this.fContainerControl.getControl(AskPINScreen.PINID).getText();
 	if(!testStrHasLen(data))
 	{
 		showMsg("PIN must be entered.");

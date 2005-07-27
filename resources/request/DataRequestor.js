@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function DataRequestor_newInstance(/*string*/ sessionData)
+DataRequestor.newInstance = function(/*string*/ sessionData)
 {
 	return new DataRequestor(sessionData);
 }
@@ -27,12 +27,12 @@ function DataRequestor(/*string*/ sessionData)
 	var request;
 	var requestData;
 
-	request = INetVODPlayerRqst_newInstance();
+	request = INetVODPlayerRqst.newInstance();
 	request.setVersion("1.0.0");	//TODO:
 	request.setRequestID("1");	//TODO:
 	request.setSessionData(this.fSessionData);
 
-	requestData = RequestData_newInstance();
+	requestData = RequestData.newInstance();
 	requestData.setRequest(payload);
 	request.setRequestData(requestData);
 
@@ -58,7 +58,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /*Streamable*/ DataRequestor.prototype.sendRequest = function(/*Streamable*/ payload)
 {
-	var httpRequestor = HTTPRequestor_newInstance();
+	var httpRequestor = HTTPRequestor.newInstance();
 
 	// build the request header
 	var request = this.createHeader(payload);
@@ -92,7 +92,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /*StatusCode*/ DataRequestor.prototype.pingRequest = function()
 {
-	var pingResp = this.sendRequest(PingRqst_newInstance());
+	var pingResp = this.sendRequest(PingRqst.newInstance());
 
 	return this.fStatusCode;
 }
@@ -108,7 +108,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /*SystemDataResp*/ DataRequestor.prototype.systemDataRequest = function()
 {
-	return this.sendRequest(SystemDataRqst_newInstance());
+	return this.sendRequest(SystemDataRqst.newInstance());
 }
 
 /******************************************************************************/

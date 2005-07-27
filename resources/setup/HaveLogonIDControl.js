@@ -3,28 +3,28 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var HaveLogonID_ControlID = "Setup001_HaveLogonIDControl";
+HaveLogonIDControl.ControlID = "Setup001_HaveLogonIDControl";
 
-var HaveLogonIDControl_LogonID = "Setup001_HaveLogonIDControl_Logon";
-var HaveLogonIDControl_PINID = "Setup001_HaveLogonIDControl_PIN";
-var HaveLogonIDControl_RememberPINID = "Setup001_HaveLogonIDControl_RememberPIN";
-var HaveLogonIDControl_ContinueID = "Setup001_HaveLogonIDControl_Continue";
+HaveLogonIDControl.LogonID = "Setup001_HaveLogonIDControl_Logon";
+HaveLogonIDControl.PINID = "Setup001_HaveLogonIDControl_PIN";
+HaveLogonIDControl.RememberPINID = "Setup001_HaveLogonIDControl_RememberPIN";
+HaveLogonIDControl.ContinueID = "Setup001_HaveLogonIDControl_Continue";
 
 /******************************************************************************/
 
-function HaveLogonIDControl_newInstance()
+HaveLogonIDControl.newInstance = function()
 {
-	var containerControl = new HaveLogonIDControl(HaveLogonID_ControlID, 0, 0);
+	var containerControl = new HaveLogonIDControl(HaveLogonIDControl.ControlID, 0, 0);
 	var control;
 
-	containerControl.newControl(new EditControl(HaveLogonIDControl_LogonID, SetupScreen_ScreenID));
-	containerControl.newControl(new EditControl(HaveLogonIDControl_PINID, SetupScreen_ScreenID));
+	containerControl.newControl(new EditControl(HaveLogonIDControl.LogonID, SetupScreen.ScreenID));
+	containerControl.newControl(new EditControl(HaveLogonIDControl.PINID, SetupScreen.ScreenID));
 
-	control = new CheckControl(HaveLogonIDControl_RememberPINID, SetupScreen_ScreenID);
+	control = new CheckControl(HaveLogonIDControl.RememberPINID, SetupScreen.ScreenID);
 	control.setChecked(true);
 	containerControl.newControl(control);
 
-	containerControl.newControl(new ButtonControl(HaveLogonIDControl_ContinueID, SetupScreen_ScreenID));
+	containerControl.newControl(new ButtonControl(HaveLogonIDControl.ContinueID, SetupScreen.ScreenID));
 
 	return containerControl
 }
@@ -48,7 +48,7 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	var data;
 	var oSetupData = oData;
 
-	data = this.getControl(HaveLogonIDControl_LogonID).getText();
+	data = this.getControl(HaveLogonIDControl.LogonID).getText();
 	if(!testStrHasLen(data))
 	{
 		showMsg("Logon ID must be entered.");
@@ -56,7 +56,7 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	}
 	oSetupData.UserID = data;
 
-	data = this.getControl(HaveLogonIDControl_PINID).getText();
+	data = this.getControl(HaveLogonIDControl.PINID).getText();
 	if(!testStrHasLen(data))
 	{
 		showMsg("PIN must be entered.");
@@ -64,7 +64,7 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	}
 	oSetupData.UserPassword = data;
 
-	oSetupData.RememberPassword = this.getControl(HaveLogonIDControl_RememberPINID).getChecked();
+	oSetupData.RememberPassword = this.getControl(HaveLogonIDControl.RememberPINID).getChecked();
 
 	return true;
 }

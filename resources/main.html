@@ -87,8 +87,8 @@ alert("reloadPage");
 
 function init()
 {
-	GetTheMainApp().init();
-	StartScreen_newInstance();
+	MainApp.getThe().init();
+	StartScreen.newInstance();
 }
 </script>
 <body id="MainBody">
@@ -139,9 +139,9 @@ function init()
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=6 border=0
 			><tr><td class="textLbl" >PIN:</td
-				><td><span id="AskPINScreen_PIN" class="editCtr150_normal"
+				><td><span id="Startup004_PIN" class="editCtr150_normal"
 					><span class="editCtrTextClip150"
-					><object id="AskPINScreen_PIN_Text" class="editCtrText" 
+					><object id="Startup004_PIN_Text" class="editCtrText"
 						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
 						height="60" width="156" tabindex="-1" viewastext>
 						<param name="InputMode" value="1">
@@ -159,7 +159,7 @@ function init()
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=0 border=0
-			><tr><td id="AskPINScreen_Continue" class="buttonCtr140_normal">Continue</td></tr
+			><tr><td id="Startup004_Continue" class="buttonCtr140_normal">Continue</td></tr
 		></table
 	></td></tr>
 </table>
@@ -223,7 +223,7 @@ function init()
 			><tr><td class="textLbl" >Logon ID:</td
 				><td><span id="Setup001_HaveLogonIDControl_Logon" class="editCtr225_normal"
 					><span class="editCtrTextClip225"
-					><object id="Setup001_HaveLogonIDControl_Logon_Text" class="editCtrText" 
+					><object id="Setup001_HaveLogonIDControl_Logon_Text" class="editCtrText"
 						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
 						height="60" width="231" tabindex="-1" viewastext>
 						<param name="InputMode" value="1">
@@ -237,7 +237,7 @@ function init()
 			><tr><td class="textLbl" >PIN:</td
 				><td><span id="Setup001_HaveLogonIDControl_PIN" class="editCtr150_normal"
 					><span class="editCtrTextClip150"
-					><object id="Setup001_HaveLogonIDControl_PIN_Text" class="editCtrText" 
+					><object id="Setup001_HaveLogonIDControl_PIN_Text" class="editCtrText"
 						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
 						height="60" width="156" tabindex="-1" viewastext>
 						<param name="InputMode" value="1">
@@ -444,7 +444,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 <div id="Show002_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
 Your Now Playing list is empty. Shows that you rent will be listed here.<br>
 <br>
-It is a good idea to rent multiple shows at a time. This will allow new shows to 
+It is a good idea to rent multiple shows at a time. This will allow new shows to
 be downloaded while your are watching another show.
 </div>
 </div>
@@ -462,14 +462,14 @@ be downloaded while your are watching another show.
 			<table width=1024 height=768 cellpadding=0 cellspacing=0 border=0>
 				<tr>
 					<td width="100%" height="100%" align=center valign=middle>
-					
+
 <table width=400 height=80 cellpadding=0 cellspacing=0 border=0>
 	<tr>
 		<td class="title" align=center valign=middle><img src="images/wait.png"></td>
 	</tr>
 </table>
-		
-							
+
+
 					</td>
 				</tr>
 			</table>
@@ -479,7 +479,7 @@ be downloaded while your are watching another show.
 			<table width=1024 height=768 cellpadding=0 cellspacing=0 border=0>
 				<tr>
 					<td width="100%" height="100%" align=center valign=middle class="Title" style="background-color: #222222; filter:alpha(opacity=70)">
-					
+
 														  x
 					</td>
 				</tr>

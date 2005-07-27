@@ -3,19 +3,19 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var AskSignedUp_ControlID = "Setup001_AskSignedUpControl";
+AskSignedUpControl.ControlID = "Setup001_AskSignedUpControl";
 
-var AskSignedUpControl_AlreadyRegisteredID = "Setup001_AskSignedUpControl_AlreadyRegistered";
-var AskSignedUpControl_NotRegisteredID = "Setup001_AskSignedUpControl_NotRegistered";
+AskSignedUpControl.AlreadyRegisteredID = "Setup001_AskSignedUpControl_AlreadyRegistered";
+AskSignedUpControl.NotRegisteredID = "Setup001_AskSignedUpControl_NotRegistered";
 
 /******************************************************************************/
 
-function AskSignedUpControl_newInstance()
+AskSignedUpControl.newInstance = function()
 {
-	var containerControl = new AskSignedUpControl(AskSignedUp_ControlID, 0, 0);
+	var containerControl = new AskSignedUpControl(AskSignedUpControl.ControlID, 0, 0);
 
-	containerControl.newControl(new ButtonControl(AskSignedUpControl_AlreadyRegisteredID, SetupScreen_ScreenID));
-	containerControl.newControl(new ButtonControl(AskSignedUpControl_NotRegisteredID, SetupScreen_ScreenID));
+	containerControl.newControl(new ButtonControl(AskSignedUpControl.AlreadyRegisteredID, SetupScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(AskSignedUpControl.NotRegisteredID, SetupScreen.ScreenID));
 
 	return containerControl
 }

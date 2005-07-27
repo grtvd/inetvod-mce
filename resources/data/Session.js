@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function Session_newInstance()
+Session.newInstance = function()
 {
 	var session = new Session();
 	
@@ -147,7 +147,7 @@ function Session()
 	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
 	try
 	{
-		var dataRequestor = DataRequestor_newInstance();
+		var dataRequestor = DataRequestor.newInstance();
 		statusCode = dataRequestor.pingRequest();
 
 		//waitScreenPtr->close();
@@ -195,7 +195,7 @@ function Session()
 	var signonRqst;
 	var signonResp;
 
-	signonRqst = SignonRqst_newInstance();
+	signonRqst = SignonRqst.newInstance();
 	signonRqst.UserID = this.fUserID;
 	signonRqst.Password = this.fUserPassword;
 	signonRqst.Player = this.fPlayer;
@@ -203,7 +203,7 @@ function Session()
 	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
 	try
 	{
-		var dataRequestor = DataRequestor_newInstance();
+		var dataRequestor = DataRequestor.newInstance();
 		signonResp = dataRequestor.signonRequest(signonRqst);
 		statusCode = dataRequestor.getStatusCode();
 
@@ -246,7 +246,7 @@ function Session()
 	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
 	try
 	{
-		var dataRequestor = DataRequestor_newInstance(this.fSessionData);
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
 		var systemDataResp = dataRequestor.systemDataRequest();
 		statusCode = dataRequestor.getStatusCode();
 
@@ -289,14 +289,14 @@ function Session()
 	var categoryIDList = new Array();
 	var ratingIDList = new Array();
 
-	if(searchData.ProviderID != Provider_AllProvidersID)
+	if(searchData.ProviderID != Provider.AllProvidersID)
 		providerIDList.push(searchData.ProviderID);
-	if(searchData.CategoryID != Category_AllCategoriesID)
+	if(searchData.CategoryID != Category.AllCategoriesID)
 		categoryIDList.push(searchData.CategoryID);
-	if(searchData.RatingID != Rating_AllRatingsID)
+	if(searchData.RatingID != Rating.AllRatingsID)
 		ratingIDList.push(searchData.RatingID);
 
-	showSearchRqst = ShowSearchRqst_newInstance();
+	showSearchRqst = ShowSearchRqst.newInstance();
 	showSearchRqst.PartialName = searchData.PartialName;
 	showSearchRqst.ProviderIDList = providerIDList;
 	showSearchRqst.CategoryIDList = categoryIDList;
@@ -305,7 +305,7 @@ function Session()
 	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
 	try
 	{
-		var dataRequestor = DataRequestor_newInstance(this.fSessionData);
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
 		showSearchResp = dataRequestor.showSearchRequest(showSearchRqst);
 		statusCode = dataRequestor.getStatusCode();
 

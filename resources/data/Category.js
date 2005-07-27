@@ -3,8 +3,8 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var Category_AllCategoriesID = "all";
-var Category_FeaturedCategoryID = "featured";
+Category.AllCategoriesID = "all";
+Category.FeaturedCategoryID = "featured";
 
 /******************************************************************************/
 

@@ -3,17 +3,17 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var NeedLogonID_ControlID = "Setup001_NeedLogonIDControl";
+NeedLogonIDControl.ControlID = "Setup001_NeedLogonIDControl";
 
-var NeedLogonIDControl_HaveLogonID = "Setup001_NeedLogonIDControl_HaveLogon";
+NeedLogonIDControl.HaveLogonID = "Setup001_NeedLogonIDControl_HaveLogon";
 
 /******************************************************************************/
 
-function NeedLogonIDControl_newInstance()
+NeedLogonIDControl.newInstance = function()
 {
-	var containerControl = new NeedLogonIDControl(NeedLogonID_ControlID, 0, 0);
+	var containerControl = new NeedLogonIDControl(NeedLogonIDControl.ControlID, 0, 0);
 
-	containerControl.newControl(new ButtonControl(NeedLogonIDControl_HaveLogonID, SetupScreen_ScreenID));
+	containerControl.newControl(new ButtonControl(NeedLogonIDControl.HaveLogonID, SetupScreen.ScreenID));
 
 	return containerControl;
 }

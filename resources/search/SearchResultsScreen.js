@@ -3,15 +3,15 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var SearchResultsScreen_ScreenID = "Search003";
-var SearchResultsScreen_ShowListID = "Search003_ShowList";
-var SearchResultsScreen_NoShowsTextID = "Search003_NoShowsText";
+SearchResultsScreen.ScreenID = "Search003";
+SearchResultsScreen.ShowListID = "Search003_ShowList";
+SearchResultsScreen.NoShowsTextID = "Search003_NoShowsText";
 
 /******************************************************************************/
 
-function SearchResultsScreen_newInstance(/*Array*/ showSearchList)
+SearchResultsScreen.newInstance = function(/*Array*/ showSearchList)
 {
-	GetTheMainApp().openScreen(new SearchResultsScreen(showSearchList));
+	MainApp.getThe().openScreen(new SearchResultsScreen(showSearchList));
 }
 
 /******************************************************************************/
@@ -23,7 +23,7 @@ SearchResultsScreen.prototype.constructor = SearchResultsScreen;
 
 function SearchResultsScreen(/*Array*/ showSearchList)
 {
-	this.ScreenID = SearchResultsScreen_ScreenID;
+	this.ScreenID = SearchResultsScreen.ScreenID;
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 522));
@@ -32,16 +32,16 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	oRowItemList.push(new ListControlRowItem("Cost", 120));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-	this.fContainerControl.newControl(new ListControl(SearchResultsScreen_ShowListID,
+	this.fContainerControl.newControl(new ListControl(SearchResultsScreen.ShowListID,
 		this.ScreenID, 8, oRowItemList, new ShowSearchListControl(showSearchList)));
-//	this.fContainerControl.newControl(new ButtonControl(SearchResultsScreen_NoShowsTextID, this.ScreenID));
+//	this.fContainerControl.newControl(new ButtonControl(SearchResultsScreen.NoShowsTextID, this.ScreenID));
 }
 
 /******************************************************************************/
 
 /*void*/ SearchResultsScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(controlID == SearchResultsScreen_ShowListID)
+	if(controlID == SearchResultsScreen.ShowListID)
 	{
 		showMsg("SearchResultsScreen.onButton()");
 		return;

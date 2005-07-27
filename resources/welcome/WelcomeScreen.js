@@ -3,18 +3,18 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var WelcomeScreen_ScreenID = "Welcome001";
-var WelcomeScreen_NowPlayingID = "Welcome001_NowPlaying";
-var WelcomeScreen_FeaturedID = "Welcome001_Featured";
-var WelcomeScreen_SearchByCategoryID = "Welcome001_SearchByCategory";
-var WelcomeScreen_SearchByNameID = "Welcome001_SearchByName";
-var WelcomeScreen_PreferencesID = "Welcome001_Preferences";
+WelcomeScreen.ScreenID = "Welcome001";
+WelcomeScreen.NowPlayingID = "Welcome001_NowPlaying";
+WelcomeScreen.FeaturedID = "Welcome001_Featured";
+WelcomeScreen.SearchByCategoryID = "Welcome001_SearchByCategory";
+WelcomeScreen.SearchByNameID = "Welcome001_SearchByName";
+WelcomeScreen.PreferencesID = "Welcome001_Preferences";
 
 /******************************************************************************/
 
-function WelcomeScreen_newInstance()
+WelcomeScreen.newInstance = function()
 {
-	GetTheMainApp().openScreen(new WelcomeScreen());
+	MainApp.getThe().openScreen(new WelcomeScreen());
 }
 
 /******************************************************************************/
@@ -26,36 +26,36 @@ WelcomeScreen.prototype.constructor = WelcomeScreen;
 
 function WelcomeScreen()
 {
-	this.ScreenID = WelcomeScreen_ScreenID;
+	this.ScreenID = WelcomeScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 122, 182);
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen_NowPlayingID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen_FeaturedID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen_SearchByCategoryID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen_SearchByNameID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen_PreferencesID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.NowPlayingID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.FeaturedID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByCategoryID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByNameID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.PreferencesID, this.ScreenID));
 }
 
 /******************************************************************************/
 
 /*void*/ WelcomeScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(controlID == WelcomeScreen_NowPlayingID)
+	if(controlID == WelcomeScreen.NowPlayingID)
 	{
-		NowPlayingScreen_newInstance();
+		NowPlayingScreen.newInstance();
 		return;
 	}
 
-	if(controlID == WelcomeScreen_FeaturedID)
+	if(controlID == WelcomeScreen.FeaturedID)
 	{
-		var oSession = GetTheMainApp().getSession();
+		var oSession = MainApp.getThe().getSession();
 		var showSearchListRef = new Object();
 		
 		var oSearchData = new SearchData();
-		oSearchData.CategoryID = Category_FeaturedCategoryID;
+		oSearchData.CategoryID = Category.FeaturedCategoryID;
 
 		if(oSession.showSearch(oSearchData, showSearchListRef))
-			SearchResultsScreen_newInstance(showSearchListRef.ref);
+			SearchResultsScreen.newInstance(showSearchListRef.ref);
 		return;
 	}
 

@@ -7,9 +7,9 @@ function SearchData()
 {
 	this.PartialName = null;
 
-	this.ProviderID = Provider_AllProvidersID;
-	this.CategoryID = Category_AllCategoriesID;
-	this.RatingID = Rating_AllRatingsID;
+	this.ProviderID = Provider.AllProvidersID;
+	this.CategoryID = Category.AllCategoriesID;
+	this.RatingID = Rating.AllRatingsID;
 }
 
 /******************************************************************************/

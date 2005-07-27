@@ -5,7 +5,7 @@
 
 function StartupInitialCheck()
 {
-	var oSession = GetTheMainApp().getSession();
+	var oSession = MainApp.getThe().getSession();
 
 	/* connect to the server */
 	if(!oSession.CanPingServer)
@@ -14,13 +14,13 @@ function StartupInitialCheck()
 
 	if(!oSession.loadDataSettings())
 	{
-		SetupScreen_newInstance();
+		SetupScreen.newInstance();
 		return true;
 	}
 
 	if(!oSession.haveUserPassword())
 	{
-		AskPINScreen_newInstance();
+		AskPINScreen.newInstance();
 		return true;
 	}
 
@@ -29,7 +29,7 @@ function StartupInitialCheck()
 	{
 		if(oSession.loadSystemData())
 		{
-			WelcomeScreen_newInstance();
+			WelcomeScreen.newInstance();
 			return true;
 		}
 		else
@@ -43,7 +43,7 @@ function StartupInitialCheck()
 
 function StartupDoSignonPassword(/*string*/ userPassword)
 {
-	var oSession = GetTheMainApp().getSession();
+	var oSession = MainApp.getThe().getSession();
 
 	var statusCode = oSession.signon(null, userPassword);
 	if(statusCode == sc_Success)
@@ -52,12 +52,12 @@ function StartupDoSignonPassword(/*string*/ userPassword)
 
 		if(oSession.loadSystemData())
 		{
-			WelcomeScreen_newInstance();
+			WelcomeScreen.newInstance();
 			return true;
 		}
 
 		oSession.clearLogonInfo();
-		StartScreen_newInstance();
+		StartScreen.newInstance();
 		return true;
 	}
 
@@ -69,7 +69,7 @@ function StartupDoSignonPassword(/*string*/ userPassword)
 function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
 	/*boolean*/ rememberPassword)
 {
-	var oSession = GetTheMainApp().getSession();
+	var oSession = MainApp.getThe().getSession();
 
 	var statusCode = oSession.signon(userID, userPassword, rememberPassword);
 	if(statusCode == sc_Success)
@@ -82,12 +82,12 @@ function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
 
 		if(oSession.loadSystemData())
 		{
-			WelcomeScreen_newInstance();
+			WelcomeScreen.newInstance();
 			return true;
 		}
 
 		oSession.clearLogonInfo();
-		StartScreen_newInstance();
+		StartScreen.newInstance();
 		return true;
 	}
 

@@ -30,7 +30,7 @@ function ShowSearchListControl(/*Array*/ showSearchList)
 	{
 		showProvider = showSearch.ShowProviderList[0];
 
-		providerName = GetTheMainApp().getSession().getProviderName(showProvider.ProviderID);
+		providerName = MainApp.getThe().getSession().getProviderName(showProvider.ProviderID);
 		cost = showProvider.ShowCost.CostDisplay;
 	}
 	else

@@ -3,14 +3,14 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var StartScreen_ScreenID = "StartUp001";
-var StartScreen_StartID = "StartUp001_Start";
+StartScreen.ScreenID = "StartUp001";
+StartScreen.StartID = "StartUp001_Start";
 
 /******************************************************************************/
 
-function StartScreen_newInstance()
+StartScreen.newInstance = function()
 {
-	GetTheMainApp().openScreen(new StartScreen());
+	MainApp.getThe().openScreen(new StartScreen());
 }
 
 /******************************************************************************/
@@ -22,10 +22,10 @@ StartScreen.prototype.constructor = StartScreen;
 
 function StartScreen()
 {
-	this.ScreenID = StartScreen_ScreenID;
+	this.ScreenID = StartScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-	this.fContainerControl.newControl(new ButtonControl(StartScreen_StartID, this.ScreenID));
+	this.fContainerControl.newControl(new ButtonControl(StartScreen.StartID, this.ScreenID));
 }
 
 /******************************************************************************/

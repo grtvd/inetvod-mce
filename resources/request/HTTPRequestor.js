@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function HTTPRequestor_newInstance()
+HTTPRequestor.newInstance = function()
 {
 	return new HTTPRequestor();
 }
@@ -19,7 +19,7 @@ function HTTPRequestor(/*string*/ sessionData)
 
 /*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
 {
-	var session = GetTheMainApp().getSession();
+	var session = MainApp.getThe().getSession();
 
 	this.fXmlHttp.open("POST", session.getNetworkURL(), false);
 	this.fXmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");

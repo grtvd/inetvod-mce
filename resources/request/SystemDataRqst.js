@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function SystemDataRqst_newInstance()
+SystemDataRqst.newInstance = function()
 {
 	return new SystemDataRqst();
 }

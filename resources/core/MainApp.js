@@ -59,7 +59,7 @@ function onScaleEvent(vScale)
 /******************************************************************************/
 /******************************************************************************/
 
-function GetTheMainApp()
+MainApp.getThe = function()
 {
 	if(gMainApp == null)
 		gMainApp = new MainApp();
@@ -71,7 +71,7 @@ function GetTheMainApp()
 function MainApp()
 {
 	this.fScreenList = new Array();
-	this.fSession = Session_newInstance();
+	this.fSession = Session.newInstance();
 	this.fMainTable = null;
 }
 
@@ -230,7 +230,7 @@ function MainAppOnRemoteEvent(keyCode)
 {
 	try
 	{
-		return GetTheMainApp().key(MainAppMapKey(keyCode));
+		return MainApp.getThe().key(MainAppMapKey(keyCode));
 	}
 	catch(e)
 	{
@@ -276,7 +276,7 @@ function MainAppOnMouseClick(obj)
 	{
 		obj = findObjectWithID(obj);
 		if(obj != null)
-			GetTheMainApp().mouseClick(obj.id);
+			MainApp.getThe().mouseClick(obj.id);
 	}
 	catch(e)
 	{
@@ -292,7 +292,7 @@ function MainAppOnMouseOver(obj)
 	{
 		obj = findObjectWithID(obj);
 		if(obj != null)
-			GetTheMainApp().mouseMove(obj.id);
+			MainApp.getThe().mouseMove(obj.id);
 	}
 	catch(e)
 	{

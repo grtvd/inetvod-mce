@@ -3,7 +3,7 @@
 /******************************************************************************/
 /******************************************************************************/
 
-var SetupScreen_ScreenID = "Setup001";
+SetupScreen.ScreenID = "Setup001";
 
 /* SetupStep */
 var ss_AskSignupStep = 0;
@@ -12,9 +12,9 @@ var ss_HaveLogonIDStep =2;
 
 /******************************************************************************/
 
-function SetupScreen_newInstance()
+SetupScreen.newInstance = function()
 {
-	GetTheMainApp().openScreen(new SetupScreen());
+	MainApp.getThe().openScreen(new SetupScreen());
 }
 
 /******************************************************************************/
@@ -26,11 +26,11 @@ SetupScreen.prototype.constructor = SetupScreen;
 
 function SetupScreen()
 {
-	this.ScreenID = SetupScreen_ScreenID;
+	this.ScreenID = SetupScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 
-	this.fStepControlID = AskSignedUp_ControlID;
+	this.fStepControlID = AskSignedUpControl.ControlID;
 	this.fSetupData = new SetupData();
 	this.fCurStep = ss_AskSignupStep;
 	this.openStep(ss_AskSignupStep);
@@ -46,13 +46,13 @@ function SetupScreen()
 	{
 		case ss_AskSignupStep:
 		default:
-			oContainerControl = AskSignedUpControl_newInstance();
+			oContainerControl = AskSignedUpControl.newInstance();
 			break;
 		case ss_NeedLogonIDStep:
-			oContainerControl = NeedLogonIDControl_newInstance();
+			oContainerControl = NeedLogonIDControl.newInstance();
 			break;
 		case ss_HaveLogonIDStep:
-			oContainerControl = HaveLogonIDControl_newInstance();
+			oContainerControl = HaveLogonIDControl.newInstance();
 			break;
 	}
 
@@ -112,13 +112,13 @@ function SetupScreen()
 {
 	if(this.fCurStep == ss_AskSignupStep)
 	{
-		if(controlID == AskSignedUpControl_NotRegisteredID)
+		if(controlID == AskSignedUpControl.NotRegisteredID)
 		{
 			if(this.closeStep(true))
 				this.openStep(ss_NeedLogonIDStep);
 			return;
 		}
-		else if(controlID == AskSignedUpControl_AlreadyRegisteredID)
+		else if(controlID == AskSignedUpControl.AlreadyRegisteredID)
 		{
 			if(this.canPingServer())
 				if(this.closeStep(true))
@@ -128,7 +128,7 @@ function SetupScreen()
 	}
 	else if(this.fCurStep == ss_NeedLogonIDStep)
 	{
-		if(controlID == NeedLogonIDControl_HaveLogonID)
+		if(controlID == NeedLogonIDControl.HaveLogonID)
 		{
 			if(this.canPingServer())
 				if(this.closeStep(true))
@@ -138,7 +138,7 @@ function SetupScreen()
 	}
 	else if(this.fCurStep == ss_HaveLogonIDStep)
 	{
-		if(controlID == HaveLogonIDControl_ContinueID)
+		if(controlID == HaveLogonIDControl.ContinueID)
 		{
 			this.doSetupSignon();
 			return;
@@ -152,7 +152,7 @@ function SetupScreen()
 
 /*bool*/ SetupScreen.prototype.canPingServer = function()
 {
-	var oSession = GetTheMainApp().getSession();
+	var oSession = MainApp.getThe().getSession();
 
 	if(!oSession.CanPingServer)
 		if(!oSession.pingServer())
