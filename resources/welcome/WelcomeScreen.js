@@ -55,7 +55,7 @@ function WelcomeScreen()
 		oSearchData.CategoryID = Category.FeaturedCategoryID;
 
 		if(oSession.showSearch(oSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.ref);
+			SearchResultsScreen.newInstance(showSearchListRef.value);
 		return;
 	}
 

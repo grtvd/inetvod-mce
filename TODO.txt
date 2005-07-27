@@ -1,9 +1,9 @@
-Change GetTheMainApp() to MainApp_getThe()
 
 Handle "no results" in the 2 list pages.
 
 ShowCost should include RentalHours
 
+HTTPS support for webapi (Session).
 
 Resize Page - need to adjust screens when pages are resized.
 Setup Flow - hitting back button during setup should go back to Start page

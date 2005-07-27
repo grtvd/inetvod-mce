@@ -312,7 +312,7 @@ function Session()
 		//waitScreenPtr->close();
 		if(statusCode == sc_Success)
 		{
-			showSearchListRef.ref = showSearchResp.ShowSearchList;
+			showSearchListRef.value = showSearchResp.ShowSearchList;
 			return true;
 		}
 
