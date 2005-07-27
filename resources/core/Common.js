@@ -286,3 +286,10 @@ function checkClassName(obj, classNameExt)
 		}
 	}
 }
+
+function forceRedraw(pauseMills)
+{
+	var val = "javascript:document.writeln('<" + "script" + ">setTimeout(\\\'window.close()\\\', "
+		+ ((pauseMills) ? pauseMills : 1) + ");</" + "script" + ">')";
+	window.showModalDialog(val);
+}

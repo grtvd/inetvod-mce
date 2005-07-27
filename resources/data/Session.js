@@ -144,13 +144,13 @@ function Session()
 	var statusCode = sc_GeneralError;
 	var statusMessage = null;
 
-	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
+	var oWaitScreen = WaitScreen.newInstance();
 	try
 	{
 		var dataRequestor = DataRequestor.newInstance();
 		statusCode = dataRequestor.pingRequest();
 
-		//waitScreenPtr->close();
+		oWaitScreen.close();
 		if(statusCode == sc_Success)
 		{
 			this.CanPingServer = true;
@@ -163,7 +163,7 @@ function Session()
 	{
 		showError("Session.pingServer", e);
 	}
-	//waitScreenPtr->close();
+	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
 
@@ -200,14 +200,14 @@ function Session()
 	signonRqst.Password = this.fUserPassword;
 	signonRqst.Player = this.fPlayer;
 
-	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
+	var oWaitScreen = WaitScreen.newInstance();
 	try
 	{
 		var dataRequestor = DataRequestor.newInstance();
 		signonResp = dataRequestor.signonRequest(signonRqst);
 		statusCode = dataRequestor.getStatusCode();
 
-		//waitScreenPtr->close();
+		oWaitScreen.close();
 		if(statusCode == sc_Success)
 		{
 			this.fSessionData = signonResp.SessionData;
@@ -229,7 +229,7 @@ function Session()
 	{
 		showError("Session.signon", e);
 	}
-	//waitScreenPtr->close();
+	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
 
@@ -243,14 +243,14 @@ function Session()
 	var statusCode = sc_GeneralError;
 	var statusMessage = null;
 
-	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
+	var oWaitScreen = WaitScreen.newInstance();
 	try
 	{
 		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
 		var systemDataResp = dataRequestor.systemDataRequest();
 		statusCode = dataRequestor.getStatusCode();
 
-		//waitScreenPtr->close();
+		oWaitScreen.close();
 		if(statusCode == sc_Success)
 		{
 			this.fProviderList = systemDataResp.ProviderList;
@@ -267,7 +267,7 @@ function Session()
 	{
 		showError("Session.loadSystemData", e);
 	}
-	//waitScreenPtr->close();
+	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
 
@@ -302,14 +302,14 @@ function Session()
 	showSearchRqst.CategoryIDList = categoryIDList;
 	showSearchRqst.RatingIDList = ratingIDList;
 
-	//ScreenPtr waitScreenPtr = WaitScreen::newInstance();
+	var oWaitScreen = WaitScreen.newInstance();
 	try
 	{
 		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
 		showSearchResp = dataRequestor.showSearchRequest(showSearchRqst);
 		statusCode = dataRequestor.getStatusCode();
 
-		//waitScreenPtr->close();
+		oWaitScreen.close();
 		if(statusCode == sc_Success)
 		{
 			showSearchListRef.value = showSearchResp.ShowSearchList;
@@ -322,7 +322,7 @@ function Session()
 	{
 		showError("Session.showSearch", e);
 	}
-	//waitScreenPtr->close();
+	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
 

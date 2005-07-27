@@ -202,6 +202,7 @@ function MainApp()
 function MainAppOnKeyDown()
 {
 	if((event.keyCode == 8)
+			|| (event.keyCode == 13)
 			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
 			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
 		return MainAppOnRemoteEvent(event.keyCode);
@@ -219,7 +220,8 @@ function MainAppOnKeyUp()
 
 function MainAppOnKeyPress()
 {
-	if(event.keyCode != 8)
+	if((event.keyCode != 8)
+			&& (event.keyCode != 13))
 		return MainAppOnRemoteEvent(event.keyCode);
 	return false;
 }

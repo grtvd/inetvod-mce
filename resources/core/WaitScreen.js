@@ -17,21 +17,22 @@ WaitScreen.newInstance = function()
 function WaitScreen()
 {
 	this.ScreenID = WaitScreen.ScreenID;
-	this.fUIObj = document.getElementById(this.ScreenID);
-	if(this.fUIObj == null)
-		throw "WaitScreen::ctor: Can't find UI object, ID(" + this.ScreenID + ")";
 
-	this.fContainerControl = new ContainerControl(this.ScreenID);
-	//this.fContainerControl.newControl(new TextControl(this.ScreenID + '_Text'));
+	this.fContainerControl = new ContainerControl(this.ScreenID, 0, 0);
+
+	// adjust position
+	var mainTable = document.getElementById("MainTable");
+	this.fContainerControl.moveTo(mainTable.offsetLeft, mainTable.offsetTop);
 
 	this.fContainerControl.show(true);
+	forceRedraw();
 }
 
 /******************************************************************************/
 
-/*ContainerControl*/ WaitScreen.prototype.getContainerControl = function()
+/*void*/ WaitScreen.prototype.close = function()
 {
-	return this.fContainerControl;
+	this.fContainerControl.show(false);
 }
 
 /******************************************************************************/

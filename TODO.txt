@@ -10,14 +10,6 @@ Setup Flow - hitting back button during setup should go back to Start page
 AskPINScreen needs to handle Back
 
 
-Test Redraw ability
-/* from http://www.activewidgets.com/javascript.forum.3006.9/a-fun-one-for-a.html */
-
-function redraw()
-{
-	window.showModalDialog("javascript:document.writeln('<" + "script" + ">window.close();</" + "script" + ">')");
-}
-
 Playing Media
 if(window.external.MediaCenter)
 	window.external.MediaCenter.playMedia(2, "http://localhost:8080/mce/SDKTestVideo.WMV");
