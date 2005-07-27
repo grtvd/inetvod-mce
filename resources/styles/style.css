@@ -1,0 +1,356 @@
+body
+{
+	background-color: #101010;
+	background1: #0E4C97;
+	background2: #0066CC;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-right: 0px;
+	margin-bottom: 0px;
+}
+.tableMain
+{
+	background-image: url(../images/background.png);
+	background-repeat: no-repeat;
+}
+
+.line_bottom
+{
+	border-bottom: #FFFFFF 2px outset;
+}
+.line_top
+{
+	border-top: #FFFFFF 2px outset;
+}
+.title
+{
+	font-weight: bold;
+	font-size: 30pt;
+	font-family: serif;
+	color: white;
+}
+
+.textCtr
+{
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+}
+.textLbl
+{
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	text-align: right;
+}
+
+.listCtrHeader
+{
+	padding-left: 10px;
+	padding-right: 5px;
+	font-weight: normal;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: yellow;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+
+.listCtrRow952_normal
+{
+	behavior: url(styles/controls.htc);
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/listCtrRow952Normal.gif);
+	cursor: hand;
+}
+.listCtrRow952_hilite
+{
+	behavior: url(styles/controls.htc);
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/listCtrRow952Hilite.gif);
+	cursor: hand;
+}
+.listCtrRow952_hide
+{
+	height: 54px; 
+}
+
+.listCtrItem
+{
+	/*behavior: url(styles/listControlItem.htc);*/
+	padding-left: 10px;
+	padding-right: 5px;
+	font-weight: normal;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+
+.listCtrCount
+{
+	font-weight: normal;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: black;
+}
+
+.listCtrNext_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 48px;
+	height: 48px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrNextNormal.gif);
+	cursor: hand;
+}
+.listCtrNext_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 48px;
+	height: 48px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrNextHilite.gif);
+	cursor: hand;
+}
+.listCtrNext_disabled
+{
+	width: 48px;
+	height: 48px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrNextDisabled.gif);
+}
+
+.buttonCtr140_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 140px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: Verdana, Arial, Helvetica;
+	color: white;
+	text-align: center;
+	background-image: url(../images/buttonCtr140Normal.gif);
+	cursor: hand;
+}
+.buttonCtr140_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 140px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: Verdana, Arial, Helvetica;
+	color: white;
+	text-align: center;
+	background-image: url(../images/buttonCtr140Hilite.gif);
+	cursor: hand;
+}
+
+.buttonCtr438_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 418px;
+	padding-left: 20px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family: Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/buttonCtr438Normal.gif);
+	cursor: hand;
+}
+.buttonCtr438_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 418px;
+	padding-left: 20px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/buttonCtr438Hilite.gif);
+	cursor: hand;
+}
+
+.buttonCtr700_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 680px;
+	padding-left: 20px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family: Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/buttonCtr700Normal.gif);
+	cursor: hand;
+}
+.buttonCtr700_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 680px;
+	padding-left: 20px;
+	height: 54px; 
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+	text-align: left;
+	background-image: url(../images/buttonCtr700Hilite.gif);
+	cursor: hand;
+}
+
+.editCtr225_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 225px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */ 
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr225Normal.gif);
+	cursor: hand;
+}
+.editCtr225_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 225px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr225Hilite.gif);
+	cursor: hand;
+}
+.editCtrTextClip225
+{
+	width: 207px;	/* Triple-tap should be this plus (+editCtrText.left * 2) */
+	height: 34px; 	/* Triple-tap should be 60 */
+	overflow: hidden;
+}
+
+.editCtr150_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 150px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */ 
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr150Normal.gif);
+	cursor: hand;
+}
+.editCtr150_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 150px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr150Hilite.gif);
+	cursor: hand;
+}
+.editCtrTextClip150
+{
+	width: 132px;	/* Triple-tap should be this plus (+editCtrText.left * 2) */
+	height: 34px; 	/* Triple-tap should be 60 */
+	overflow: hidden;
+}
+
+.editCtrText
+{
+	behavior: url(styles/controls.htc);
+	position: relative;
+	top: -18px;
+	left: -12px;
+}
+
+.checkCtr_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 51px;
+	height: 50px;
+	background-image: url(../images/checkCtrNormal.gif);
+	cursor: hand;
+}
+.checkCtr_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 51px;
+	height: 50px;
+	background-image: url(../images/checkCtrHilite.gif);
+	cursor: hand;
+}
+.checkCtr_normalchk
+{
+	behavior: url(styles/controls.htc);
+	width: 51px;
+	height: 50px;
+	background-image: url(../images/checkCtrNormalChk.gif);
+	cursor: hand;
+}
+.checkCtr_hilitechk
+{
+	behavior: url(styles/controls.htc);
+	width: 51px;
+	height: 50px;
+	background-image: url(../images/checkCtrHiliteChk.gif);
+	cursor: hand;
+}
+
+.labelCtr
+{
+	font-weight: bold;
+	font-size: 18pt;
+	font-family: serif;
+	color: white;
+	text-align: left;
+}
+
+.ttInput_normal
+{
+	behavior: url(controls.htc);
+	background: #FF00FF;
+}
+
+.ttInput_hilite
+{
+	behavior: url(controls.htc);
+	background: #FFFF00;
+}

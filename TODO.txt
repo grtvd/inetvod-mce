@@ -1,0 +1,47 @@
+Change GetTheMainApp() to MainApp_getThe()
+
+Handle "no results" in the 2 list pages.
+
+ShowCost should include RentalHours
+
+
+Resize Page - need to adjust screens when pages are resized.
+Setup Flow - hitting back button during setup should go back to Start page
+AskPINScreen needs to handle Back
+
+
+Test Redraw ability
+/* from http://www.activewidgets.com/javascript.forum.3006.9/a-fun-one-for-a.html */
+
+function redraw()
+{
+	window.showModalDialog("javascript:document.writeln('<" + "script" + ">window.close();</" + "script" + ">')");
+}
+
+Playing Media
+if(window.external.MediaCenter)
+	window.external.MediaCenter.playMedia(2, "http://localhost:8080/mce/SDKTestVideo.WMV");
+//	window.external.MediaCenter.playMedia(2, "http://www.gamelink.com/asx/AsxGenerator?file=gl1/249287.wmv&code=LNANN2C4NWFG4A5LKRE8");
+
+
+Turn on Errors via Query String
+
+http://javascript.about.com/library/blqs2.htm
+
+var qsParm = new Array();
+function qs() {
+var query = window.location.search.substring(1);
+var parms = query.split('&');
+for (var i=0; i<parms.length; i++) {
+   var pos = parms[i].indexOf('=');
+   if (pos > 0) {
+      var key = parms[i].substring(0,pos);
+      var val = parms[i].substring(pos+1);
+      qsParm[key] = val;
+      }
+   }
+}
+
+qsParm['code'] = null;
+qsParm['desc'] = null;
+qs();

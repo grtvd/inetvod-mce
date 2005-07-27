@@ -1,0 +1,542 @@
+<html>
+<head>
+<title>iNetVOD</title>
+<link rel="stylesheet" href="styles/style.css" type="text/css"></link>
+</head>
+<script language="javascript" src="core/Common.js"></script>
+<script language="javascript" src="core/Cookie.js"></script>
+<script language="javascript" src="core/Money.js"></script>
+<script language="javascript" src="core/MainApp.js"></script>
+<script language="javascript" src="core/Screen.js"></script>
+<script language="javascript" src="core/Control.js"></script>
+<script language="javascript" src="core/ContainerControl.js"></script>
+<script language="javascript" src="core/ButtonControl.js"></script>
+<script language="javascript" src="core/EditControl.js"></script>
+<script language="javascript" src="core/ListControl.js"></script>
+<script language="javascript" src="core/ListControlRow.js"></script>
+<script language="javascript" src="core/ListControlRowItem.js"></script>
+<script language="javascript" src="core/CheckControl.js"></script>
+<script language="javascript" src="core/XmlDataReader.js"></script>
+<script language="javascript" src="core/XmlDataWriter.js"></script>
+<script language="javascript" src="core/WaitScreen.js"></script>
+
+<script language="javascript" src="controls/ShowSearchListControl.js"></script>
+<script language="javascript" src="controls/RentedShowListControl.js"></script>
+
+<script language="javascript" src="data/Session.js"></script>
+<script language="javascript" src="data/DataID.js"></script>
+<script language="javascript" src="data/MemberState.js"></script>
+<script language="javascript" src="data/MemberPrefs.js"></script>
+<script language="javascript" src="data/IncludeAdult.js"></script>
+<script language="javascript" src="data/Provider.js"></script>
+<script language="javascript" src="data/Category.js"></script>
+<script language="javascript" src="data/Rating.js"></script>
+<script language="javascript" src="data/MemberProvider.js"></script>
+<script language="javascript" src="data/ShowSearch.js"></script>
+<script language="javascript" src="data/ShowProvider.js"></script>
+<script language="javascript" src="data/ShowCostType.js"></script>
+<script language="javascript" src="data/ShowCost.js"></script>
+
+<script language="javascript" src="request/StatusCode.js"></script>
+<script language="javascript" src="request/HTTPRequestor.js"></script>
+<script language="javascript" src="request/DataRequestor.js"></script>
+<script language="javascript" src="request/INetVODPlayerRqst.js"></script>
+<script language="javascript" src="request/INetVODPlayerResp.js"></script>
+<script language="javascript" src="request/RequestData.js"></script>
+<script language="javascript" src="request/ResponseData.js"></script>
+<script language="javascript" src="request/PingRqst.js"></script>
+<script language="javascript" src="request/PingResp.js"></script>
+<script language="javascript" src="request/SignonRqst.js"></script>
+<script language="javascript" src="request/SignonResp.js"></script>
+<script language="javascript" src="request/SystemDataRqst.js"></script>
+<script language="javascript" src="request/SystemDataResp.js"></script>
+<script language="javascript" src="request/ShowSearchRqst.js"></script>
+<script language="javascript" src="request/ShowSearchResp.js"></script>
+
+<script language="javascript" src="welcome/StartScreen.js"></script>
+<script language="javascript" src="welcome/WelcomeScreen.js"></script>
+
+<script language="javascript" src="setup/StartupFlows.js"></script>
+<script language="javascript" src="setup/AskPINScreen.js"></script>
+<script language="javascript" src="setup/SetupScreen.js"></script>
+<script language="javascript" src="setup/SetupData.js"></script>
+<script language="javascript" src="setup/AskSignedUpControl.js"></script>
+<script language="javascript" src="setup/NeedLogonIDControl.js"></script>
+<script language="javascript" src="setup/HaveLogonIDControl.js"></script>
+
+<script language="javascript" src="search/SearchScreen.js"></script>
+<script language="javascript" src="search/SearchData.js"></script>
+<script language="javascript" src="search/SearchResultsScreen.js"></script>
+<script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
+
+<script language="javascript">
+
+function reloadPage()
+{
+alert("reloadPage");
+    /* This function refreshes the page, and calls the onScaleEvent function
+    to manage resizing of the elements on the page */
+    window.location.reload()
+    // determine width of page
+    var newWidth = body.getBoundingClientRect().right
+    // determine how much the page needs to be resized, by comparing page width to 1024
+    var sizeAmount = (newWidth/1024)
+    // call onScaleEvent function
+    onScaleEvent(sizeAmount)
+}
+
+function init()
+{
+	GetTheMainApp().init();
+	StartScreen_newInstance();
+}
+</script>
+<body id="MainBody">
+
+<div style="position:absolute; left=100; top=120; font-size: 20pt">
+<span id="ShowScale"></span>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="StartUp001" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td id="StartUp001_Text" class="textCtr">
+		Welcome to the iNetVOD Media Player demo. This player is a reference
+		implementation of the iNetVOD user interface for TV-connected devices,
+		accessing the iNetVOD Service across the Internet using the
+		iNetVOD Player API. Navigation is performed using the keyboard to simulate
+		remote control commands. The following commands are supported:<br><br>
+		Arrow Keys - Navigate between the controls<br>
+		Enter - Select the focused control<br>
+		Backspace - Return to the previous screen<br>
+		> - Next value (Edit/Select controls)<br>
+		< - Previous value (Edit/Select controls)<br>
+		Esc - Quit the Media Player
+	</td></tr>
+</table>
+
+<table cellpadding=0 cellspacing=0 border=0 width=964 height=200>
+	<tr><td align="center" valign="bottom"
+		><table cellpadding=0 cellspacing=0 border=0><tr
+			><td id="StartUp001_Start" class="buttonCtr140_normal">Start</td
+		></tr></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Startup004" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=624>
+	<tr><td class="textCtr">
+		Please enter your PIN:<br>
+		<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td class="textLbl" >PIN:</td
+				><td><span id="AskPINScreen_PIN" class="editCtr150_normal"
+					><span class="editCtrTextClip150"
+					><object id="AskPINScreen_PIN_Text" class="editCtrText" 
+						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
+						height="60" width="156" tabindex="-1" viewastext>
+						<param name="InputMode" value="1">
+						<param name="InputFontName" value="Verdana, Arial, Helvetica">
+						<param name="InputTextColor" value="#0f0f0f">
+						<param name="InputFontSize" value="20pt">
+						<param name="InputFontWeight" value="bold">
+					</object></span
+					></span
+				></td
+			></tr
+		></table>
+		<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=0 border=0
+			><tr><td id="AskPINScreen_Continue" class="buttonCtr140_normal">Continue</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Setup001" style="position:absolute; display:none">
+
+<div id="Setup001_AskSignedUpControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td id="Setup001_AskSignedUpControl_WelecomeText" class="textCtr">
+		Welcome to iNetVOD! iNetVOD is a service for accessing a vast array of
+		Internet-based content, such as movies, TV shows, and radio programs.<br>
+		<br>
+		<br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Are you already registered with iNetVOD?<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td id="Setup001_AskSignedUpControl_AlreadyRegistered" class="buttonCtr700_normal">Yes, I am already registered</td></tr
+			><tr><td id="Setup001_AskSignedUpControl_NotRegistered" class="buttonCtr700_normal">No, I am not yet registered</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Setup001_NeedLogonIDControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td id="Setup001_NeedLogonIDControl_RegisterText" class="textCtr">
+		You may register for iNetVOD by visiting www.iNetVOD.com/register or by
+		calling 1-800-999-9999.<br>
+		<br>
+		Upon registering, you will be assigned a Logon ID.  Proceed once you
+		have your Logon ID.<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td id="Setup001_NeedLogonIDControl_HaveLogon" class="buttonCtr700_normal">I have my Logon ID</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Setup001_HaveLogonIDControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td id="Setup001_HaveLogonIDControl_DescriptionID" class="textCtr">
+		Please enter your registered Logon ID and your chosen PIN:<br>
+		<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td class="textLbl" >Logon ID:</td
+				><td><span id="Setup001_HaveLogonIDControl_Logon" class="editCtr225_normal"
+					><span class="editCtrTextClip225"
+					><object id="Setup001_HaveLogonIDControl_Logon_Text" class="editCtrText" 
+						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
+						height="60" width="231" tabindex="-1" viewastext>
+						<param name="InputMode" value="1">
+						<param name="InputFontName" value="Verdana, Arial, Helvetica">
+						<param name="InputTextColor" value="#0f0f0f">
+						<param name="InputFontSize" value="20pt">
+						<param name="InputFontWeight" value="bold">
+					</object></span
+					></span
+				></td></tr
+			><tr><td class="textLbl" >PIN:</td
+				><td><span id="Setup001_HaveLogonIDControl_PIN" class="editCtr150_normal"
+					><span class="editCtrTextClip150"
+					><object id="Setup001_HaveLogonIDControl_PIN_Text" class="editCtrText" 
+						classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D"
+						height="60" width="156" tabindex="-1" viewastext>
+						<param name="InputMode" value="1">
+						<param name="InputFontName" value="Verdana, Arial, Helvetica">
+						<param name="InputTextColor" value="#0f0f0f">
+						<param name="InputFontSize" value="20pt">
+						<param name="InputFontWeight" value="bold">
+					</object></span
+					></span
+				></td></tr
+			><tr><td class="textLbl" >Remember PIN:</td><td><span id="Setup001_HaveLogonIDControl_RememberPIN" class="checkCtr_normal" /></td></tr
+			><tr><td colspan="2"></td></tr
+		></table>
+		<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=0 border=0
+			><tr><td id="Setup001_HaveLogonIDControl_Continue" class="buttonCtr140_normal">Continue</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Welcome001" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=6 border=0>
+	<tr><td id="Welcome001_NowPlaying" class="buttonCtr438_normal">Now Playing</td></tr>
+	<tr><td id="Welcome001_Featured" class="buttonCtr438_normal">Featured</td></tr>
+	<tr><td id="Welcome001_SearchByCategory" class="buttonCtr438_normal">Search by Category</td></tr>
+	<tr><td id="Welcome001_SearchByName" class="buttonCtr438_normal">Search by Title</td></tr>
+	<tr><td id="Welcome001_Preferences" class="buttonCtr438_normal">Preferences</td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Search003" style="position:absolute; display:none">
+<div id="Search003_ShowList" style="position:relative; display:inline">
+<table cellpadding=0 cellspacing=6 border=0 width=964>
+	<tr><td
+		><span class="listCtrHeader" style="width: 522;">Show</span
+		><span class="listCtrHeader" style="width: 90;">Date</span
+		><span class="listCtrHeader" style="width: 220;">Provider</span
+		><span class="listCtrHeader" style="width: 120;">Price</span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_0" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_0_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_0_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_0_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_0_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_1" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_1_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_1_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_1_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_1_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_2" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_2_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_2_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_2_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_2_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_3" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_3_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_3_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_3_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_3_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_4" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_4_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_4_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_4_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_4_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_5" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_5_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_5_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_5_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_5_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_6" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_6_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_6_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_6_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_6_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+	<tr><td id="Search003_ShowList_7" class="listCtrRow952_normal"
+		><span id="Search003_ShowList_7_Show" class="listCtrItem"></span
+		><span id="Search003_ShowList_7_Year" class="listCtrItem"></span
+		><span id="Search003_ShowList_7_Provider" class="listCtrItem"></span
+		><span id="Search003_ShowList_7_Cost" class="listCtrItem"></span
+		></td>
+	</tr>
+</table>
+
+<table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
+	<table cellpadding=0 cellspacing=5 border=0>
+		<tr><td id="Search003_ShowList_Count" class="listCtrCount">0 of 0</td
+			><td id="Search003_ShowList_Up" class="listCtrNext_normal">-</td
+			><td id="Search003_ShowList_Down" class="listCtrNext_normal">+</td
+		></tr>
+	</table>
+</td></tr></table>
+
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Search003_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
+No shows were found matching your search criteria.  Please try again.<br>
+</div>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Show002" style="position:absolute; display:none">
+<div id="Show002_ShowList" style="position:relative; display:inline">
+<table cellpadding=0 cellspacing=6 border=0 width=964>
+	<tr><td
+		><span class="listCtrHeader" style="width: 550;">Show</span
+		><span class="listCtrHeader" style="width: 230;">Provider</span
+		><span class="listCtrHeader" style="width: 172;">Until</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_0" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_0_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_0_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_0_Until" class="listCtrItem">Wed 12p</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_1" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_1_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_1_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_1_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_2" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_2_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_2_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_2_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_3" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_3_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_3_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_3_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_4" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_4_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_4_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_4_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_5" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_5_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_5_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_5_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_6" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_6_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_6_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_6_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+	<tr><td id="Show002_ShowList_7" class="listCtrRow952_normal"
+		><span id="Show002_ShowList_7_Show" class="listCtrItem">An American Werewolf in London</span
+		><span id="Show002_ShowList_7_Provider" class="listCtrItem">VOD Flicks</span
+		><span id="Show002_ShowList_7_Until" class="listCtrItem">Mon 4pm</span
+		></td>
+	</tr>
+</table>
+
+<table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
+	<table cellpadding=0 cellspacing=5 border=0>
+		<tr><td id="Show002_ShowList_Count" class="listCtrCount">5 of 50</td
+			><td id="Show002_ShowList_Up" class="listCtrNext_normal">-</td
+			><td id="Show002_ShowList_Down" class="listCtrNext_normal">+</td
+		></tr>
+	</table>
+</td></tr></table>
+
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Show002_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
+Your Now Playing list is empty. Shows that you rent will be listed here.<br>
+<br>
+It is a good idea to rent multiple shows at a time. This will allow new shows to 
+be downloaded while your are watching another show.
+</div>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<table width="100%" height="100%" cellpadding=0 cellspacing=0 border=0>
+	<tr><td align=center valign=middle>
+<table id="MainTable" width=1024 height=768 class="tableMain" cellpadding=0 cellspacing=0 border=0>
+	<tr>
+		<td>
+			<div id="Wait001" style="position:absolute; left:0; top:0; display:none;">
+			<div style="position:absolute; left:0; top:0; z-index:2; display:inline">
+			<table width=1024 height=768 cellpadding=0 cellspacing=0 border=0>
+				<tr>
+					<td width="100%" height="100%" align=center valign=middle>
+					
+<table width=400 height=80 cellpadding=0 cellspacing=0 border=0>
+	<tr>
+		<td class="title" align=center valign=middle><img src="images/wait.png"></td>
+	</tr>
+</table>
+		
+							
+					</td>
+				</tr>
+			</table>
+			</div>
+
+			<div style="position:absolute; left:0; top:0; z-index:1; display:inline; ">
+			<table width=1024 height=768 cellpadding=0 cellspacing=0 border=0>
+				<tr>
+					<td width="100%" height="100%" align=center valign=middle class="Title" style="background-color: #222222; filter:alpha(opacity=70)">
+					
+														  x
+					</td>
+				</tr>
+			</table>
+			</div>
+			</div>
+
+			<div id="Search006" style="position:relative; display:none; background-color:red">
+			<table cellpadding=0 cellspacing=5 border=1>
+				<tr><td id="Search006_Description" class="labelCtr" colspan=5
+					>Please enter a partial title then Search:</td></tr>
+				<tr>
+					<td id="Search006_ShowNameLabel" class="labelCtr" style="text-align:right" width=70>Title:</td>
+					<td width=1><img src="images/spacer.gif" border=0 width=1 height=1></td>
+					<td id="Search006_ShowName" class="editCtr300_normal" width=300><HtmlInput /></td>
+					<td width=1><img src="images/spacer.gif" border=0 width=1 height=1></td>
+					<td id="Search006_Search" class="buttonCtr120_normal" style="text-align:center" width=120>Search</td>
+				</tr>
+				<tr>
+					<td id="Search006_SearchName" class="ttInput_normal" colspan=5 onmouseover="MainAppOnMouseOver(this)">
+<object MCFocusable="true" class="textControl" style="" id="TextEntryControl"  height="200" width="260" classid="CLSID:939EA880-465C-4A4A-B465-B0073167902D" name="objInput" VIEWASTEXT>
+	<param name="InputMode" value="1">
+	<param name="InputFontName" value="arial">
+	<param name="InputTextColor" value="#222222">
+	<param name="InputFontSize" value="24pt">
+	<param name="InputFontWeight" value="bold">
+	<param name="TTFontName" value="Trebuchet MS">
+	<param name="TTFontSize" value="24pt">
+	<param name="TTFontStyle" value="normal">
+	<param name="TTFontWeight" value="600">
+	<param name="TTBkGrndColor" value="#666666">
+	<param name="TTCharacterColor" value="#dddddd">
+	<param name="TTDigitColor" value="#dddddd">
+</object>
+					</td>
+				</tr>
+			</table>
+			</div>
+
+		</td>
+	</tr>
+</table>
+	</td></tr>
+</table>
+
+
+</body>
+</html>
+<script for=document event=onkeyup language="javascript">
+	return !MainAppOnKeyUp(event);
+</script>
+<script for=document event=onkeydown language="javascript">
+	return !MainAppOnKeyDown(event);
+</script>
+<script for=document event=onkeypress language="javascript">
+	return !MainAppOnKeyPress(event);
+</script>
+<script for=window event=onload language="javascript">
+	tryit('init();');
+</script>
