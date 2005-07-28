@@ -35,8 +35,8 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	oRowItemList.push(new ListControlRowItem("Until", 172));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-	this.fContainerControl.newControl(new ListControl(NowPlayingScreen.ShowListID,
-		this.ScreenID, 8, oRowItemList, new RentedShowListControl(rentedShowSearchList)));
+	this.fContainerControl.newControl(new RentedShowListControl(NowPlayingScreen.ShowListID,
+		this.ScreenID, 8, oRowItemList, rentedShowSearchList));
 //	this.fContainerControl.newControl(new ButtonControl(NowPlayingScreen.NoShowsTextID, this.ScreenID));
 }
 

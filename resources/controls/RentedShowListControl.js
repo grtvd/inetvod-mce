@@ -3,9 +3,17 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function RentedShowListControl(/*Array*/ rentedShowSearchList)
+RentedShowListControl.prototype = new ListControl();
+RentedShowListControl.prototype.constructor = ListControl;
+
+/******************************************************************************/
+
+function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
+	/*ListControlRowItemList*/ oRowItemList, /*Array*/ rentedShowSearchList)
 {
 	this.RentedShowSearchList = rentedShowSearchList;
+
+	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
 }
 
 /******************************************************************************/

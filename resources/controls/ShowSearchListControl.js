@@ -3,9 +3,17 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function ShowSearchListControl(/*Array*/ showSearchList)
+ShowSearchListControl.prototype = new ListControl();
+ShowSearchListControl.prototype.constructor = ListControl;
+
+/******************************************************************************/
+
+function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
+	/*ListControlRowItemList*/ oRowItemList, /*Array*/ showSearchList)
 {
 	this.ShowSearchList = showSearchList;
+
+	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
 }
 
 /******************************************************************************/

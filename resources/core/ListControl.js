@@ -9,7 +9,16 @@ ListControl.prototype.constructor = ListControl;
 /******************************************************************************/
 
 function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
-	/*ListControlRowItemList*/ oRowItemList, /*DataList*/ oDataList)
+	/*ListControlRowItemList*/ oRowItemList)
+{
+	if(controlID)	// default ctor will be called by inherited objects
+		this.init(controlID, screenID, numRows, oRowItemList);
+}
+
+/******************************************************************************/
+
+/*void*/ ListControl.prototype.init = function(/*string*/ controlID, /*string*/ screenID,
+	/*int*/ numRows, /*ListControlRowItemList*/ oRowItemList)
 {
 	this.ControlID = controlID;
 	this.ScreenID = screenID;
@@ -33,8 +42,6 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	this.fTopItem = 0;
 	this.fBottomItem = -1;
 
-	this.fDataList = oDataList;
-
 	this.recalcBottomItemFromTopItem();
 	this.setFocus(false);
 	this.drawItems(false);
@@ -47,7 +54,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /*void*/ ListControl.prototype.recalcTopItemFromBottomItem = function()
 {
-	var totalItems = this.fDataList.getItemCount();
+	var totalItems = this.getItemCount();
 
 	if(totalItems == 0)
 	{
@@ -68,7 +75,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /*void*/ ListControl.prototype.recalcBottomItemFromTopItem = function()
 {
-	var totalItems = this.fDataList.getItemCount();
+	var totalItems = this.getItemCount();
 
 	this.fBottomItem = -1;
 	if(totalItems == 0)
@@ -123,7 +130,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 {
 	Control.prototype.setFocus.call(this, set);
 
-	if(set && (this.fFocusedItem == null) && (this.fDataList.getItemCount() > 0))
+	if(set && (this.fFocusedItem == null) && (this.getItemCount() > 0))
 		this.setFocusedItem(this.fRowList[0]);
 }
 
@@ -158,7 +165,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /*void*/ ListControl.prototype.drawDownIcon = function(/*boolean*/ showFocus)
 {
-	var enabled = (this.fBottomItem < this.fDataList.getItemCount() - 1);
+	var enabled = (this.fBottomItem < this.getItemCount() - 1);
 
 	checkClassName(this.fUIDownIconObj, enabled ? (showFocus ? 'hilite' : 'normal') : 'disabled');
 }
@@ -167,10 +174,10 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /*void*/ ListControl.prototype.drawCount = function()
 {
-	var itemCount = this.fDataList.getItemCount();
+	var itemCount = this.getItemCount();
 	var current = -1;
 	var value = "";
-	
+
 	if(itemCount > 0)
 	{
 		if(this.fFocusedItem != null)
@@ -201,7 +208,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	for(var dataIndex = this.fTopItem; dataIndex <= this.fBottomItem; dataIndex++)
 	{
 		oRow = this.fRowList[rowIndex];
-		this.fDataList.drawItem(dataIndex, oRow);
+		this.drawItem(dataIndex, oRow);
 		if(showFocus && (oRow.ControlID == focusedControlID))
 			oRow.setFocus(true);
 		else
@@ -216,7 +223,6 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 		oRow.show(false);
 	}
 }
-
 
 /******************************************************************************/
 
@@ -237,6 +243,21 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	return false;
 }
 
+
+/******************************************************************************/
+
+/*int*/ ListControl.prototype.getItemCount = function()
+{
+	throw "ListControl.getItemCount: this method should be overridden";
+}
+
+/******************************************************************************/
+
+/*void*/ ListControl.prototype.drawItem = function(/*int*/ item, /*ListControlRow*/ oRow)
+{
+	throw "ListControl.drawItem: this method should be overridden";
+}
+
 /******************************************************************************/
 
 /*boolean*/ ListControl.prototype.key = function(/*int*/ key)
@@ -254,9 +275,9 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 	if((key == ek_DownButton) || (key == ek_RightButton))
 	{
-		var itemCount = this.fDataList.getItemCount();
+		var itemCount = this.getItemCount();
 
-		if(focusedItem < this.fDataList.getItemCount() - 1)
+		if(focusedItem < this.getItemCount() - 1)
 			focusedItem++;
 
 		if(focusedItem > this.fBottomItem)
@@ -294,7 +315,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 	if(key == ek_PageDown)
 	{
-		var itemCount = this.fDataList.getItemCount();
+		var itemCount = this.getItemCount();
 		var pageCount = (this.fBottomItem - this.fTopItem + 1);
 
 		this.fBottomItem += pageCount;
