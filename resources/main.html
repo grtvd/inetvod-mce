@@ -100,10 +100,6 @@ function init()
 </script>
 <body id="MainBody">
 
-<div style="position:absolute; left=100; top=120; font-size: 20pt">
-<span id="ShowScale"></span>
-</div>
-
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
 
@@ -528,17 +524,30 @@ be downloaded while your are watching another show.
 	</td></tr>
 </table>
 
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="ScaleDiv" style="position:absolute; left=10; top=10; display:none; font-size: 8pt; background-color: white;">
+<a id="ScaleLink" href="javascript:tryit('DoScale();');">Scale</a><br>
+<span id="ScaleText"></span>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
 
 </body>
 </html>
 <script for=document event=onkeyup language="javascript">
-	return !MainAppOnKeyUp(event);
+	return !MainAppOnKeyUp();
 </script>
 <script for=document event=onkeydown language="javascript">
-	return !MainAppOnKeyDown(event);
+	return !MainAppOnKeyDown();
 </script>
 <script for=document event=onkeypress language="javascript">
-	return !MainAppOnKeyPress(event);
+	return !MainAppOnKeyPress();
+</script>
+<script for=window event=onresize language="javascript">
+	MainAppOnResize();
 </script>
 <script for=window event=onload language="javascript">
 	tryit('init();');

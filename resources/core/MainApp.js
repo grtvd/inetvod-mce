@@ -47,13 +47,21 @@ function onScaleEvent(vScale)
 {
 	try
 	{
-		//document.getElementById("ShowScale").innerHTML = vScale;
+		if(!window.external.MediaCenter)
+			document.getElementById("ScaleText").innerHTML = vScale;
 		document.body.style.zoom = vScale;
 	}
 	catch(e)
 	{
 		// ignore error
 	}
+}
+
+/******************************************************************************/
+
+function DoScale()
+{
+	MainApp.getThe().onScale();
 }
 
 /******************************************************************************/
@@ -86,6 +94,9 @@ function MainApp()
 	document.body.focus;
 
 	this.fMainTable = document.getElementById("MainTable");
+
+	if(!window.external.MediaCenter)
+		document.getElementById("ScaleDiv").style.display = "inline";
 }
 
 /******************************************************************************/
@@ -141,6 +152,38 @@ function MainApp()
 			return this.fScreenList[i];
 
 	return null;
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.onResize = function()
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oCurScreen = this.fScreenList[this.fScreenList.length - 1];
+		oCurScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.onScale = function()
+{
+// scale to the current window size
+//		var newScale = (document.body.style.zoom.length > 0)
+//			? ((document.body.style.zoom * document.body.clientWidth) / 1024)
+//			: (document.body.clientWidth / 1024);
+//
+//		onScaleEvent(newScale);
+
+	// toggle on scaling on and off
+	var newScale = "";
+	
+	if(document.body.style.zoom.length == 0)
+		newScale = document.body.getBoundingClientRect().right / 1024;
+
+	onScaleEvent(newScale);
+	this.onResize();
 }
 
 /******************************************************************************/
@@ -295,6 +338,20 @@ function MainAppOnMouseOver(obj)
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().mouseMove(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnMouseOver", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnResize()
+{
+	try
+	{
+		MainApp.getThe().onResize();
 	}
 	catch(e)
 	{
