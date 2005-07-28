@@ -11,7 +11,11 @@ NowPlayingScreen.NoShowsTextID = "Show002_NoShowsText";
 
 NowPlayingScreen.newInstance = function()
 {
-	MainApp.getThe().openScreen(new NowPlayingScreen());
+	var oSession = MainApp.getThe().getSession();
+	var rentedShowSearchListRef = new Object();
+
+	if(oSession.rentedShowList(rentedShowSearchListRef) == sc_Success)
+		MainApp.getThe().openScreen(new NowPlayingScreen(rentedShowSearchListRef.value));
 }
 
 /******************************************************************************/
@@ -21,7 +25,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 
 /******************************************************************************/
 
-function NowPlayingScreen()
+function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 {
 	this.ScreenID = NowPlayingScreen.ScreenID;
 
@@ -32,7 +36,7 @@ function NowPlayingScreen()
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.newControl(new ListControl(NowPlayingScreen.ShowListID,
-		this.ScreenID, 8, oRowItemList, new RentedShowListControl()));
+		this.ScreenID, 8, oRowItemList, new RentedShowListControl(rentedShowSearchList)));
 //	this.fContainerControl.newControl(new ButtonControl(NowPlayingScreen.NoShowsTextID, this.ScreenID));
 }
 

@@ -330,4 +330,43 @@ function Session()
 }
 
 /******************************************************************************/
+
+/*StatusCode*/ Session.prototype.rentedShowList = function(/*RentedShowSearch reference*/ rentedShowSearchListRef)
+{
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var rentedShowListRqst;
+	var rentedShowListResp;
+	
+	rentedShowListRqst = RentedShowListRqst.newInstance();
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		rentedShowListResp = dataRequestor.rentedShowListRequest(rentedShowListRqst);
+		statusCode = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+		{
+			rentedShowSearchListRef.value = rentedShowListResp.RentedShowSearchList;
+			return sc_Success;
+		}
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.showSearch", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return statusCode;
+}
+
+/******************************************************************************/
 /******************************************************************************/

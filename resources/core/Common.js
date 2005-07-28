@@ -1,3 +1,8 @@
+/* Common.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
 function tryit(m)
 {
 	try
@@ -11,6 +16,8 @@ function tryit(m)
 	}
 }
 
+/******************************************************************************/
+
 function showMsg(msg)
 {
 
@@ -20,10 +27,12 @@ function showMsg(msg)
 		alert(msg);
 }
 
+/******************************************************************************/
+
 function showError(loc, e)
 {
 	var msg;
-	
+
 	if(isUndefined(e.message))
 		msg = e.toString();
 	else
@@ -37,68 +46,98 @@ function showError(loc, e)
 		alert(msg);
 }
 
+/******************************************************************************/
+/******************************************************************************/
+
 function isAlien(a)
 {
-   return isObject(a) && typeof a.constructor != 'function';
+	return isObject(a) && typeof a.constructor != 'function';
 }
+
+/******************************************************************************/
 
 function isArray(a)
 {
-    return isObject(a) && a.constructor == Array;
+	return isObject(a) && a.constructor == Array;
 }
+
+/******************************************************************************/
 
 function isBoolean(a)
 {
-    return typeof a == 'boolean';
+	return typeof a == 'boolean';
 }
+
+/******************************************************************************/
+
+function isDate(a)
+{
+	return (typeof a == 'object') && a.getTime;
+}
+
+/******************************************************************************/
 
 /* isEmpty(a) returns true if a is an object or array or function containing no enumerable members. */
 function isEmpty(o)
 {
-    var i, v;
-    if (isObject(o))
-    {
-        for (i in o)
-        {
-            v = o[i];
-            if (isUndefined(v) && isFunction(v))
-            {
-                return false;
-            }
-        }
-    }
-    return true;
+	var i, v;
+	if (isObject(o))
+	{
+		for (i in o)
+		{
+			v = o[i];
+			if (isUndefined(v) && isFunction(v))
+			{
+				return false;
+			}
+		}
+	}
+	return true;
 }
+
+/******************************************************************************/
 
 function isFunction(a)
 {
-    return typeof a == 'function';
+	return typeof a == 'function';
 }
+
+/******************************************************************************/
 
 function isNull(a)
 {
-    return typeof a == 'object' && !a;
+	return typeof a == 'object' && !a;
 }
+
+/******************************************************************************/
 
 function isNumber(a)
 {
-    return typeof a == 'number' && isFinite(a);
+	return typeof a == 'number' && isFinite(a);
 }
+
+/******************************************************************************/
 
 function isObject(a)
 {
-    return (a && typeof a == 'object') || isFunction(a);
+	return (a && typeof a == 'object') || isFunction(a);
 }
+
+/******************************************************************************/
 
 function isString(a)
 {
-    return typeof a == 'string';
+	return typeof a == 'string';
 }
+
+/******************************************************************************/
 
 function isUndefined(a)
 {
-    return typeof a == 'undefined';
-} 
+	return typeof a == 'undefined';
+}
+
+/******************************************************************************/
 
 //function isNull(value)
 //{
@@ -112,6 +151,8 @@ function testNull(value, defaultValue)
 	return isNull(value) ? defaultValue : value;
 }
 
+/******************************************************************************/
+
 function validateStrNotNull(str, method)
 {
 	if(str == undefined)
@@ -121,6 +162,8 @@ function validateStrNotNull(str, method)
 		throw testNull(method, "Unknown") + ":validateStrNotNull: is null";
 }
 
+/******************************************************************************/
+
 function testStrHasLen(str)
 {
 	if(!isString(str))
@@ -128,6 +171,8 @@ function testStrHasLen(str)
 
 	return (str.length > 0);
 }
+
+/******************************************************************************/
 
 function validateStrHasLen(str, method)
 {
@@ -144,6 +189,9 @@ function validateStrHasLen(str, method)
 		throw testNull(method, "Unknown") + ":validateStrHasLen: length == 0";
 }
 
+/******************************************************************************/
+/******************************************************************************/
+
 function buildClassName(curr, ext)
 {
 	if(curr == undefined)
@@ -155,6 +203,8 @@ function buildClassName(curr, ext)
 	return parts[0] + '_' + ext;
 }
 
+/******************************************************************************/
+
 function checkClassName(obj, classNameExt)
 {
 	if(obj.className == undefined)
@@ -165,6 +215,8 @@ function checkClassName(obj, classNameExt)
 	if(newName != className)
 		obj.className = newName;
 }
+
+/******************************************************************************/
 
 /*object*/ function findObjectWithID(/*object */ obj)
 {
@@ -185,107 +237,8 @@ function checkClassName(obj, classNameExt)
 	}
 }
 
-
-/*Date*/ function ISO8601DateFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return null;
-
-	var parts = value.split("-");
-	if(parts.length == 3)
-	{
-		var year = parseInt(parts[0]);
-		var month = parseInt(parts[1]);
-		var day = parseInt(parts[2]);
-
-		return new Date(Date.UTC(year, month - 1, day));
-	}
-
-	throw "ISO8601DateFromString: cannot parse date(" + value + ")";
-}
-
-/*Date*/ function ISO8601DateTimeFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return null;
-
-	var year = 0;
-	var month = 0;
-	var day = 0;
-
-	var parts = value.split("T");
-	if(parts.length == 1)
-	{
-		return ISO8601DateFromString(value);
-	}
-	else if(parts.length == 2)
-	{
-		var datePart = ISO8601DateFromString(parts[0]);
-		var timePart = ISO8601TimeFromString(parts[1]);
-
-		var dateValue = new Date(0);
-		dateValue.setTime(datePart.getTime() + timePart);
-		return dateValue;
-	}
-
-	throw "ISO8601DateTimeFromString: cannot parse date(" + value + ")";
-}
-
-/*int ticks*/ function ISO8601TimeFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return 0;
-
-	if(value.length >= 8)
-	{
-		var timeZoneTicks = 0;
-
-		if(value.length > 8)
-			timeZoneTicks = ISO8601TimeZoneFromString(value.substr(8));
-
-		var timePart = value.substr(0,8);
-		var parts = value.substr(0,8).split(":");
-		if(parts.length == 3)
-		{
-			var hour = parseInt(parts[0]);
-			var minute = parseInt(parts[1]);
-			var second = parseInt(parts[2]);
-
-			return (hour * 3600000) + (minute * 60000) + (second * 1000) + timeZoneTicks;
-		}
-
-	}
-
-	throw "ISO8601TimeFromString: cannot parse time(" + value + ")";
-}
-
-/*int ticks*/ function ISO8601TimeZoneFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return 0;
-
-	if(value.length == 1)
-	{
-		if(value == "Z")
-			return 0;
-	}
-	else if(value.length == 6)
-	{
-		var parts = value.substr(1,5).split(":");
-		if(parts.length == 2)
-		{
-			var hour = parseInt(parts[0]);
-			var minute = parseInt(parts[1]);
-
-			var tzValue = (hour * 3600000) + (minute * 60000);
-
-			if(value.substr(0,1) == "-")
-				return tzValue;
-			if(value.substr(0,1) == "+")
-				return tzValue * -1;
-		}
-	}
-}
+/******************************************************************************/
+/******************************************************************************/
 
 function forceRedraw(pauseMills)
 {
@@ -293,3 +246,6 @@ function forceRedraw(pauseMills)
 		+ ((pauseMills) ? pauseMills : 1) + ");</" + "script" + ">')";
 	window.showModalDialog(val);
 }
+
+/******************************************************************************/
+/******************************************************************************/
