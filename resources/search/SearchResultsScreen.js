@@ -32,9 +32,19 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	oRowItemList.push(new ListControlRowItem("Cost", 120));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-	this.fContainerControl.newControl(new ShowSearchListControl(SearchResultsScreen.ShowListID,
-		this.ScreenID, 8, oRowItemList, showSearchList));
-//	this.fContainerControl.newControl(new ButtonControl(SearchResultsScreen.NoShowsTextID, this.ScreenID));
+
+	var oControl;
+
+	oControl = new ShowSearchListControl(SearchResultsScreen.ShowListID, this.ScreenID,
+		8, oRowItemList, showSearchList);
+	if(showSearchList.length > 0)
+		this.fContainerControl.newControl(oControl);
+	oControl.show(showSearchList.length > 0);
+
+	oControl = new TextControl(SearchResultsScreen.NoShowsTextID, this.ScreenID);
+	if(showSearchList.length == 0)
+		this.fContainerControl.newControl(oControl);
+	oControl.show(showSearchList.length == 0);
 }
 
 /******************************************************************************/

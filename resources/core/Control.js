@@ -20,6 +20,13 @@ function Control()
 
 /******************************************************************************/
 
+/*void*/ Control.prototype.show = function(show)
+{
+	this.fUIObj.style.display = show ? 'inline' : 'none';
+}
+
+/******************************************************************************/
+
 /*boolean*/ Control.prototype.canFocus = function() { return true; }
 /*boolean*/ Control.prototype.hasFocus = function() { return this.fFocused; }
 /*void*/ Control.prototype.setFocus = function(/*boolean*/ set)

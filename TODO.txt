@@ -1,12 +1,11 @@
-
-Handle "no results" in the 2 list pages.
+NowPlayingList needs to handle deletion of show.
 
 ShowCost should include RentalHours
 
 HTTPS support for webapi (Session).
 
-Resize Page - need to adjust screens when pages are resized.
 Setup Flow - hitting back button during setup should go back to Start page
+
 AskPINScreen needs to handle Back
 
 
@@ -14,6 +13,10 @@ Playing Media
 if(window.external.MediaCenter)
 	window.external.MediaCenter.playMedia(2, "http://localhost:8080/mce/SDKTestVideo.WMV");
 //	window.external.MediaCenter.playMedia(2, "http://www.gamelink.com/asx/AsxGenerator?file=gl1/249287.wmv&code=LNANN2C4NWFG4A5LKRE8");
+
+
+Wait cursor: style.cursor = "wait";
+
 
 
 Turn on Errors via Query String
@@ -37,3 +40,5 @@ for (var i=0; i<parms.length; i++) {
 qsParm['code'] = null;
 qsParm['desc'] = null;
 qs();
+
+
