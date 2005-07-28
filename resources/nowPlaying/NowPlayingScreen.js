@@ -44,9 +44,16 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 
 /*void*/ NowPlayingScreen.prototype.onButton = function(/*string*/ controlID)
 {
+	var oSession = MainApp.getThe().getSession();
+
 	if(controlID == NowPlayingScreen.ShowListID)
 	{
-		showMsg("NowPlayingScreen.onButton()");
+		var rentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
+		var rentedShow = oSession.rentedShow(
+			rentedShowListControl.getFocusedItemValue().RentedShowID);
+
+		if(rentedShow != null)
+			showMsg("NowPlayingScreen.onButton: to-do open details for Show(" + rentedShow.Name + ")");
 		return;
 	}
 

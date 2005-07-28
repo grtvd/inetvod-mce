@@ -18,6 +18,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*Control*/ Screen.prototype.getControl = function(/*string*/ controlID)
+{
+	return this.fContainerControl.getControl(controlID);
+}
+
+/******************************************************************************/
+
 /*void*/ Screen.prototype.moveTo = function(/*int*/ left, /*int*/ top)
 {
 	this.fContainerControl.moveTo(left, top);
