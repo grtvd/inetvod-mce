@@ -369,4 +369,41 @@ function Session()
 }
 
 /******************************************************************************/
+
+/*RentedShow*/ Session.prototype.rentedShow = function(/*string*/ rentedShowID)
+{
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var rentedShowRqst;
+	var rentedShowResp;
+	
+	rentedShowRqst = RentedShowRqst.newInstance();
+	rentedShowRqst.RentedShowID = rentedShowID;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		rentedShowResp = dataRequestor.rentedShowRequest(rentedShowRqst);
+		statusCode = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+			return rentedShowResp.RentedShow;
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.showSearch", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return null;
+}
+
+/******************************************************************************/
 /******************************************************************************/

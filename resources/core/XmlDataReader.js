@@ -130,7 +130,8 @@ function XmlDataReader(xml)
 /******************************************************************************/
 /* Read a String. May return null */
 
-/*string*/ XmlDataReader.prototype.readString = function(/*string*/ fieldName, /*int*/ maxLength)
+/*string*/ XmlDataReader.prototype.readString = function(/*string*/ fieldName,
+	/*int*/ maxLength)
 {
 	var data = this.internalReadString(fieldName);
 	if(data == null)
@@ -185,7 +186,8 @@ function XmlDataReader(xml)
 /******************************************************************************/
 /* Read an Object. May return null */
 
-/*Readable*/ XmlDataReader.prototype.readObject = function(/*string*/ fieldName, /*Constructor*/ ctorDataFiler)
+/*Readable*/ XmlDataReader.prototype.readObject = function(/*string*/ fieldName,
+	/*Constructor*/ ctorDataFiler)
 {
 	var node = this.findChildNode(fieldName);
 	if(node == null)
@@ -201,7 +203,8 @@ function XmlDataReader(xml)
 /******************************************************************************/
 /* Read a list of complex Objects. */
 
-/*Array*/ XmlDataReader.prototype.readList = function(/*string*/ fieldName, /*Constructor*/ itemCtorDataFiler)
+/*Array*/ XmlDataReader.prototype.readList = function(/*string*/ fieldName,
+	/*Constructor*/ itemCtorDataFiler)
 {
 	var list = new Array();
 
@@ -216,6 +219,28 @@ function XmlDataReader(xml)
 		var readable = new itemCtorDataFiler(this);
 		list.push(readable);
 		this.fCurNodeList.pop();
+	}
+
+	return list;
+}
+
+/******************************************************************************/
+/* Read a list of Strings (or non-complex items than can be constructed from a sting). */
+
+/*Array*/ XmlDataReader.prototype.readStringList = function(/*string*/ fieldName,
+	/*Constructor*/ itemCtorDataFiler)
+{
+	var list = new Array();
+
+	var nodes = this.findChildNodes(fieldName);
+	if(nodes.length == 0)
+		return list;
+
+	for(var i = 0; i < nodes.length; i++)
+	{
+		var node = nodes[i];
+		var readable = new itemCtorDataFiler(this.getNodeText(node));
+		list.push(readable);
 	}
 
 	return list;
