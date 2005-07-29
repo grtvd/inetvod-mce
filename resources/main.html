@@ -272,12 +272,23 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="Welcome001" style="position:absolute; display:none">
-<table cellpadding=0 cellspacing=6 border=0>
-	<tr><td id="Welcome001_NowPlaying" class="buttonCtr438_normal">Now Playing</td></tr>
-	<tr><td id="Welcome001_Featured" class="buttonCtr438_normal">Featured</td></tr>
-	<tr><td id="Welcome001_SearchByCategory" class="buttonCtr438_normal">Search by Category</td></tr>
-	<tr><td id="Welcome001_SearchByName" class="buttonCtr438_normal">Search by Title</td></tr>
-	<tr><td id="Welcome001_Preferences" class="buttonCtr438_normal">Preferences</td></tr>
+<table cellpadding=0 cellspacing=0 border=0>
+	<tr><td>
+		<table cellpadding=0 cellspacing=6 border=0>
+			<tr><td id="Welcome001_NowPlaying" class="buttonCtr438_normal">Now Playing</td></tr>
+			<tr><td id="Welcome001_Featured" class="buttonCtr438_normal">Featured</td></tr>
+			<tr><td id="Welcome001_SearchByCategory" class="buttonCtr438_normal">Search by Category</td></tr>
+			<tr><td id="Welcome001_SearchByName" class="buttonCtr438_normal">Search by Title</td></tr>
+			<tr><td id="Welcome001_Preferences" class="buttonCtr438_normal">Preferences</td></tr>
+		</table>
+	</td>
+	<td width=30><img src="images/spacer.gif" border=0 width=1 height=1></td>
+	<td class="textSmallCtr" valign="top" width=350>
+	<br>
+	Help<br>
+	<br>
+	"Now Playing" lists the shows that you have previously rented and have available for viewing.
+	</td></tr>
 </table>
 </div>
 
@@ -355,8 +366,8 @@ function init()
 <table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
 	<table cellpadding=0 cellspacing=5 border=0>
 		<tr><td id="Search003_ShowList_Count" class="listCtrCount">0 of 0</td
-			><td id="Search003_ShowList_Up" class="listCtrNext_normal">-</td
-			><td id="Search003_ShowList_Down" class="listCtrNext_normal">+</td
+			><td id="Search003_ShowList_Up" class="listCtrPrev_normal"></td
+			><td id="Search003_ShowList_Down" class="listCtrNext_normal"></td
 		></tr>
 	</table>
 </td></tr></table>
@@ -435,8 +446,8 @@ No shows were found matching your search criteria.  Please try again.<br>
 <table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
 	<table cellpadding=0 cellspacing=5 border=0>
 		<tr><td id="Show002_ShowList_Count" class="listCtrCount">5 of 50</td
-			><td id="Show002_ShowList_Up" class="listCtrNext_normal">-</td
-			><td id="Show002_ShowList_Down" class="listCtrNext_normal">+</td
+			><td id="Show002_ShowList_Up" class="listCtrPrev_normal"></td
+			><td id="Show002_ShowList_Down" class="listCtrNext_normal"></td
 		></tr>
 	</table>
 </td></tr></table>

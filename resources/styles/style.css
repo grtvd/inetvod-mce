@@ -37,6 +37,13 @@ body
 	font-family : Verdana, Arial, Helvetica;
 	color: white;
 }
+.textSmallCtr
+{
+	font-weight: normal;
+	font-size: 18pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: white;
+}
 .textLbl
 {
 	font-weight: bold;
@@ -64,7 +71,7 @@ body
 .listCtrRow952_normal
 {
 	behavior: url(styles/controls.htc);
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -76,7 +83,7 @@ body
 .listCtrRow952_hilite
 {
 	behavior: url(styles/controls.htc);
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -87,7 +94,7 @@ body
 }
 .listCtrRow952_hide
 {
-	height: 54px; 
+	height: 54px;
 }
 
 .listCtrItem
@@ -113,11 +120,51 @@ body
 	color: black;
 }
 
+.listCtrPrev_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 52px;
+	height: 52px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrPrevNormal.gif);
+	cursor: hand;
+}
+.listCtrPrev_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 52px;
+	height: 52px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrPrevHilite.gif);
+	cursor: hand;
+}
+.listCtrPrev_disabled
+{
+	width: 52px;
+	height: 52px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+	background-image: url(../images/listCtrPrevDisabled.gif);
+}
 .listCtrNext_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 48px;
-	height: 48px; 
+	width: 52px;
+	height: 52px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -130,8 +177,8 @@ body
 .listCtrNext_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 48px;
-	height: 48px; 
+	width: 52px;
+	height: 52px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -143,8 +190,8 @@ body
 }
 .listCtrNext_disabled
 {
-	width: 48px;
-	height: 48px; 
+	width: 52px;
+	height: 52px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -158,7 +205,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 140px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 18pt;
 	font-family: Verdana, Arial, Helvetica;
@@ -171,7 +218,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 140px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 18pt;
 	font-family: Verdana, Arial, Helvetica;
@@ -186,7 +233,7 @@ body
 	behavior: url(styles/controls.htc);
 	width: 418px;
 	padding-left: 20px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family: Verdana, Arial, Helvetica;
@@ -200,7 +247,7 @@ body
 	behavior: url(styles/controls.htc);
 	width: 418px;
 	padding-left: 20px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -215,7 +262,7 @@ body
 	behavior: url(styles/controls.htc);
 	width: 680px;
 	padding-left: 20px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family: Verdana, Arial, Helvetica;
@@ -229,7 +276,7 @@ body
 	behavior: url(styles/controls.htc);
 	width: 680px;
 	padding-left: 20px;
-	height: 54px; 
+	height: 54px;
 	font-weight: bold;
 	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
@@ -243,7 +290,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 225px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */ 
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr225Normal.gif);
@@ -270,7 +317,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 150px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */ 
+	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr150Normal.gif);
