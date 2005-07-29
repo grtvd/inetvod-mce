@@ -79,7 +79,7 @@ function XmlDataReader(xml)
 	if(data == null)
 		return null;
 
-	return parseInt(data);
+	return parseInt(data, 10);
 }
 
 /******************************************************************************/
@@ -92,7 +92,7 @@ function XmlDataReader(xml)
 	if(data == null)
 		return null;
 
-	return parseInt(data);
+	return parseInt(data, 10);
 }
 
 /******************************************************************************/

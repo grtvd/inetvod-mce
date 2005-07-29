@@ -102,9 +102,9 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	var parts = value.split("-");
 	if(parts.length == 3)
 	{
-		var year = parseInt(parts[0]);
-		var month = parseInt(parts[1]);
-		var day = parseInt(parts[2]);
+		var year = parseInt(parts[0], 10);
+		var month = parseInt(parts[1], 10);
+		var day = parseInt(parts[2], 10);
 
 		return new Date(Date.UTC(year, month - 1, day));
 	}
@@ -159,9 +159,9 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 		var parts = value.substr(0,8).split(":");
 		if(parts.length == 3)
 		{
-			var hour = parseInt(parts[0]);
-			var minute = parseInt(parts[1]);
-			var second = parseInt(parts[2]);
+			var hour = parseInt(parts[0], 10);
+			var minute = parseInt(parts[1], 10);
+			var second = parseInt(parts[2], 10);
 
 			return (hour * 3600000) + (minute * 60000) + (second * 1000) + timeZoneTicks;
 		}
@@ -188,8 +188,8 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 		var parts = value.substr(1,5).split(":");
 		if(parts.length == 2)
 		{
-			var hour = parseInt(parts[0]);
-			var minute = parseInt(parts[1]);
+			var hour = parseInt(parts[0], 10);
+			var minute = parseInt(parts[1], 10);
 
 			var tzValue = (hour * 3600000) + (minute * 60000);
 
