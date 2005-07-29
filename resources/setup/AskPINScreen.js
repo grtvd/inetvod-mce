@@ -12,7 +12,10 @@ AskPINScreen.ContinueID = "Startup004_Continue";
 
 AskPINScreen.newInstance = function()
 {
-	MainApp.getThe().openScreen(new AskPINScreen());
+	var oScreen = new AskPINScreen();
+	MainApp.getThe().openScreen(oScreen);
+	oScreen.focusControl(AskPINScreen.ContinueID);	//TODO: remove after focus working on EditControl
+	return oScreen;
 }
 
 /******************************************************************************/

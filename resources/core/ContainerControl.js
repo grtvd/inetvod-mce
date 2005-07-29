@@ -194,6 +194,24 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 
 /******************************************************************************/
 
+/*void*/ ContainerControl.prototype.focusControl = function(/*string*/ controlID)
+{
+	var oControl;
+	var pos;
+
+	oControl = this.getControl(controlID);
+	if(!oControl.canFocus())
+		return;
+
+	var pos = this.findFocusedPos();
+	if(pos >= 0)
+		this.fControlArray[pos].setFocus(false);
+
+	oControl.setFocus(true);
+}
+
+/******************************************************************************/
+
 /*boolean*/ ContainerControl.prototype.key = function(/*int*/ keyCode)
 {
 	var oCurControl = null;

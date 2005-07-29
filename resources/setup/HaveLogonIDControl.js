@@ -43,6 +43,14 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /******************************************************************************/
 
+/*boolean*/ HaveLogonIDControl.prototype.loadData = function(/*object*/ oData)
+{
+	this.focusControl(HaveLogonIDControl.ContinueID);	//TODO: remove after focus working on EditControl
+	return true;
+}
+
+/******************************************************************************/
+
 /*boolean*/ HaveLogonIDControl.prototype.unloadData = function(/*object*/ oData)
 {
 	var data;

@@ -46,6 +46,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*void*/ Screen.prototype.focusControl = function(/*string*/ controlID)
+{
+	this.fContainerControl.focusControl(controlID);
+}
+
+/******************************************************************************/
+
 /*boolean*/ Screen.prototype.key = function(/*int*/ keyCode)
 {
 	if(this.fContainerControl.key(keyCode))
