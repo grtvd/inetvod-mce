@@ -9,6 +9,7 @@ WelcomeScreen.FeaturedID = "Welcome001_Featured";
 WelcomeScreen.SearchByCategoryID = "Welcome001_SearchByCategory";
 WelcomeScreen.SearchByNameID = "Welcome001_SearchByName";
 WelcomeScreen.PreferencesID = "Welcome001_Preferences";
+WelcomeScreen.HelpID = "Welcome001_Help";
 
 /******************************************************************************/
 
@@ -34,6 +35,8 @@ function WelcomeScreen()
 	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByCategoryID, this.ScreenID));
 	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByNameID, this.ScreenID));
 	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.PreferencesID, this.ScreenID));
+	this.fContainerControl.newControl(new TextControl(WelcomeScreen.HelpID, this.ScreenID));
+
 }
 
 /******************************************************************************/
@@ -50,7 +53,7 @@ function WelcomeScreen()
 	{
 		var oSession = MainApp.getThe().getSession();
 		var showSearchListRef = new Object();
-		
+
 		var oSearchData = new SearchData();
 		oSearchData.CategoryID = Category.FeaturedCategoryID;
 
@@ -60,6 +63,26 @@ function WelcomeScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ WelcomeScreen.prototype.onFocus = function(/*string*/ controlID)
+{
+	var oTextControl = this.getControl(WelcomeScreen.HelpID);
+
+	if(controlID == WelcomeScreen.NowPlayingID)
+		oTextControl.setText("\"Now Playing\" lists the shows that you have previously rented and have available for viewing.");
+	else if(controlID == WelcomeScreen.FeaturedID)
+		oTextControl.setText("\"Featured\" lists shows that are currently featured.");
+	else if(controlID == WelcomeScreen.SearchByCategoryID)
+		oTextControl.setText("Use \"Search by Category\" to find shows by a specific category.");
+	else if(controlID == WelcomeScreen.SearchByNameID)
+		oTextControl.setText("Use \"Search by Title\" to find shows by a partial show title.");
+	else if(controlID == WelcomeScreen.PreferencesID)
+		oTextControl.setText("\"Preferences\" allows you to update your iNetVOD settings.");
+	else
+		oTextControl.setText("");
 }
 
 /******************************************************************************/

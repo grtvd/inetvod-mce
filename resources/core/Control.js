@@ -33,6 +33,8 @@ function Control()
 {
 	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
 	this.fFocused = set;
+	if(set)
+		this.getScreen().onFocus(this.ControlID);
 }
 
 /******************************************************************************/

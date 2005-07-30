@@ -23,6 +23,13 @@ function TextControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
+/*void*/ TextControl.prototype.setText = function(/*string*/ text)
+{
+	this.fUIObj.innerHTML = text;
+}
+
+/******************************************************************************/
+
 /*boolean*/ TextControl.prototype.canFocus = function() { return false; }
 
 /******************************************************************************/
