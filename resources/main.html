@@ -78,25 +78,9 @@
 <script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
 
 <script language="javascript">
-
-function reloadPage()
-{
-alert("reloadPage");
-    /* This function refreshes the page, and calls the onScaleEvent function
-    to manage resizing of the elements on the page */
-    window.location.reload()
-    // determine width of page
-    var newWidth = body.getBoundingClientRect().right
-    // determine how much the page needs to be resized, by comparing page width to 1024
-    var sizeAmount = (newWidth/1024)
-    // call onScaleEvent function
-    onScaleEvent(sizeAmount)
-}
-
 function init()
 {
 	MainApp.getThe().init();
-	StartScreen.newInstance();
 }
 </script>
 <body id="MainBody">
@@ -344,25 +328,12 @@ function init()
 		><span id="Search003_ShowList_5_Cost" class="listCtrItem"></span
 		></td>
 	</tr>
-	<tr><td id="Search003_ShowList_6" class="listCtrRow952_normal"
-		><span id="Search003_ShowList_6_Show" class="listCtrItem"></span
-		><span id="Search003_ShowList_6_Year" class="listCtrItem"></span
-		><span id="Search003_ShowList_6_Provider" class="listCtrItem"></span
-		><span id="Search003_ShowList_6_Cost" class="listCtrItem"></span
-		></td>
-	</tr>
-	<tr><td id="Search003_ShowList_7" class="listCtrRow952_normal"
-		><span id="Search003_ShowList_7_Show" class="listCtrItem"></span
-		><span id="Search003_ShowList_7_Year" class="listCtrItem"></span
-		><span id="Search003_ShowList_7_Provider" class="listCtrItem"></span
-		><span id="Search003_ShowList_7_Cost" class="listCtrItem"></span
-		></td>
-	</tr>
 </table>
 
-<table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
+<table cellpadding=0 cellspacing=0 border=0 width=964><tr><td align="right" valign="top">
 	<table cellpadding=0 cellspacing=5 border=0>
 		<tr><td id="Search003_ShowList_Count" class="listCtrCount">0 of 0</td
+			><td width=5><img src="images/spacer.gif" border=0 width=1 height=1></td
 			><td id="Search003_ShowList_Up" class="listCtrPrev_normal"></td
 			><td id="Search003_ShowList_Down" class="listCtrNext_normal"></td
 		></tr>
@@ -426,23 +397,12 @@ No shows were found matching your search criteria.  Please try again.<br>
 		><span id="Show002_ShowList_5_Until" class="listCtrItem"></span
 		></td>
 	</tr>
-	<tr><td id="Show002_ShowList_6" class="listCtrRow952_normal"
-		><span id="Show002_ShowList_6_Show" class="listCtrItem"></span
-		><span id="Show002_ShowList_6_Provider" class="listCtrItem"></span
-		><span id="Show002_ShowList_6_Until" class="listCtrItem"></span
-		></td>
-	</tr>
-	<tr><td id="Show002_ShowList_7" class="listCtrRow952_normal"
-		><span id="Show002_ShowList_7_Show" class="listCtrItem"></span
-		><span id="Show002_ShowList_7_Provider" class="listCtrItem"></span
-		><span id="Show002_ShowList_7_Until" class="listCtrItem"></span
-		></td>
-	</tr>
 </table>
 
-<table cellpadding=0 cellspacing=0 border=0 width=962 height=100><tr><td align="center" valign="bottom">
+<table cellpadding=0 cellspacing=0 border=0 width=964><tr><td align="right" valign="top">
 	<table cellpadding=0 cellspacing=5 border=0>
-		<tr><td id="Show002_ShowList_Count" class="listCtrCount">5 of 50</td
+		<tr><td id="Show002_ShowList_Count" class="listCtrCount">0 of 0</td
+			><td width=5><img src="images/spacer.gif" border=0 width=1 height=1></td
 			><td id="Show002_ShowList_Up" class="listCtrPrev_normal"></td
 			><td id="Show002_ShowList_Down" class="listCtrNext_normal"></td
 		></tr>
@@ -458,6 +418,14 @@ Your Now Playing list is empty. Shows that you rent will be listed here.<br>
 <br>
 It is a good idea to rent multiple shows at a time. This will allow new shows to
 be downloaded while your are watching another show.
+</div>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="SVP" style="position:absolute; left:0; top:574; width:274; height:194; background-color: #0F0F0F">
+<div style="position:relative; left:43; top:0; width:227; height:176; background-color: #FF0000;">
 </div>
 </div>
 
@@ -491,7 +459,7 @@ be downloaded while your are watching another show.
 <!-- *********************************************************************** -->
 
 <table width="100%" height="100%" cellpadding=0 cellspacing=0 border=0>
-	<tr><td align=center valign=middle>
+	<tr><td align=left valign=top>
 <table id="MainTable" width=1024 height=768 class="tableMain" cellpadding=0 cellspacing=0 border=0>
 	<tr>
 		<td>

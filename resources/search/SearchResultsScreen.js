@@ -36,7 +36,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	var oControl;
 
 	oControl = new ShowSearchListControl(SearchResultsScreen.ShowListID, this.ScreenID,
-		8, oRowItemList, showSearchList);
+		6, oRowItemList, showSearchList);
 	if(showSearchList.length > 0)
 		this.fContainerControl.newControl(oControl);
 	oControl.show(showSearchList.length > 0);

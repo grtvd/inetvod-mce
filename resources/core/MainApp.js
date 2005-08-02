@@ -22,9 +22,6 @@ var g_Color_Black = "#101010";
 /******************************************************************************/
 
 var gMainApp = null;
-var gMainTable = null;
-var gSession = null;
-var gCurrentScreen = null;
 
 /******************************************************************************/
 /******************************************************************************/
@@ -78,6 +75,7 @@ MainApp.getThe = function()
 
 function MainApp()
 {
+	this.fInit = false;
 	this.fScreenList = new Array();
 	this.fSession = Session.newInstance();
 	this.fMainTable = null;
@@ -88,6 +86,10 @@ function MainApp()
 
 /*void*/ MainApp.prototype.init = function()
 {
+	if(this.fInit)
+		return;
+	this.fInit = true;
+
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.BGColor = g_Color_Black;
 	document.body.scroll = "no";
@@ -97,6 +99,8 @@ function MainApp()
 
 	if(!window.external.MediaCenter)
 		document.getElementById("ScaleDiv").style.display = "inline";
+
+	StartScreen.newInstance();
 }
 
 /******************************************************************************/
@@ -178,7 +182,7 @@ function MainApp()
 
 	// toggle on scaling on and off
 	var newScale = "";
-	
+
 	if(document.body.style.zoom.length == 0)
 		newScale = document.body.getBoundingClientRect().right / 1024;
 

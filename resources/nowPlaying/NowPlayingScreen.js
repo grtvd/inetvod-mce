@@ -39,7 +39,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	var oControl;
 
 	oControl = new RentedShowListControl(NowPlayingScreen.ShowListID, this.ScreenID,
-		8, oRowItemList, rentedShowSearchList);
+		6, oRowItemList, rentedShowSearchList);
 	if(rentedShowSearchList.length > 0)
 		this.fContainerControl.newControl(oControl);
 	oControl.show(rentedShowSearchList.length > 0);
