@@ -42,3 +42,26 @@ qsParm['desc'] = null;
 qs();
 
 
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Debugger" style="position:absolute; left:0; top:0; width:100; top:100;">
+<span id="Debugger_Out"></span>
+</div>
+
+<script language="javascript">
+var gDebugLines = new Array();
+function DebugOut(msg)
+{
+	gDebugLines.push(msg);
+	if(gDebugLines.length > 10)
+		gDebugLines.splice(0, 1);
+
+	var txt = "";
+	for(var i = 0; i < gDebugLines.length; i++)
+		txt += gDebugLines[i] + "\n";
+
+	document.getElementById("Debugger_Out").innerHTML = txt;
+}
+</script>
+

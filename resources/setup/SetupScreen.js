@@ -14,7 +14,12 @@ var ss_HaveLogonIDStep =2;
 
 SetupScreen.newInstance = function()
 {
-	MainApp.getThe().openScreen(new SetupScreen());
+	var oScreen = new SetupScreen();
+
+	MainApp.getThe().openScreen(oScreen);
+	oScreen.openStep(ss_AskSignupStep);
+
+	return oScreen;
 }
 
 /******************************************************************************/
@@ -33,7 +38,6 @@ function SetupScreen()
 	this.fStepControlID = AskSignedUpControl.ControlID;
 	this.fSetupData = new SetupData();
 	this.fCurStep = ss_AskSignupStep;
-	this.openStep(ss_AskSignupStep);
 }
 
 /******************************************************************************/
