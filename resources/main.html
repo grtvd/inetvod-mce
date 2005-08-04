@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="styles/style.css" type="text/css"></link>
 </head>
 <script language="javascript" src="core/Common.js"></script>
+<script language="javascript" src="core/Debugger.js"></script>
 <script language="javascript" src="core/DateTimeUtil.js"></script>
 <script language="javascript" src="core/Cookie.js"></script>
 <script language="javascript" src="core/Money.js"></script>
@@ -507,6 +508,15 @@ be downloaded while your are watching another show.
 <div id="ScaleDiv" style="position:absolute; left=10; top=10; display:none; font-size: 8pt; background-color: white;">
 <a id="ScaleLink" href="javascript:tryit('DoScale();');">Scale</a><br>
 <span id="ScaleText"></span>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Debugger" style="position:absolute; left:0; top:0; top:50; display:none; font-size: 8pt; background-color: white;">
+<a id="DebuggerLink" href="javascript:tryit('DebugShow();');">Debug</a>&nbsp;
+<a id="DebuggerLink" href="javascript:tryit('DebugClear();');">Clear</a><br>
+<span id="Debugger_Out"></span>
 </div>
 
 <!-- *********************************************************************** -->
