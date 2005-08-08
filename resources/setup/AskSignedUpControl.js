@@ -16,6 +16,8 @@ AskSignedUpControl.newInstance = function()
 
 	containerControl.newControl(new ButtonControl(AskSignedUpControl.AlreadyRegisteredID, SetupScreen.ScreenID));
 	containerControl.newControl(new ButtonControl(AskSignedUpControl.NotRegisteredID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
 
 	return containerControl
 }

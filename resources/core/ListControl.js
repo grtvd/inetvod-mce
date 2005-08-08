@@ -128,10 +128,27 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /*void*/ ListControl.prototype.setFocus = function(/*boolean*/ set)
 {
-	Control.prototype.setFocus.call(this, set);
+	var wasFocused = this.fFocused;
+	this.fFocused = set;
 
-	if(set && (this.fFocusedItem == null) && (this.getItemCount() > 0))
-		this.setFocusedItem(this.fRowList[0]);
+	if(set && !wasFocused)
+		this.getScreen().onFocus(this.ControlID);
+
+	if(set)
+	{
+		if(this.fFocusedItem != null)
+			this.fFocusedItem.setFocus(true);
+		else
+		{
+			if(this.getItemCount() > 0)
+				this.setFocusedItem(this.fRowList[0]);
+		}
+	}
+	else
+	{
+		if(this.fFocusedItem != null)
+			this.fFocusedItem.setFocus(false);
+	}
 }
 
 /******************************************************************************/
@@ -279,6 +296,8 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 		if(focusedItem < this.getItemCount() - 1)
 			focusedItem++;
+		else
+			return false;
 
 		if(focusedItem > this.fBottomItem)
 		{
@@ -298,6 +317,8 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	{
 		if(focusedItem > 0)
 			--focusedItem;
+		else
+			return false;
 
 		if(focusedItem < this.fTopItem)
 		{

@@ -18,6 +18,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*void*/ Screen.prototype.newControl = function(oControl)
+{
+	this.fContainerControl.newControl(oControl);
+}
+
+/******************************************************************************/
+
 /*Control*/ Screen.prototype.getControl = function(/*string*/ controlID)
 {
 	return this.fContainerControl.getControl(controlID);
@@ -46,9 +53,9 @@ function Screen()
 
 /******************************************************************************/
 
-/*void*/ Screen.prototype.focusControl = function(/*string*/ controlID)
+/*void*/ Screen.prototype.focusControl = function(/*string*/ controlID, /*boolean*/ set)
 {
-	this.fContainerControl.focusControl(controlID);
+	this.fContainerControl.focusControl(controlID, set);
 }
 
 /******************************************************************************/
@@ -79,6 +86,20 @@ function Screen()
 /*void*/ Screen.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
 {
 	this.fContainerControl.mouseMove(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.focusEvent = function(/*string*/ controlID)
+{
+	this.fContainerControl.focusEvent(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.blurEvent = function(/*string*/ controlID)
+{
+	this.fContainerControl.blurEvent(controlID);
 }
 
 /******************************************************************************/

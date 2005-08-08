@@ -25,6 +25,8 @@ HaveLogonIDControl.newInstance = function()
 	containerControl.newControl(control);
 
 	containerControl.newControl(new ButtonControl(HaveLogonIDControl.ContinueID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
 
 	return containerControl
 }
@@ -45,7 +47,7 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /*boolean*/ HaveLogonIDControl.prototype.loadData = function(/*object*/ oData)
 {
-	this.focusControl(HaveLogonIDControl.ContinueID);	//TODO: remove after focus working on EditControl
+	this.focusControl(HaveLogonIDControl.ContinueID, true);	//TODO: remove after focus working on EditControl
 	return true;
 }
 

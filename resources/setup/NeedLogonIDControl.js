@@ -14,6 +14,8 @@ NeedLogonIDControl.newInstance = function()
 	var containerControl = new NeedLogonIDControl(NeedLogonIDControl.ControlID, 0, 0);
 
 	containerControl.newControl(new ButtonControl(NeedLogonIDControl.HaveLogonID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
 
 	return containerControl;
 }

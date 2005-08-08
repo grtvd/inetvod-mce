@@ -26,7 +26,6 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 			throw "ListControlRow::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
 
 		oUIObj.style.width = oRowItem.Width;
-		//oUIObj.innerHTML = "Hello";
 	}
 }
 
@@ -35,6 +34,10 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 /*void*/ ListControlRow.prototype.setFocus = function(/*boolean*/ set)
 {
 	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
+
+	if(set)
+		if(document.activeElement.id != this.fUIObj.id)
+			this.fUIObj.focus();
 }
 
 /******************************************************************************/

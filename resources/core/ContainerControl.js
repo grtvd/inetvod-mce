@@ -20,6 +20,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 	this.fLeft = left;
 	this.fTop = top;
 	this.fControlArray = new Array();
+	this.fFocusedControlPos = -1;
 }
 
 /******************************************************************************/
@@ -34,7 +35,11 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 
 /*void*/ ContainerControl.prototype.show = function(show)
 {
-	this.fUIObj.style.display = show ? 'inline' : 'none';
+	var newDisplay = show ? 'inline' : 'none';
+
+	// only change display if new value, resetting to same value seems to effect the focus.
+	if(this.fUIObj.style.display != newDisplay)
+		this.fUIObj.style.display = newDisplay;
 }
 
 /******************************************************************************/
@@ -68,6 +73,22 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 	}
 
 	return null;
+}
+
+/******************************************************************************/
+
+/*Control*/ ContainerControl.prototype.findControlPos = function(controlID)
+{
+	var oControl;
+
+	for(var i = 0; i < this.fControlArray.length; i++)
+	{
+		oControl = this.fControlArray[i];
+		if(oControl.hasControl(controlID))
+			return i;
+	}
+
+	return -1;
 }
 
 /******************************************************************************/
@@ -133,23 +154,31 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 
 /******************************************************************************/
 
-/*boolean*/ ContainerControl.prototype.hasFocus = function()
-{
-	return (this.findFocusedPos() >= 0);
-}
-
-/******************************************************************************/
-
-/*void*/ ContainerControl.prototype.setFocus = function(/*boolean*/ set)
+/*void*/ ContainerControl.prototype.setFocus = function(/*boolean*/ set, /*string*/ controlID)
 {
 	var oControl;
 
-	// make sure to unfocus child controls
+	// was a control ID specified
+	if(controlID)
+	{
+		if(this.ControlID != controlID)
+		{
+			oControl = this.findControl(controlID)
+			if(oControl != null)
+				this.focusControl(controlID, set);
+		}
+		return;
+	}
+
+	// does any control already has the focus?
 	oControl = this.findFocusedControl();
 	if(oControl != null)
-		oControl.setFocus(false);
+	{
+		oControl.setFocus(set);
+		return;
+	}
 
-	// if setting, first first child the focus
+	// if setting, give first child the focus
 	if(set)
 	{
 		for(var i = 0; i < this.fControlArray.length; i++)
@@ -157,7 +186,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			oControl = this.fControlArray[i];
 			if(oControl.canFocus())
 			{
-				oControl.setFocus(true);
+				this.focusControl(oControl.ControlID, true);
 				break;
 			}
 		}
@@ -166,48 +195,38 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 
 /******************************************************************************/
 
-/*int*/ ContainerControl.prototype.findFocusedPos = function()
-{
-	var oControl;
-
-	for(var i = 0; i < this.fControlArray.length; i++)
-	{
-		oControl = this.fControlArray[i];
-		if(oControl.hasFocus())
-			return i;
-	}
-
-	return -1;
-}
-
-/******************************************************************************/
-
 /*Control*/ ContainerControl.prototype.findFocusedControl = function()
 {
-	var pos = this.findFocusedPos();
-
-	if(pos >= 0)
-		return this.fControlArray[pos];
+	if(this.fFocusedControlPos >= 0)
+		return this.fControlArray[this.fFocusedControlPos];
 
 	return null;
 }
 
 /******************************************************************************/
 
-/*void*/ ContainerControl.prototype.focusControl = function(/*string*/ controlID)
+/*void*/ ContainerControl.prototype.focusControl = function(/*string*/ controlID, /*boolean*/ set)
 {
 	var oControl;
 	var pos;
 
-	oControl = this.getControl(controlID);
+	pos = this.findControlPos(controlID);
+	if(pos < 0)
+		return;
+	oControl = this.fControlArray[pos];
 	if(!oControl.canFocus())
 		return;
 
-	var pos = this.findFocusedPos();
-	if(pos >= 0)
-		this.fControlArray[pos].setFocus(false);
+	if(set)
+	{
+		if(this.fFocusedControlPos >= 0)
+			this.fControlArray[this.fFocusedControlPos].setFocus(false);
 
-	oControl.setFocus(true);
+		this.fFocusedControlPos = pos;
+		oControl.setFocus(true);
+	}
+	else
+		oControl.setFocus(false);
 }
 
 /******************************************************************************/
@@ -215,7 +234,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 /*boolean*/ ContainerControl.prototype.key = function(/*int*/ keyCode)
 {
 	var oCurControl = null;
-	var focusedPos = this.findFocusedPos();
+	var focusedPos = this.fFocusedControlPos;
 
 	if(focusedPos != -1)
 	{
@@ -232,6 +251,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			{
 				if(oCurControl != null)
 					oCurControl.setFocus(false);
+				this.fFocusedControlPos = i;
 				this.fControlArray[i].setFocus(true);
 				return true;
 			}
@@ -246,6 +266,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			{
 				if(oCurControl != null)
 					oCurControl.setFocus(false);
+				this.fFocusedControlPos = i;
 				this.fControlArray[i].setFocus(true);
 				return true;
 			}
@@ -293,6 +314,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 					if(oFocusedControl != null)
 						oFocusedControl.setFocus(false);
 
+					this.fFocusedControlPos = i;
 					oControl.setFocus(true);
 				}
 			}
@@ -301,6 +323,24 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			return;
 		}
 	}
+}
+
+/******************************************************************************/
+
+/*void*/ ContainerControl.prototype.focusEvent = function(/*string*/ controlID)
+{
+	var oControl = this.findControl(controlID);
+	if((oControl != null) && oControl.canFocus())
+		this.setFocus(true, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ ContainerControl.prototype.blurEvent = function(/*string*/ controlID)
+{
+	var oControl = this.findControl(controlID);
+	if((oControl != null) && oControl.canFocus())
+		this.setFocus(false, controlID);
 }
 
 /******************************************************************************/

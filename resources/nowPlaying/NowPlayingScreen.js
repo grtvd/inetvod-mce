@@ -48,6 +48,9 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	if(rentedShowSearchList.length == 0)
 		this.fContainerControl.newControl(oControl);
 	oControl.show(rentedShowSearchList.length == 0);
+
+	if(ViewPortControl.isOpen())
+		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

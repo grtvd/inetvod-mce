@@ -49,8 +49,18 @@ function CheckControl(/*string*/ controlID, /*string*/ screenID)
 
 /*void*/ CheckControl.prototype.setFocus = function(/*boolean*/ set)
 {
+	var wasFocused = this.fFocused;
 	this.fFocused = set;
 	this.drawCheck();
+
+	if(set)
+	{
+		if(document.activeElement.id != this.fUIObj.id)
+			this.fUIObj.focus();
+
+		if(!wasFocused)
+			this.getScreen().onFocus(this.ControlID);
+	}
 }
 
 /******************************************************************************/

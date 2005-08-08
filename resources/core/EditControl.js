@@ -34,12 +34,16 @@ function EditControl(/*string*/ controlID, /*string*/ screenID)
 
 /*void*/ EditControl.prototype.setFocus = function(/*boolean*/ set)
 {
-	Control.prototype.setFocus.call(this, set);
+	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
+	this.fFocused = set;
 
 	if(set)
-		this.fUITextObj.SetInputFocus();
-	else
-		document.body.focus();
+	{
+		if(document.activeElement.id != this.fUITextObj.id)
+			this.fUITextObj.SetInputFocus();
+
+		this.getScreen().onFocus(this.ControlID);
+	}
 }
 
 /******************************************************************************/

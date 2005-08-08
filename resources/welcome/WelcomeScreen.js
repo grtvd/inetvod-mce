@@ -36,7 +36,8 @@ function WelcomeScreen()
 	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByNameID, this.ScreenID));
 	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.PreferencesID, this.ScreenID));
 	this.fContainerControl.newControl(new TextControl(WelcomeScreen.HelpID, this.ScreenID));
-
+	if(ViewPortControl.isOpen())
+		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

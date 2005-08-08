@@ -28,7 +28,7 @@ var gMainApp = null;
 
 function IsMCEEnabled()
 {
-   return true
+	return true
 }
 
 /******************************************************************************/
@@ -107,17 +107,22 @@ function MainApp()
 
 /*void*/ MainApp.prototype.openScreen = function(/*Screen*/ oScreen)
 {
+	var oCurScreen = null;
+
 	if(this.fScreenList.length > 0)
-	{
-		var oCurScreen = this.fScreenList[this.fScreenList.length - 1];
-		oCurScreen.show(false);
-	}
+		oCurScreen = this.fScreenList[this.fScreenList.length - 1];
 
 	this.fScreenList.push(oScreen);
 
 	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
 	oScreen.show(true);
 	oScreen.setFocus(true);
+
+	if(oCurScreen != null)
+	{
+		oCurScreen.show(false);
+		oCurScreen.setFocus(false);
+	}
 }
 
 /******************************************************************************/
@@ -144,6 +149,7 @@ function MainApp()
 	{
 		oScreen = this.fScreenList[this.fScreenList.length - 1];
 		oScreen.show(true);
+		oScreen.setFocus(true);
 	}
 }
 
@@ -233,6 +239,31 @@ function MainApp()
 		var oScreen = this.fScreenList[this.fScreenList.length - 1];
 
 		oScreen.mouseMove(controlID);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.focusEvent = function(/*string*/ controlID)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.focusEvent(controlID);
+	}
+}
+
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.blurEvent = function(/*string*/ controlID)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.blurEvent(controlID);
 	}
 }
 
@@ -346,6 +377,38 @@ function MainAppOnMouseOver(obj)
 	catch(e)
 	{
 		showError("MainAppOnMouseOver", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnFocus(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().focusEvent(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnFocus", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnBlur(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().blurEvent(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnBlur", e);
 	}
 }
 

@@ -22,6 +22,23 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
+/*void*/ ButtonControl.prototype.setFocus = function(/*boolean*/ set)
+{
+	var wasFocused = this.fFocused;
+	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
+	this.fFocused = set;
+	if(set)
+	{
+		if(document.activeElement.id != this.fUIObj.id)
+			this.fUIObj.focus();
+
+		if(!wasFocused)
+			this.getScreen().onFocus(this.ControlID);
+	}
+}
+
+/******************************************************************************/
+
 /*boolean*/ ButtonControl.prototype.key = function(/*int*/ key)
 {
 	if(key == ek_Select)

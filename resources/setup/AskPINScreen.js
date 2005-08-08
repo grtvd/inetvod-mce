@@ -14,7 +14,7 @@ AskPINScreen.newInstance = function()
 {
 	var oScreen = new AskPINScreen();
 	MainApp.getThe().openScreen(oScreen);
-	oScreen.focusControl(AskPINScreen.ContinueID);	//TODO: remove after focus working on EditControl
+	oScreen.focusControl(AskPINScreen.ContinueID, true);	//TODO: remove after focus working on EditControl
 	return oScreen;
 }
 
