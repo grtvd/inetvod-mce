@@ -65,18 +65,11 @@ function Screen()
 	if(this.fContainerControl.key(keyCode))
 		return true;
 
-	if(keyCode == ek_Back)
+	if((keyCode == ek_Back) || (keyCode == ek_Backspace))
 	{
 		this.close();
 		return true;
 	}
-
-	if(!window.external.MediaCenter)
-		if(keyCode == ek_Backspace)
-		{
-			this.close();
-			return true;
-		}
 
 	return false;
 }

@@ -214,15 +214,12 @@ function MainApp()
 		// if going back and all screens have been closed, return control to browser
 		if((keyCode == ek_Back) && (this.fScreenList.length == 0))
 			return false;
-		if(!window.external.MediaCenter)
-		{
-			if((keyCode == ek_Backspace) && (this.fScreenList.length == 0))
-				handled = false;
+		if((keyCode == ek_Backspace) && (this.fScreenList.length == 0))
+			return false;
 
-			//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
-			if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
-				handled = true;
-		}
+		//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
+		if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
+			handled = true;
 
 		if(!handled)
 			;	//TODO: beep sound
@@ -381,6 +378,9 @@ function MainAppOnMouseOver(obj)
 {
 	try
 	{
+		if(IsMCExtender())
+			return;
+
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().mouseMove(obj.id);
