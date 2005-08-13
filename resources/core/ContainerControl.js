@@ -243,7 +243,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			return true;
 	}
 
-	if((keyCode == ek_DownButton) || (keyCode == ek_RightButton))
+	if(keyCode == ek_DownButton)
 	{
 		for(var i = focusedPos + 1; i < this.fControlArray.length; i++)
 		{
@@ -258,7 +258,7 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 		}
 	}
 
-	if((keyCode == ek_UpButton) || (keyCode == ek_LeftButton))
+	if(keyCode == ek_UpButton)
 	{
 		for(var i = focusedPos - 1; i >= 0; i--)
 		{

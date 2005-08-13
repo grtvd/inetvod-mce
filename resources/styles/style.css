@@ -289,8 +289,8 @@ body
 .editCtr225_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 225px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	width: 225px;
+	height: 50px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr225Normal.gif);
@@ -299,53 +299,64 @@ body
 .editCtr225_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 225px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	width: 225px;
+	height: 50px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr225Hilite.gif);
 	cursor: hand;
 }
-.editCtrTextClip225
-{
-	width: 207px;	/* Triple-tap should be this plus (+editCtrText.left * 2) */
-	height: 34px; 	/* Triple-tap should be 60 */
-	overflow: hidden;
-}
 
 .editCtr150_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 150px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	width: 150px;
+	height: 50px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr150Normal.gif);
 	cursor: hand;
+	/*border: 1px solid blue;*/
 }
 .editCtr150_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 150px;	/* Should be editCtrTextChip.width + (this.padding * 2) */
-	height: 52px; 	/* Should be editCtrTextChip.height + (this.padding * 2) */
+	width: 150px;
+	height: 50px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr150Hilite.gif);
 	cursor: hand;
-}
-.editCtrTextClip150
-{
-	width: 132px;	/* Triple-tap should be this plus (+editCtrText.left * 2) */
-	height: 34px; 	/* Triple-tap should be 60 */
-	overflow: hidden;
+	/*border: 1px solid blue;*/
 }
 
-.editCtrText
+.editCtrCharNum_normal
 {
-	behavior: url(styles/controls.htc);
-	position: relative;
-	top: -18px;
-	left: -12px;
+	width: 22px;
+	height: 32px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #0F0F0F;
+	background-color: #F0F0F0;
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+.editCtrCharNum_hilite
+{
+	width: 22px;
+	height: 32px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #F0F0F0;
+	background-color: #0E4C97;
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
 }
 
 .checkCtr_normal

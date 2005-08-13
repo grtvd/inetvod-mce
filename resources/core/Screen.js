@@ -71,6 +71,13 @@ function Screen()
 		return true;
 	}
 
+	if(!window.external.MediaCenter)
+		if(keyCode == ek_Backspace)
+		{
+			this.close();
+			return true;
+		}
+
 	return false;
 }
 

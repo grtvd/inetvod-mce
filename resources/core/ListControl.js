@@ -290,7 +290,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	if(this.fFocusedItem != null)
 		focusedItem = this.findRowPos(this.fFocusedItem.ControlID) + this.fTopItem;
 
-	if((key == ek_DownButton) || (key == ek_RightButton))
+	if(key == ek_DownButton)
 	{
 		var itemCount = this.getItemCount();
 
@@ -313,7 +313,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 		return true;
 	}
 
-	if((key == ek_UpButton) || (key == ek_LeftButton))
+	if(key == ek_UpButton)
 	{
 		if(focusedItem > 0)
 			--focusedItem;

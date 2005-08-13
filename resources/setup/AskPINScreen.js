@@ -12,10 +12,7 @@ AskPINScreen.ContinueID = "Startup004_Continue";
 
 AskPINScreen.newInstance = function()
 {
-	var oScreen = new AskPINScreen();
-	MainApp.getThe().openScreen(oScreen);
-	oScreen.focusControl(AskPINScreen.ContinueID, true);	//TODO: remove after focus working on EditControl
-	return oScreen;
+	return MainApp.getThe().openScreen(new AskPINScreen());
 }
 
 /******************************************************************************/
@@ -27,11 +24,19 @@ AskPINScreen.prototype.constructor = AskPINScreen;
 
 function AskPINScreen()
 {
+	var oControl;
+
 	this.ScreenID = AskPINScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 150);
-	this.fContainerControl.newControl(new EditControl(AskPINScreen.PINID, this.ScreenID));
+	oControl = new EditControl(AskPINScreen.PINID, this.ScreenID, 6);
+	this.fContainerControl.newControl(oControl);
+	oControl.MaxLength = 6;
+	oControl.AutoButton = true;
 	this.fContainerControl.newControl(new ButtonControl(AskPINScreen.ContinueID, this.ScreenID));
+
+	if(ViewPortControl.isOpen())
+		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/
@@ -53,7 +58,7 @@ function AskPINScreen()
 		return;
 	}
 
-	Screen.prototype.onButton.call(this, controlID);
+	//Screen.prototype.onButton.call(this, controlID);
 }
 
 /******************************************************************************/

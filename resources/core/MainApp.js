@@ -4,6 +4,7 @@
 /******************************************************************************/
 
 /* Event Keys */
+var ek_Backspace = 8;
 var ek_Select = 256;
 var ek_Back = 257;
 var ek_NextValue = 258;
@@ -35,6 +36,11 @@ function IsMCEEnabled()
 
 function onRemoteEvent(keyCode)
 {
+	// for the numerics on the Remote, MCE returns both "keypress" and "onremote" events, causing double chars.
+	// so "eat" the numerics from the Remote, they'll be handled by "keypress" event.
+	if((keyCode >= 48) && (keyCode <= 57))
+		return true;
+
 	return MainAppOnRemoteEvent(keyCode);
 }
 
@@ -208,6 +214,15 @@ function MainApp()
 		// if going back and all screens have been closed, return control to browser
 		if((keyCode == ek_Back) && (this.fScreenList.length == 0))
 			return false;
+		if(!window.external.MediaCenter)
+		{
+			if((keyCode == ek_Backspace) && (this.fScreenList.length == 0))
+				handled = false;
+
+			//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
+			if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
+				handled = true;
+		}
 
 		if(!handled)
 			;	//TODO: beep sound
@@ -326,11 +341,7 @@ function MainAppMapKey(key)
 {
 	if(key == 13)
 		key = ek_Select;
-	else if(key == 27)
-		key = ek_Back;
 	else if(key == 166)
-		key = ek_Back;
-	else if(key == 8)
 		key = ek_Back;
 	else if(key == 33)
 		key = ek_PageUp;

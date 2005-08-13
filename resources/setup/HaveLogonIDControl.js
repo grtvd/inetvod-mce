@@ -15,14 +15,18 @@ HaveLogonIDControl.ContinueID = "Setup001_HaveLogonIDControl_Continue";
 HaveLogonIDControl.newInstance = function()
 {
 	var containerControl = new HaveLogonIDControl(HaveLogonIDControl.ControlID, 0, 0);
-	var control;
+	var oControl;
 
-	containerControl.newControl(new EditControl(HaveLogonIDControl.LogonID, SetupScreen.ScreenID));
-	containerControl.newControl(new EditControl(HaveLogonIDControl.PINID, SetupScreen.ScreenID));
+	oControl = new EditControl(HaveLogonIDControl.LogonID, SetupScreen.ScreenID, 9)
+	containerControl.newControl(oControl);
+	oControl.MaxLength = 9;
+	oControl = new EditControl(HaveLogonIDControl.PINID, SetupScreen.ScreenID, 6);
+	oControl.MaxLength = 6;
+	containerControl.newControl(oControl);
 
-	control = new CheckControl(HaveLogonIDControl.RememberPINID, SetupScreen.ScreenID);
-	control.setChecked(true);
-	containerControl.newControl(control);
+	oControl = new CheckControl(HaveLogonIDControl.RememberPINID, SetupScreen.ScreenID);
+	oControl.setChecked(true);
+	containerControl.newControl(oControl);
 
 	containerControl.newControl(new ButtonControl(HaveLogonIDControl.ContinueID, SetupScreen.ScreenID));
 	if(ViewPortControl.isOpen())
@@ -47,7 +51,6 @@ function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /*boolean*/ HaveLogonIDControl.prototype.loadData = function(/*object*/ oData)
 {
-	this.focusControl(HaveLogonIDControl.ContinueID, true);	//TODO: remove after focus working on EditControl
 	return true;
 }
 
