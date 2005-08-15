@@ -66,7 +66,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 			rentedShowListControl.getFocusedItemValue().RentedShowID);
 
 		if(rentedShow != null)
-			showMsg("NowPlayingScreen.onButton: to-do open details for Show(" + rentedShow.Name + ")");
+			RentedShowDetailScreen.newInstance(rentedShow);
 		return;
 	}
 

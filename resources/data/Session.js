@@ -6,7 +6,7 @@
 Session.newInstance = function()
 {
 	var session = new Session();
-	
+
 	session.loadAppSettings();
 
 	return session;
@@ -96,6 +96,36 @@ function Session()
 /*string*/ Session.prototype.getProviderName = function(/*string*/ providerID)
 {
 	return this.getProvider(providerID).Name;
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getCategoryName = function(/*string*/ categoryID)
+{
+	if(categoryID == Category.AllCategoriesID)
+		return Category.AllCategoriesName;
+
+	for(var i = 0; i < this.fCategoryList.length; i++)
+		if(this.fCategoryList[i].CategoryID == categoryID)
+			return this.fCategoryList[i].Name;
+
+	throw "Session.getCategoryName: can't find CategoryID(" + categoryID + ")";
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getCategoryNames = function(/*Array*/ categoryIDList)
+{
+	var names = "";
+
+	for(var i = 0; i < categoryIDList.length; i++)
+	{
+		if(names.length > 0)
+			names += ", ";
+		names += this.getCategoryName(categoryIDList[i]);
+	}
+
+	return names;
 }
 
 /******************************************************************************/
@@ -256,7 +286,7 @@ function Session()
 			this.fProviderList = systemDataResp.ProviderList;
 			this.fCategoryList = systemDataResp.CategoryList;
 			this.fRatingList = systemDataResp.RatingList;
-			
+
 			this.fIsSystemDataLoaded = true;
 			return this.fIsSystemDataLoaded;
 		}
@@ -338,7 +368,7 @@ function Session()
 
 	var rentedShowListRqst;
 	var rentedShowListResp;
-	
+
 	rentedShowListRqst = RentedShowListRqst.newInstance();
 
 	var oWaitScreen = WaitScreen.newInstance();
@@ -377,7 +407,7 @@ function Session()
 
 	var rentedShowRqst;
 	var rentedShowResp;
-	
+
 	rentedShowRqst = RentedShowRqst.newInstance();
 	rentedShowRqst.RentedShowID = rentedShowID;
 

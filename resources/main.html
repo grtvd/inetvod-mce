@@ -78,6 +78,7 @@
 <script language="javascript" src="search/SearchData.js"></script>
 <script language="javascript" src="search/SearchResultsScreen.js"></script>
 <script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
+<script language="javascript" src="nowPlaying/RentedShowDetailScreen.js"></script>
 
 <script language="javascript">
 function init()
@@ -248,7 +249,7 @@ function init()
 <div id="Welcome001" style="position:absolute; display:none">
 <table cellpadding=0 cellspacing=0 border=0>
 	<tr><td>
-		<table cellpadding=0 cellspacing=6 border=0>
+		<table cellpadding=0 cellspacing=6 border=0 width=450>
 			<tr><td id="Welcome001_NowPlaying" class="buttonCtr438_normal">Now Playing</td></tr>
 			<tr><td id="Welcome001_Featured" class="buttonCtr438_normal">Featured</td></tr>
 			<tr><td id="Welcome001_SearchByCategory" class="buttonCtr438_normal">Search by Category</td></tr>
@@ -257,8 +258,8 @@ function init()
 		</table>
 	</td>
 	<td width=30><img src="images/spacer.gif" border=0 width=1 height=1></td>
-	<td valign="top" width=350><span id="Welcome001_HelpTitle" class="textSmallCtr"><br>Help<br><br></span
-		><span id="Welcome001_Help" class="textSmallCtr"></span>
+	<td valign="top"><span id="Welcome001_HelpTitle" class="textSmallCtr"><br>Help<br><br></span
+		><span id="Welcome001_Help" class="textSmallWrapCtr" style="width: 362;"></span>
 	</td></tr>
 </table>
 </div>
@@ -409,6 +410,53 @@ Your Now Playing list is empty. Shows that you rent will be listed here.<br>
 It is a good idea to rent multiple shows at a time. This will allow new shows to
 be downloaded while your are watching another show.
 </div>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Show003" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td align=left valign=top>
+		<table cellpadding=0 cellspacing=6 border=0 width=232>
+			<tr><td height=50><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+			<tr><td id="Show003_WatchNow" class="buttonCtr220_normal">Watch</td></tr>
+			<tr><td id="Show003_DeleteNow" class="buttonCtr220_normal">Delete</td></tr>
+		</table>
+	</td>
+
+	<td width=18><img src="images/spacer.gif" border=0 width=1 height=1></td>
+
+	<td>
+		<table cellpadding=0 cellspacing=6 border=0>
+			<tr><td><span id="Show003_Name" class="textCtr" style="width: 708;"></span></td></tr>
+			<tr><td><span id="Show003_Episode" class="textSmallCtr" style="width: 708;"></span></td></tr>
+			<tr><td height=5><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+			<tr><td><span id="Show003_Description" class="textSmallWrapCtr" style="width: 708; height=130;"></span></td></tr>
+		</table>
+		<br>
+		<table cellpadding=0 cellspacing=0 border=0>
+			<tr><td align=left valign=top>
+				<table cellpadding=0 cellspacing=6 border=0>
+					<tr><td class="textSmallLbl">Released:</td><td><span id="Show003_Released" class="textSmallCtr" style="width: 140;"></span></td></tr>
+					<tr><td class="textSmallLbl">Running Time:</td><td><span id="Show003_RunningMins" class="textSmallCtr" style="width: 140;"></span></td></tr>
+					<tr><td class="textSmallLbl">Rating: </td><td><span id="Show003_Rating" class="textSmallCtr" style="width: 140;"></span></td></tr>
+					<tr><td class="textSmallLbl" valign=top>Categories:</td><td><span id="Show003_Category" class="textSmallWrapCtr" style="width: 140;"></span></td></tr>
+				</table>
+			</td>
+			<td width=10><img src="images/spacer.gif" border=0 width=1 height=1></td>
+			<td align=right valign=top>
+				<table cellpadding=0 cellspacing=6 border=0>
+					<tr><td class="textSmallLbl">Provider:</td><td><span id="Show003_Provider" class="textSmallCtr" style="width: 180;"></span></td></tr>
+					<tr><td class="textSmallLbl">Cost:</td><td><span id="Show003_Cost" class="textSmallCtr" style="width: 180;"></span></td></tr>
+					<tr><td class="textSmallLbl">Rental Period:</td><td><span id="Show003_RentalHours" class="textSmallCtr" style="width: 180;"></span></td></tr>
+					<tr><td class="textSmallLbl">Rented On:</td><td><span id="Show003_RentedOn" class="textSmallCtr" style="width: 180;"></span></td></tr>
+					<tr><td class="textSmallLbl">Available Until:</td><td><span id="Show003_AvailableUntil" class="textSmallCtr" style="width: 180;"></span></td></tr>
+				</table>
+			</td></tr>
+		</table>
+	</td></tr>
+</table>
 </div>
 
 <!-- *********************************************************************** -->

@@ -4,6 +4,7 @@
 /******************************************************************************/
 
 Category.AllCategoriesID = "all";
+Category.AllCategoriesName = "All Categories";
 Category.FeaturedCategoryID = "featured";
 
 /******************************************************************************/

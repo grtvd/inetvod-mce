@@ -7,12 +7,12 @@
 /* DateTimeFormat */
 //var dtf_ISO8601_Date = 0;
 //var dtf_ISO8601_DateTime = 1;
-//var dtf_MM_DD_YY = 2;				// 02/03/04
-//var dtf_MM_DD_YYYY = 3;			// 02/03/2004
+//var dtf_M_D_YY = 2;				// 2/3/04
+var dtf_M_D_YYYY = 3;				// 2/3/2004
 var dtf_M_D = 4;					// 2/3
 //var dtf_M_D_YYYY_H_MM_AM = 5;		// 2/3/2004 1:05 PM
 //var dtf_M_D_YYYY_H_MM_SS_AM = 6;	// 2/3/2004 1:05:07 PM
-//var dtf_M_D_H_MM_AM = 7;			// 2/3 1:05 PM
+var dtf_M_D_H_MM_AM = 7;			// 2/3 1:05 PM
 //var dtf_H_AM = 8;					// 1 PM
 var dtf_Ha = 9;						// 1p
 //var dtf_H_MM_AM = 10;				// 1:05 PM
@@ -28,11 +28,12 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 /******************************************************************************/
 
-/*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format)
+/*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format, /*boolean*/ showInUTC)
 {
 	if(!isDate(dateTime))
 		return "";
 
+	var year;
 	var month;
 	var day;
 	var hour;
@@ -41,11 +42,24 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	var timeStr;
 	var minStr;
 
-	month = dateTime.getMonth() + 1;
-	day = dateTime.getDate();
+	if(showInUTC)
+	{
+		year = dateTime.getUTCFullYear();
+		month = dateTime.getUTCMonth() + 1;
+		day = dateTime.getUTCDate();
 
-	hour = dateTime.getHours();
-	minute = dateTime.getMinutes();
+		hour = dateTime.getUTCHours();
+		minute = dateTime.getUTCMinutes();
+	}
+	else
+	{
+		year = dateTime.getFullYear();
+		month = dateTime.getMonth() + 1;
+		day = dateTime.getDate();
+
+		hour = dateTime.getHours();
+		minute = dateTime.getMinutes();
+	}
 
 	isPM = (hour >= 12);
 	if(hour == 0)
@@ -60,8 +74,16 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 	switch(format)
 	{
+		case dtf_M_D_YYYY:
+			timeStr = month + DateSeparator + day + DateSeparator + year;
+			break;
+
 		case dtf_M_D:
 			timeStr = month + DateSeparator + day;
+			break;
+
+		case dtf_M_D_H_MM_AM:
+			timeStr = month + DateSeparator + day + " " + hour + TimeSeparator + minStr + " " + getAMPM(isPM, true);
 			break;
 
 		case dtf_Ha:
@@ -88,8 +110,8 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 /*string*/ function getAMPM(/*bool*/ isPM, /*bool*/ longFormat)
 {
 	if(isPM)
-		return (longFormat) ? "PM" : "p";
-	return (longFormat) ? "AM" : "a";
+		return (longFormat) ? "pm" : "p";
+	return (longFormat) ? "pm" : "a";
 }
 
 /******************************************************************************/
