@@ -51,6 +51,8 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 /*void*/ SearchResultsScreen.prototype.onButton = function(/*string*/ controlID)
 {
+	var oSession = MainApp.getThe().getSession();
+
 	if(controlID == SearchResultsScreen.ShowListID)
 	{
 		var oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
@@ -61,6 +63,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		if(showProviderList.length == 1)
 		{
 			var oShowProvider = showProviderList[0];
+			var showDetailPtr = oSession.showDetail(oShowSearch.ShowID, oShowProvider.ProviderID);
 
 			showMsg("SearchResultsScreen.onButton: open showDetail for ShowID(" + oShowSearch.ShowID + "), ProviderID(" + oShowProvider.ProviderID + ")");
 		}

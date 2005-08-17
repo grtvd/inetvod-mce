@@ -361,6 +361,44 @@ function Session()
 
 /******************************************************************************/
 
+/*ShowDetail*/ Session.prototype.showDetail = function(/*string*/ showID, /*string*/ providerID)
+{
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var showDetailRqst;
+	var showDetailResp;
+
+	showDetailRqst = ShowDetailRqst.newInstance();
+	showDetailRqst.ShowID = showID;
+	showDetailRqst.ProviderID = providerID;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		showDetailResp = dataRequestor.showDetailRequest(showDetailRqst);
+		statusCode = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+			return showDetailResp.ShowDetail;
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.showDetail", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return null;
+}
+
+/******************************************************************************/
+
 /*StatusCode*/ Session.prototype.rentedShowList = function(/*RentedShowSearch reference*/ rentedShowSearchListRef)
 {
 	var statusCode = sc_GeneralError;
@@ -389,7 +427,7 @@ function Session()
 	}
 	catch(e)
 	{
-		showError("Session.showSearch", e);
+		showError("Session.rentedShowList", e);
 	}
 	oWaitScreen.close();
 
@@ -426,7 +464,7 @@ function Session()
 	}
 	catch(e)
 	{
-		showError("Session.showSearch", e);
+		showError("Session.rentedShow", e);
 	}
 	oWaitScreen.close();
 

@@ -120,6 +120,13 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
+/*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(/*ShowDetailRqst*/ showDetailRqst)
+{
+	return this.sendRequest(showDetailRqst);
+}
+
+/******************************************************************************/
+
 /*RentedShowListResp*/ DataRequestor.prototype.rentedShowListRequest = function(
 	/*RentedShowListRqst*/ rentedShowListRqst)
 {
