@@ -25,6 +25,16 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
+/*boolean*/ ViewPortControl.canOpen = function()
+{
+	if(window.external.MediaCenter)
+		return true;
+
+	return false;
+}
+
+/******************************************************************************/
+
 /*boolean*/ ViewPortControl.isOpen = function()
 {
 	if(window.external.MediaCenter)
@@ -53,6 +63,20 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 		if(!wasFocused)
 			this.getScreen().onFocus(this.ControlID);
 	}
+}
+
+/******************************************************************************/
+
+/*void*/ ViewPortControl.prototype.playVideo = function(/*string*/ url)
+{
+	if(window.external.MediaCenter)
+	{
+		window.external.MediaCenter.playMedia(2, url);
+		window.external.MediaCenter.Experience.GoToFullScreen();
+		return;
+	}
+
+	showMsg("An error occurred trying to play video.");
 }
 
 /******************************************************************************/

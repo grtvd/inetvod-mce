@@ -129,14 +129,32 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 {
 	var oSession = MainApp.getThe().getSession();
 
-	showMsg("RentedShowDetailScreen.onButton: to-do, controlID(" + controlID + ")");
-
 	if(controlID == RentedShowDetailScreen.WatchNowID)
 	{
+		var watchShowResp = oSession.watchShow(this.fRentedShow.RentedShowID);
+		if(watchShowResp == null)
+			return;
+
+		if(!ViewPortControl.canOpen())
+		{
+			showMsg("This player does not play audio or video content.");
+			return;
+		}
+
+		var oControl = this.fContainerControl.findControl(ViewPortControl.ControlID);
+		if(oControl == null)
+		{
+			oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
+			this.fContainerControl.newControl(oControl);
+		}
+
+		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
+		oControl.playVideo(watchShowResp.ShowURL);
 		return;
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
 	{
+		showMsg("RentedShowDetailScreen.onButton: to-do, controlID(" + controlID + ")");
 		return;
 	}
 
