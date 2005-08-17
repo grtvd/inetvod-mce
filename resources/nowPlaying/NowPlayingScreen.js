@@ -27,6 +27,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 
 function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 {
+	this.fRentedShowSearchList = rentedShowSearchList;
 	this.ScreenID = NowPlayingScreen.ScreenID;
 
 	var oRowItemList = new Array();
@@ -41,16 +42,41 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	oControl = new RentedShowListControl(NowPlayingScreen.ShowListID, this.ScreenID,
 		6, oRowItemList, rentedShowSearchList);
 	if(rentedShowSearchList.length > 0)
-		this.fContainerControl.newControl(oControl);
+		this.newControl(oControl);
 	oControl.show(rentedShowSearchList.length > 0);
 
 	oControl = new TextControl(NowPlayingScreen.NoShowsTextID, this.ScreenID);
 	if(rentedShowSearchList.length == 0)
-		this.fContainerControl.newControl(oControl);
+		this.newControl(oControl);
 	oControl.show(rentedShowSearchList.length == 0);
 
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+}
+
+/******************************************************************************/
+
+/*void*/ NowPlayingScreen.prototype.removeRentedShow = function(/*string*/ rentedShowID)
+{
+	var oControl;
+
+	arrayRemoveByCmpr(this.fRentedShowSearchList, new RentedShowSearchToIDCmpr(rentedShowID));
+
+	if(this.fRentedShowSearchList.length > 0)
+	{
+		var oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
+		oRentedShowListControl.setRentedShowSearchList(this.fRentedShowSearchList);
+	}
+	else
+	{
+		oControl = this.getControl(NowPlayingScreen.ShowListID);
+		oControl.show(false);
+		this.deleteControl(NowPlayingScreen.ShowListID);
+
+		oControl = new TextControl(NowPlayingScreen.NoShowsTextID, this.ScreenID);
+		this.newControl(oControl);
+		oControl.show(true);
+	}
 }
 
 /******************************************************************************/

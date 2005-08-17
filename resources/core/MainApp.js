@@ -161,13 +161,25 @@ function MainApp()
 
 /******************************************************************************/
 
-/*Screen*/ MainApp.prototype.getScreen = function(/*string */ screenID)
+/*Screen*/ MainApp.prototype.findScreen = function(/*string */ screenID)
 {
 	for(var i = 0; i < this.fScreenList.length; i++)
 		if(this.fScreenList[i].ScreenID == screenID)
 			return this.fScreenList[i];
 
 	return null;
+}
+
+/******************************************************************************/
+
+/*Screen*/ MainApp.prototype.getScreen = function(/*string */ screenID)
+{
+	var oScreen = this.findScreen(screenID);
+
+	if(oScreen != null)
+		return oScreen;
+
+	throw "MainApp.getScreen: can't find screen, ID(" + screenID + ")";
 }
 
 /******************************************************************************/

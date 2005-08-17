@@ -296,13 +296,36 @@ function forceRedraw(pauseMills)
 /******************************************************************************/
 /******************************************************************************/
 
-function ArrayIndexOf(arr, item)
+function arrayIndexOf(arr, item)
 {
 	for(var i = 0; i < arr.length; i++)
 		if(item == arr[i])
 			return i;
 
 	return -1;
+}
+
+/******************************************************************************/
+
+function arrayIndexOfByCmpr(arr, itemComparer)
+{
+	for(var i = 0; i < arr.length; i++)
+		if(itemComparer.compare(arr[i]) == 0)
+			return i;
+
+	return -1;
+}
+
+/******************************************************************************/
+
+function arrayRemoveByCmpr(arr, itemComparer)
+{
+	var pos = arrayIndexOfByCmpr(arr, itemComparer);
+
+	if(pos < 0)
+		return;
+
+	arr.splice(pos, 1);
 }
 
 /******************************************************************************/

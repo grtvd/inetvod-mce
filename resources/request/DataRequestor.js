@@ -143,4 +143,12 @@ function DataRequestor(/*string*/ sessionData)
 }
 
 /******************************************************************************/
+
+/*ReleaseShowResp*/ DataRequestor.prototype.releaseShowRequest = function(
+	/*ReleaseShowRqst*/ releaseShowRqst)
+{
+	return this.sendRequest(releaseShowRqst);
+}
+
+/******************************************************************************/
 /******************************************************************************/

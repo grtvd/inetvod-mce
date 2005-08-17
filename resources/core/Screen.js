@@ -32,6 +32,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*Control*/ Screen.prototype.deleteControl = function(/*string*/ controlID)
+{
+	return this.fContainerControl.deleteControl(controlID);
+}
+
+/******************************************************************************/
+
 /*void*/ Screen.prototype.moveTo = function(/*int*/ left, /*int*/ top)
 {
 	this.fContainerControl.moveTo(left, top);

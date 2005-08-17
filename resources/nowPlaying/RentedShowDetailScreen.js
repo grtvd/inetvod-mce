@@ -154,7 +154,16 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
 	{
-		showMsg("RentedShowDetailScreen.onButton: to-do, controlID(" + controlID + ")");
+		var statusCode = oSession.releaseShow(this.fRentedShow.RentedShowID);
+
+		if(statusCode == sc_Success)
+		{
+			this.close();
+			
+			var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
+			if(oNowPlayingScreen != null)
+				oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);
+		}
 		return;
 	}
 

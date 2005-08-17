@@ -473,4 +473,41 @@ function Session()
 }
 
 /******************************************************************************/
+
+/*StatusCode*/ Session.prototype.releaseShow = function(/*string*/ rentedShowID)
+{
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var releaseShowRqst;
+	var releaseShowResp;
+
+	releaseShowRqst = ReleaseShowRqst.newInstance();
+	releaseShowRqst.RentedShowID = rentedShowID;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		releaseShowResp = dataRequestor.releaseShowRequest(releaseShowRqst);
+		statusCode = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+			return statusCode;
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.releaseShow", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return statusCode;
+}
+
+/******************************************************************************/
 /******************************************************************************/

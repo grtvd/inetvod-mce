@@ -94,6 +94,19 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
+/*void*/ ListControl.prototype.recalcAfterDataChange = function()
+{
+	this.recalcTopItemFromBottomItem();
+	if((this.fFocusedItem != null) && (this.fBottomItem >= 0) && (this.fFocusedItem.RowIndex > this.fBottomItem))
+		this.setFocusedItem(this.fRowList[this.fBottomItem]);
+	this.drawItems(false);
+	this.drawUpIcon(false);
+	this.drawDownIcon(false);
+	this.drawCount();
+}
+
+/******************************************************************************/
+
 /*ListControlRow*/ ListControl.prototype.findRow = function(controlID)
 {
 	var oRow;

@@ -18,6 +18,14 @@ function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /******************************************************************************/
 
+/*void*/ RentedShowListControl.prototype.setRentedShowSearchList = function(/*Array*/ rentedShowSearchList)
+{
+	this.RentedShowSearchList = rentedShowSearchList;
+	this.recalcAfterDataChange();
+}
+
+/******************************************************************************/
+
 /*RentedShowSearch*/ RentedShowListControl.prototype.getFocusedItemValue = function()
 {
 	if(this.fFocusedItem != null)

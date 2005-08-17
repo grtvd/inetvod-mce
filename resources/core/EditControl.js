@@ -217,7 +217,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 			else if((this.fText.length == 0) || (this.fText[this.fText.length - 1] != " "))
 			{
 				// see if spaces are supported, add a space char
-				pos = ArrayIndexOf(validCharArray, 32);
+				pos = arrayIndexOf(validCharArray, 32);
 				if(pos >= 0)
 				{
 					this.fText.push(" ");
@@ -255,7 +255,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	var validCharArray = this.getValidCharArray(this.Type);
 	var pos;
 
-	pos = ArrayIndexOf(validCharArray, key);
+	pos = arrayIndexOf(validCharArray, key);
 	if(pos >= 0)
 	{
 		if(this.fCurPos >= this.fText.length)
