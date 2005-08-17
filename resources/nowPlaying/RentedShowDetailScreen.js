@@ -23,9 +23,7 @@ RentedShowDetailScreen.DeleteNowID = "Show003_DeleteNow";
 
 RentedShowDetailScreen.newInstance = function(/*RentedShow*/ rentedShow)
 {
-	var oScreen = new RentedShowDetailScreen(rentedShow);
-	MainApp.getThe().openScreen(oScreen);
-	return oScreen;
+	return MainApp.getThe().openScreen(new RentedShowDetailScreen(rentedShow));
 }
 
 /******************************************************************************/
@@ -159,7 +157,7 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 		if(statusCode == sc_Success)
 		{
 			this.close();
-			
+
 			var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
 			if(oNowPlayingScreen != null)
 				oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);

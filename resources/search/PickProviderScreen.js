@@ -55,7 +55,13 @@ function PickProviderScreen(/*ShowSearch*/ oShowSearch)
 		var oShowProviderListControl = this.getControl(PickProviderScreen.ProviderListID);
 		var oShowProvider = oShowProviderListControl.getFocusedItemValue();
 
-		showMsg("PickProviderScreen.onButton: open showDetail for ShowID(" + this.ShowSearch.ShowID + "), ProviderID(" + oShowProvider.ProviderID + ")");
+		var oShowDetail = oSession.showDetail(this.ShowSearch.ShowID, oShowProvider.ProviderID);
+
+		if(oShowDetail != null)
+		{
+			SearchDetailScreen.newInstance(oShowDetail);
+			this.close();
+		}
 		return;
 	}
 

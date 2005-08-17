@@ -63,9 +63,10 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		if(showProviderList.length == 1)
 		{
 			var oShowProvider = showProviderList[0];
-			var showDetailPtr = oSession.showDetail(oShowSearch.ShowID, oShowProvider.ProviderID);
+			var oShowDetail = oSession.showDetail(oShowSearch.ShowID, oShowProvider.ProviderID);
 
-			showMsg("SearchResultsScreen.onButton: open showDetail for ShowID(" + oShowSearch.ShowID + "), ProviderID(" + oShowProvider.ProviderID + ")");
+			if(oShowDetail != null)
+				SearchDetailScreen.newInstance(oShowDetail);
 		}
 		else
 		{

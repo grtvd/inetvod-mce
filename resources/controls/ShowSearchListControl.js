@@ -42,7 +42,7 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 	var showSearch = this.ShowSearchList[item];
 	var showProvider;
 	var providerName;
-	var cost = null;
+	var cost = "";
 	var tempStr;
 
 	if(showSearch.ShowProviderList.length == 1)
