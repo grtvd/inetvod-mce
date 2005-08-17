@@ -11,7 +11,7 @@ AskPINScreen needs to handle Back
 
 Playing Media
 if(window.external.MediaCenter)
-	window.external.MediaCenter.playMedia(2, "http://localhost:8080/mce/SDKTestVideo.WMV");
+	window.external.MediaCenter.playMedia(2, "http://localhost:8080/mce/videos/TestVideo.wmv");
 //	window.external.MediaCenter.playMedia(2, "http://www.gamelink.com/asx/AsxGenerator?file=gl1/249287.wmv&code=LNANN2C4NWFG4A5LKRE8");
 
 
