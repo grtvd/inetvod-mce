@@ -93,6 +93,34 @@ body
 	/*border: 1px solid blue;*/
 }
 
+.listCtrRow438_normal
+{
+	behavior: url(styles/controls.htc);
+	height: 54px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #F0F0F0;
+	text-align: left;
+	background-image: url(../images/buttonCtr438Normal.gif);
+	cursor: hand;
+}
+.listCtrRow438_hilite
+{
+	behavior: url(styles/controls.htc);
+	height: 54px;
+	font-weight: bold;
+	font-size: 20pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #F0F0F0;
+	text-align: left;
+	background-image: url(../images/buttonCtr438Hilite.gif);
+	cursor: hand;
+}
+.listCtrRow438_hide
+{
+	height: 54px;
+}
 .listCtrRow952_normal
 {
 	behavior: url(styles/controls.htc);

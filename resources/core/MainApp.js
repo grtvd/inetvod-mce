@@ -111,7 +111,7 @@ function MainApp()
 
 /******************************************************************************/
 
-/*void*/ MainApp.prototype.openScreen = function(/*Screen*/ oScreen)
+/*Screen*/ MainApp.prototype.openScreen = function(/*Screen*/ oScreen)
 {
 	var oCurScreen = null;
 
@@ -129,6 +129,8 @@ function MainApp()
 		oCurScreen.show(false);
 		oCurScreen.setFocus(false);
 	}
+
+	return oScreen;
 }
 
 /******************************************************************************/

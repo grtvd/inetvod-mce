@@ -53,7 +53,22 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 {
 	if(controlID == SearchResultsScreen.ShowListID)
 	{
-		showMsg("SearchResultsScreen.onButton()");
+		var oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
+		var oShowSearch = oShowSearchListControl.getFocusedItemValue();
+		var showProviderList = oShowSearch.ShowProviderList;
+		var providerID;
+
+		if(showProviderList.length == 1)
+		{
+			var oShowProvider = showProviderList[0];
+
+			showMsg("SearchResultsScreen.onButton: open showDetail for ShowID(" + oShowSearch.ShowID + "), ProviderID(" + oShowProvider.ProviderID + ")");
+		}
+		else
+		{
+			PickProviderScreen.newInstance(oShowSearch);
+		}
+
 		return;
 	}
 

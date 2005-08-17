@@ -25,6 +25,7 @@
 <script language="javascript" src="core/WaitScreen.js"></script>
 
 <script language="javascript" src="controls/ShowSearchListControl.js"></script>
+<script language="javascript" src="controls/ShowProviderListControl.js"></script>
 <script language="javascript" src="controls/RentedShowListControl.js"></script>
 
 <script language="javascript" src="data/Session.js"></script>
@@ -82,6 +83,7 @@
 <script language="javascript" src="search/SearchScreen.js"></script>
 <script language="javascript" src="search/SearchData.js"></script>
 <script language="javascript" src="search/SearchResultsScreen.js"></script>
+<script language="javascript" src="search/PickProviderScreen.js"></script>
 <script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
 <script language="javascript" src="nowPlaying/RentedShowDetailScreen.js"></script>
 
@@ -343,6 +345,50 @@ function init()
 <div id="Search003_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
 No shows were found matching your search criteria.  Please try again.<br>
 </div>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Search009" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=600>
+	<tr><td id="Search009_AvailText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td class="textCtr">Please select your desired provider:</td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td align="center"
+		><table id=Search009_ProviderList cellpadding=0 cellspacing=0 border=0>
+			<tr><td>
+				<table id=Search009_ProviderList cellpadding=0 cellspacing=6 border=0>
+					<tr><td
+						><span class="listCtrHeader" style="width: 318;">Provider</span
+						><span class="listCtrHeader" style="width: 120;">Price</span
+						></td>
+					</tr>
+					<tr><td id="Search009_ProviderList_0" class="listCtrRow438_normal"
+						><span id="Search009_ProviderList_0_Provider" class="listCtrItem"></span
+						><span id="Search009_ProviderList_0_Price" class="listCtrItem"></span
+						></td>
+					</tr>
+					<tr><td id="Search009_ProviderList_1" class="listCtrRow438_normal"
+						><span id="Search009_ProviderList_1_Provider" class="listCtrItem"></span
+						><span id="Search009_ProviderList_1_Price" class="listCtrItem"></span
+						></td>
+					</tr>
+				</table
+			></td></tr>
+			<tr><td align="right"
+				><table cellpadding=0 cellspacing=5 border=0>
+					<tr><td id="Search009_ProviderList_Count" class="listCtrCount">0 of 0</td
+						><td width=5><img src="images/spacer.gif" border=0 width=1 height=1></td
+						><td id="Search009_ProviderList_Up" class="listCtrPrev_normal"></td
+						><td id="Search009_ProviderList_Down" class="listCtrNext_normal"></td
+					></tr>
+				</table
+			></td></tr>
+		</table
+	></td></tr>
+</table>
 </div>
 
 <!-- *********************************************************************** -->

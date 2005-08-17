@@ -63,7 +63,8 @@ function WelcomeScreen()
 		return;
 	}
 
-	Screen.prototype.onButton.call(this, controlID);
+	showMsg("WelcomeScreen.onButton: to-do");
+	//Screen.prototype.onButton.call(this, controlID);
 }
 
 /******************************************************************************/

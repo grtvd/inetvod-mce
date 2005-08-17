@@ -28,12 +28,9 @@ function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /*RentedShowSearch*/ RentedShowListControl.prototype.getFocusedItemValue = function()
 {
-	if(this.fFocusedItem != null)
-	{
-		var focusedItem = this.findRowPos(this.fFocusedItem.ControlID) + this.fTopItem;
-		if((focusedItem >= 0) && (focusedItem < this.RentedShowSearchList.length))
-			return this.RentedShowSearchList[focusedItem];
-	}
+	var focusedItem = this.getFocusedItemPos();
+	if((focusedItem >= 0) && (focusedItem < this.RentedShowSearchList.length))
+		return this.RentedShowSearchList[focusedItem];
 
 	return null;
 }

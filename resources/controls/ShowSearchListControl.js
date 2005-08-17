@@ -18,6 +18,17 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /******************************************************************************/
 
+/*ShowSearch*/ ShowSearchListControl.prototype.getFocusedItemValue = function()
+{
+	var focusedItem = this.getFocusedItemPos();
+	if((focusedItem >= 0) && (focusedItem < this.ShowSearchList.length))
+		return this.ShowSearchList[focusedItem];
+
+	return null;
+}
+
+/******************************************************************************/
+
 /*int*/ ShowSearchListControl.prototype.getItemCount = function()
 {
 	return this.ShowSearchList.length;

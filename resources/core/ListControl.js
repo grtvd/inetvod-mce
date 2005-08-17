@@ -166,6 +166,16 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
+/*int*/ ListControl.prototype.getFocusedItemPos = function()
+{
+	if(this.fFocusedItem != null)
+		return this.findRowPos(this.fFocusedItem.ControlID) + this.fTopItem;
+
+	return -1;
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.setFocusedItem = function(/*ListControlRow*/ oRow)
 {
 	if(this.fFocusedItem != null)
