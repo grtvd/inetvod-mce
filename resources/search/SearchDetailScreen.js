@@ -117,7 +117,7 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 
 	if(controlID == SearchDetailScreen.RentNowID)
 	{
-		showMsg("SearchDetailScreen.onButton: to-do.");
+		RentScreen.newInstance(this.fShowDetail);
 		return;
 	}
 

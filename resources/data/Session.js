@@ -84,9 +84,10 @@ function Session()
 
 /*Provider*/ Session.prototype.getProvider = function(/*string*/ providerID)
 {
-	for(var i = 0; i < this.fProviderList.length; i++)
-		if(this.fProviderList[i].ProviderID == providerID)
-			return this.fProviderList[i];
+	var provider = arrayFindItemByCmpr(this.fProviderList, new ProviderIDCmpr(providerID));
+
+	if(provider != null)
+		return provider;
 
 	throw "Session.getProvider: can't find ProviderID(" + providerID + ")";
 }
@@ -268,6 +269,13 @@ function Session()
 
 /******************************************************************************/
 
+/*boolean*/ Session.prototype.isMemberOfProvider = function(/*string*/ providerID)
+{
+	return(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(providerID)) != null)
+}
+
+/******************************************************************************/
+
 /*boolean*/ Session.prototype.loadSystemData = function()
 {
 	var statusCode = sc_GeneralError;
@@ -394,6 +402,42 @@ function Session()
 
 	this.showRequestError(statusMessage);
 
+	return null;
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.providerEnroll = function(/*string*/ providerID)
+{
+	showMsg("Session.providerEnroll: to-do");
+	return sc_Success;
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.setProvider = function(/*string*/ providerID,
+	/*string*/ userID, /*string*/ password)
+{
+	showMsg("Session.setProvider: to-do");
+	return sc_Success;
+}
+
+/******************************************************************************/
+
+/*CheckShowAvailResp*/ Session.prototype.checkShowAvail = function(/*string*/ showID,
+	/*string*/ providerID, /*StatusCode reference*/ statusCodeRef)
+{
+	showMsg("Session.checkShowAvail: to-do");
+	statusCodeRef.value = sc_InvalidProviderUserIDPassword;
+	return null;
+}
+
+/******************************************************************************/
+
+/*RentShowResp*/ Session.prototype.rentShow = function(/*string*/ showID,
+	/*string*/ providerID, /*ShowCost*/ oApprovedCost)
+{
+	showMsg("Session.rentShow: to-do");
 	return null;
 }
 

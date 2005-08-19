@@ -34,6 +34,7 @@
 <script language="javascript" src="data/MemberPrefs.js"></script>
 <script language="javascript" src="data/IncludeAdult.js"></script>
 <script language="javascript" src="data/Provider.js"></script>
+<script language="javascript" src="data/ProviderIDCmpr.js"></script>
 <script language="javascript" src="data/Category.js"></script>
 <script language="javascript" src="data/Rating.js"></script>
 <script language="javascript" src="data/MemberProvider.js"></script>
@@ -88,6 +89,13 @@
 <script language="javascript" src="search/SearchResultsScreen.js"></script>
 <script language="javascript" src="search/PickProviderScreen.js"></script>
 <script language="javascript" src="search/SearchDetailScreen.js"></script>
+
+<script language="javascript" src="rent/RentData.js"></script>
+<script language="javascript" src="rent/RentScreen.js"></script>
+<script language="javascript" src="rent/AskHaveProviderControl.js"></script>
+<script language="javascript" src="rent/NeedProviderControl.js"></script>
+<script language="javascript" src="rent/HaveProviderControl.js"></script>
+
 <script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
 <script language="javascript" src="nowPlaying/RentedShowDetailScreen.js"></script>
 
@@ -437,6 +445,85 @@ No shows were found matching your search criteria.  Please try again.<br>
 		</table>
 	</td></tr>
 </table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Rent001" style="position:absolute; display:none">
+
+<div id="Rent001_AskHaveProviderControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=1 width=964>
+	<tr><td id="Rent001_AskHaveProviderControl_WelcomeText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td id="Rent001_AskHaveProviderControl_MembershipText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td id="Rent001_AskHaveProviderControl_HaveMembership" class="buttonCtr700_normal">Yes, I already have a membership</td></tr
+			><tr><td id="Rent001_AskHaveProviderControl_NeedMembership" class="buttonCtr700_normal">No, but please sign me up</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Rent001_NeedProviderControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=1 width=964>
+	<tr><td id="Rent001_NeedProviderControl_MemberText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td id="Rent001_NeedProviderControl_PlanText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td id="Rent001_NeedProviderControl_CreateMembership" class="buttonCtr438_normal">Create Membership</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Rent001_HaveProviderControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=964>
+	<tr><td id="Rent001_HaveProviderControl_Description" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td class="textLbl" >User ID:</td
+				><td><span id="Rent001_HaveProviderControl_UserID" class="editCtr225_normal"
+					><span id="Rent001_HaveProviderControl_UserID_0" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_1" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_2" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_3" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_4" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_5" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_6" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_7" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_UserID_8" class="editCtrCharNum_normal"></span
+				></span></td></tr
+			><tr><td class="textLbl" >Password:</td
+				><td><span id="Rent001_HaveProviderControl_Password" class="editCtr150_normal"
+					><span id="Rent001_HaveProviderControl_Password_0" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_Password_1" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_Password_2" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_Password_3" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_Password_4" class="editCtrCharNum_normal"></span
+					><span id="Rent001_HaveProviderControl_Password_5" class="editCtrCharNum_normal"></span
+				></span></td></tr
+		></table>
+		<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=0 border=0
+			><tr><td id="Rent001_HaveProviderControl_Continue" class="buttonCtr140_normal">Continue</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
 </div>
 
 <!-- *********************************************************************** -->

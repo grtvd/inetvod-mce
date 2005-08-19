@@ -318,6 +318,17 @@ function arrayIndexOfByCmpr(arr, itemComparer)
 
 /******************************************************************************/
 
+function arrayFindItemByCmpr(arr, itemComparer)
+{
+	for(var i = 0; i < arr.length; i++)
+		if(itemComparer.compare(arr[i]) == 0)
+			return arr[i];
+
+	return null;
+}
+
+/******************************************************************************/
+
 function arrayRemoveByCmpr(arr, itemComparer)
 {
 	var pos = arrayIndexOfByCmpr(arr, itemComparer);

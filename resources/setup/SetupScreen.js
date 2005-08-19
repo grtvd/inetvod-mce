@@ -6,9 +6,9 @@
 SetupScreen.ScreenID = "Setup001";
 
 /* SetupStep */
-var ss_AskSignupStep = 0;
+var ss_AskSignedUpStep = 0;
 var ss_NeedLogonIDStep = 1;
-var ss_HaveLogonIDStep =2;
+var ss_HaveLogonIDStep = 2;
 
 /******************************************************************************/
 
@@ -17,7 +17,7 @@ SetupScreen.newInstance = function()
 	var oScreen = new SetupScreen();
 
 	MainApp.getThe().openScreen(oScreen);
-	oScreen.openStep(ss_AskSignupStep);
+	oScreen.openStep(ss_AskSignedUpStep);
 
 	return oScreen;
 }
@@ -37,7 +37,7 @@ function SetupScreen()
 
 	this.fStepControlID = AskSignedUpControl.ControlID;
 	this.fSetupData = new SetupData();
-	this.fCurStep = ss_AskSignupStep;
+	this.fCurStep = ss_AskSignedUpStep;
 }
 
 /******************************************************************************/
@@ -48,7 +48,7 @@ function SetupScreen()
 
 	switch(step)
 	{
-		case ss_AskSignupStep:
+		case ss_AskSignedUpStep:
 		default:
 			oContainerControl = AskSignedUpControl.newInstance();
 			break;
@@ -81,7 +81,7 @@ function SetupScreen()
 	}
 
 	oContainerControl.show(false);
-	this.fContainerControl.deleteControl(this.fStepControlID);
+	this.deleteControl(this.fStepControlID);
 	return true;
 }
 
@@ -94,14 +94,14 @@ function SetupScreen()
 		if(this.fCurStep == ss_NeedLogonIDStep)
 		{
 			if(this.closeStep(false))
-				this.openStep(ss_AskSignupStep);
+				this.openStep(ss_AskSignedUpStep);
 
 			return true;
 		}
 		else if(this.fCurStep == ss_HaveLogonIDStep)
 		{
 			if(this.closeStep(false))
-				this.openStep(ss_AskSignupStep);
+				this.openStep(ss_AskSignedUpStep);
 
 			return true;
 		}
@@ -114,7 +114,7 @@ function SetupScreen()
 
 /*void*/ SetupScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(this.fCurStep == ss_AskSignupStep)
+	if(this.fCurStep == ss_AskSignedUpStep)
 	{
 		if(controlID == AskSignedUpControl.NotRegisteredID)
 		{
