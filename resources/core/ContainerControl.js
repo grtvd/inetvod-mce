@@ -154,6 +154,22 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 
 /******************************************************************************/
 
+/*boolean*/ ContainerControl.prototype.hasFocus = function()
+{
+	var oControl;
+
+	for(var i = 0; i < this.fControlArray.length; i++)
+	{
+		oControl = this.fControlArray[i];
+		if(oControl.hasFocus())
+			return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
 /*void*/ ContainerControl.prototype.setFocus = function(/*boolean*/ set, /*string*/ controlID)
 {
 	var oControl;
@@ -308,10 +324,11 @@ function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*
 			{
 				var oFocusedControl = this.findFocusedControl();
 
-				if((oFocusedControl == null) || (oFocusedControl.ControlID
-					!= oControl.ControlID))
+				if(!oControl.hasFocus() || (oFocusedControl == null)
+					|| (oFocusedControl.ControlID != oControl.ControlID))
 				{
-					if(oFocusedControl != null)
+					if((oFocusedControl != null)
+							&& (oFocusedControl.ControlID != oControl.ControlID))
 						oFocusedControl.setFocus(false);
 
 					this.fFocusedControlPos = i;

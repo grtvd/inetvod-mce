@@ -31,6 +31,10 @@ function Control()
 
 /******************************************************************************/
 
+/*boolean*/ Control.prototype.hasFocus = function() { return this.fFocused; }
+
+/******************************************************************************/
+
 /*void*/ Control.prototype.setFocus = function(/*boolean*/ set)
 {
 }
