@@ -22,7 +22,6 @@ function ShowDetail(reader)
 	this.IsAdult = false;
 
 	this.ShowCost = null;
-	this.RentalHours = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -49,7 +48,6 @@ function ShowDetail(reader)
 	this.IsAdult = reader.readBoolean("IsAdult");
 
 	this.ShowCost = reader.readObject("ShowCost", ShowCost);
-	this.RentalHours = reader.readShort("RentalHours");
 }
 
 /******************************************************************************/

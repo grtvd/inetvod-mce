@@ -106,7 +106,7 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	this.fContainerControl.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentalHoursID, this.ScreenID);
-	oControl.setText(this.fRentedShow.RentalHours + " hrs.");
+	oControl.setText(this.fRentedShow.ShowCost.RentalHours + " hrs.");
 	this.fContainerControl.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentedOnID, this.ScreenID);

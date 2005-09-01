@@ -102,7 +102,7 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	this.fContainerControl.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.RentalHoursID, this.ScreenID);
-	oControl.setText(this.fShowDetail.RentalHours + " hrs.");
+	oControl.setText(this.fShowDetail.ShowCost.RentalHours + " hrs.");
 	this.fContainerControl.newControl(oControl);
 
 	if(ViewPortControl.isOpen())

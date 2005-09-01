@@ -24,7 +24,6 @@ function RentedShow(reader)
 	this.IsAdult = false;
 
 	this.ShowCost = null;
-	this.RentalHours = null;
 	this.RentedOn = null;
 	this.AvailableUntil = null;
 
@@ -55,7 +54,6 @@ function RentedShow(reader)
 	this.IsAdult = reader.readBoolean("IsAdult");
 
 	this.ShowCost = reader.readObject("ShowCost", ShowCost);
-	this.RentalHours = reader.readShort("RentalHours");
 	this.RentedOn = reader.readDateTime("RentedOn");
 	this.AvailableUntil = reader.readDateTime("AvailableUntil");
 }
