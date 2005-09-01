@@ -23,7 +23,7 @@ HaveProviderControl.newInstance = function()
 	containerControl.newControl(oControl);
 	oControl.MaxLength = 64;
 	oControl = new EditControl(HaveProviderControl.PasswordID, RentScreen.ScreenID, 6);
-	oControl.MaxLength = 32;
+	oControl.MaxLength = 16;
 	containerControl.newControl(oControl);
 
 	containerControl.newControl(new ButtonControl(HaveProviderControl.ContinueID, RentScreen.ScreenID));
