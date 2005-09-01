@@ -226,6 +226,8 @@ function Session()
 	var signonRqst;
 	var signonResp;
 
+	//TODO: encrypt UserID and Password
+
 	signonRqst = SignonRqst.newInstance();
 	signonRqst.UserID = this.fUserID;
 	signonRqst.Password = this.fUserPassword;
