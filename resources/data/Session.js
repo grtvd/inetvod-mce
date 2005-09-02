@@ -43,6 +43,12 @@ function Session()
 
 /*boolean*/ Session.prototype.loadAppSettings = function()
 {
+	this.fPlayer = Player.newInstance();
+
+	this.fPlayer.ManufacturerID = "inetvod";
+	this.fPlayer.ModelNo = "mce";
+	this.fPlayer.SerialNo = "9876543210";
+	this.fPlayer.Version = "0.0.0001";
 }
 
 /******************************************************************************/
