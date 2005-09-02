@@ -21,7 +21,7 @@ function ShowDetail(reader)
 	this.RatingID = null;
 	this.IsAdult = false;
 
-	this.ShowCost = null;
+	this.ShowCostList = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -47,7 +47,7 @@ function ShowDetail(reader)
 	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
 	this.IsAdult = reader.readBoolean("IsAdult");
 
-	this.ShowCost = reader.readObject("ShowCost", ShowCost);
+	this.ShowCostList = reader.readList("ShowCost", ShowCost);
 }
 
 /******************************************************************************/

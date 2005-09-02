@@ -97,12 +97,14 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(oSession.getProviderName(this.fShowDetail.ProviderID));
 	this.fContainerControl.newControl(oControl);
 
+	var showCost = this.fShowDetail.ShowCostList[0];	//TODO: Need to deal with multiple
+
 	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
-	oControl.setText(this.fShowDetail.ShowCost.CostDisplay);
+	oControl.setText(showCost.CostDisplay);
 	this.fContainerControl.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.RentalHoursID, this.ScreenID);
-	oControl.setText(this.fShowDetail.ShowCost.RentalHours + " hrs.");
+	oControl.setText(showCost.RentalHours + " hrs.");
 	this.fContainerControl.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
