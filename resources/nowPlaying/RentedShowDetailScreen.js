@@ -147,7 +147,7 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 		}
 
 		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
-		oControl.playVideo(watchShowResp.ShowURL);
+		oControl.playVideo(watchShowResp.License.ShowURL);
 		return;
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
