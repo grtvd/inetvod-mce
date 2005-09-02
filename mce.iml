@@ -6,7 +6,12 @@
     <exclude-output />
     <exploded url="file://$MODULE_DIR$/exploded" />
     <exclude-exploded />
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/resources/images/Hold.nosvn" />
+      <excludeFolder url="file://$MODULE_DIR$/resources/images/Look1.nosvn" />
+      <excludeFolder url="file://$MODULE_DIR$/resources/images/Mathias1.nosvn" />
+      <excludeFolder url="file://$MODULE_DIR$/resources/images/source" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Tomcat 5.0" level="application_server_libraries" />
@@ -16,7 +21,7 @@
     <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/exploded" />
     <setting name="EXPLODED_ENABLED" value="false" />
     <setting name="JAR_URL" value="file://$MODULE_DIR$/mce.war" />
-    <setting name="JAR_ENABLED" value="true" />
+    <setting name="JAR_ENABLED" value="false" />
     <setting name="SYNC_EXPLODED_DIR" value="true" />
     <setting name="BUILD_ON_FRAME_DEACTIVATION" value="false" />
     <setting name="RUN_JASPER_VALIDATION" value="false" />

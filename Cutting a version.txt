@@ -1,0 +1,24 @@
+* mce
+
+- In IDEA
+	- Open mce.ipr
+	- Open "Settings -> Paths -> J2EE Build Settings"
+		- Check "Create web modeule jar file"
+	- Run "Build -> Rebuild Project"
+	- Will create "C:\projects\iNetVOD\webapi\trunk\mce.war"
+	- Open "Settings -> Paths -> J2EE Build Settings"
+		- Unheck "Create web modeule jar file"
+	- Close IDEA
+
+- NOTE: a bunch of extra files are added to WAR file (.svn folders, images), can use WinZip to remove.
+
+- Commit all changed files, use label: "mce: Cut version CCYY-MM-DD."
+
+
+- Deploy to Server
+	- In Firefox, open: http://api.inetvod.com/manager/html
+
+	- In "Applications" section, Undeploy "mce"
+
+	- In "Deploy:WAR file to deploy", specify WAR file as:
+		- C:\projects\iNetVOD\mce\trunk\mce.war
