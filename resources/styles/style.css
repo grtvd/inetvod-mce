@@ -33,14 +33,14 @@ body
 .textCtr
 {
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 }
 .textSmallWrapCtr
 {
 	font-weight: normal;
-	font-size: 16pt;
+	font-size: 18pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	overflow: hidden;
@@ -48,7 +48,7 @@ body
 .textSmallCtr
 {
 	font-weight: normal;
-	font-size: 16pt;
+	font-size: 18pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	overflow: hidden;
@@ -58,7 +58,7 @@ body
 .textLbl
 {
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: right;
@@ -69,7 +69,7 @@ body
 .textSmallLbl
 {
 	font-weight: normal;
-	font-size: 16pt;
+	font-size: 18pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: right;
@@ -83,9 +83,9 @@ body
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
-	color: yellow;
+	color: #9AB4D7;
 	text-align: left;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -98,7 +98,7 @@ body
 	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -110,7 +110,7 @@ body
 	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -126,7 +126,7 @@ body
 	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -138,7 +138,7 @@ body
 	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -156,7 +156,7 @@ body
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	overflow: hidden;
@@ -178,12 +178,6 @@ body
 	behavior: url(styles/controls.htc);
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrPrevNormal.gif);
 	cursor: hand;
 }
@@ -192,12 +186,6 @@ body
 	behavior: url(styles/controls.htc);
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrPrevHilite.gif);
 	cursor: hand;
 }
@@ -205,12 +193,6 @@ body
 {
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrPrevDisabled.gif);
 }
 .listCtrNext_normal
@@ -218,12 +200,6 @@ body
 	behavior: url(styles/controls.htc);
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrNextNormal.gif);
 	cursor: hand;
 }
@@ -232,12 +208,6 @@ body
 	behavior: url(styles/controls.htc);
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrNextHilite.gif);
 	cursor: hand;
 }
@@ -245,39 +215,33 @@ body
 {
 	width: 52px;
 	height: 52px;
-	font-weight: bold;
-	font-size: 20pt;
-	font-family : Verdana, Arial, Helvetica;
-	text-align: center;
-	vertical-align: middle;
-	color: #F0F0F0;
 	background-image: url(../images/listCtrNextDisabled.gif);
 }
 
-.buttonCtr140_normal
+.buttonCtr180_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 140px;
+	width: 180px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 18pt;
+	font-size: 22pt;
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: center;
-	background-image: url(../images/buttonCtr140Normal.gif);
+	background-image: url(../images/buttonCtr180Normal.gif);
 	cursor: hand;
 }
-.buttonCtr140_hilite
+.buttonCtr180_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 140px;
+	width: 180px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 18pt;
+	font-size: 22pt;
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: center;
-	background-image: url(../images/buttonCtr140Hilite.gif);
+	background-image: url(../images/buttonCtr180Hilite.gif);
 	cursor: hand;
 }
 
@@ -288,7 +252,7 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -302,7 +266,7 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -317,11 +281,12 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
 	background-image: url(../images/buttonCtr438Normal.gif);
+	/*filter: alpha(opacity=70);*/
 	cursor: hand;
 }
 .buttonCtr438_hilite
@@ -331,11 +296,12 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
 	background-image: url(../images/buttonCtr438Hilite.gif);
+	/*filter: alpha(opacity=70);*/
 	cursor: hand;
 }
 
@@ -346,7 +312,7 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -360,7 +326,7 @@ body
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
@@ -372,7 +338,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 225px;
-	height: 50px;
+	height: 54px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr225Normal.gif);
@@ -382,7 +348,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 225px;
-	height: 50px;
+	height: 54px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr225Hilite.gif);
@@ -393,7 +359,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 150px;
-	height: 50px;
+	height: 54px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr150Normal.gif);
@@ -404,7 +370,7 @@ body
 {
 	behavior: url(styles/controls.htc);
 	width: 150px;
-	height: 50px;
+	height: 54px;
 	padding: 9px;
 	overflow: hidden;
 	background-image: url(../images/editCtr150Hilite.gif);
@@ -415,9 +381,9 @@ body
 .editCtrCharNum_normal
 {
 	width: 22px;
-	height: 32px;
+	height: 36px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #0F0F0F;
 	background-color: #F0F0F0;
@@ -429,9 +395,9 @@ body
 .editCtrCharNum_hilite
 {
 	width: 22px;
-	height: 32px;
+	height: 36px;
 	font-weight: bold;
-	font-size: 20pt;
+	font-size: 22pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	background-color: #0E4C97;

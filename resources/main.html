@@ -114,26 +114,17 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="StartUp001" style="position:absolute; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="StartUp001_Text" class="textCtr">
-		Welcome to the iNetVOD Media Player demo. This player is a reference
-		implementation of the iNetVOD user interface for TV-connected devices,
-		accessing the iNetVOD Service across the Internet using the
-		iNetVOD Player API. Navigation is performed using the keyboard to simulate
-		remote control commands. The following commands are supported:<br><br>
-		Arrow Keys - Navigate between the controls<br>
-		Enter - Select the focused control<br>
-		Backspace - Return to the previous screen<br>
-		> - Next value (Edit/Select controls)<br>
-		< - Previous value (Edit/Select controls)<br>
-		Esc - Quit the Media Player
+		Welcome to iNetVOD!<br>
+		<br>
+		iNetVOD is a service for accessing a vast array of
+		Internet-based content, such as movies, TV shows, and radio programs.
 	</td></tr>
-</table>
-
-<table cellpadding=0 cellspacing=0 border=0 width=964 height=200>
+	<tr><td height=100><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
 	<tr><td align="center" valign="bottom"
 		><table cellpadding=0 cellspacing=0 border=0><tr
-			><td id="StartUp001_Start" class="buttonCtr140_normal">Start</td
+			><td id="StartUp001_Start" class="buttonCtr180_normal">Start</td
 		></tr></table
 	></td></tr>
 </table>
@@ -146,7 +137,6 @@ function init()
 <table cellpadding=0 cellspacing=0 border=0 width=624>
 	<tr><td class="textCtr">
 		Please enter your PIN:<br>
-		<br>
 		<br>
 	</td></tr>
 	<tr><td align="center"
@@ -167,7 +157,7 @@ function init()
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=0 border=0
-			><tr><td id="Startup004_Continue" class="buttonCtr140_normal">Continue</td></tr
+			><tr><td id="Startup004_Continue" class="buttonCtr180_normal">Continue</td></tr
 		></table
 	></td></tr>
 </table>
@@ -179,13 +169,12 @@ function init()
 <div id="Setup001" style="position:absolute; display:none">
 
 <div id="Setup001_AskSignedUpControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=864>
 	<tr><td id="Setup001_AskSignedUpControl_WelecomeText" class="textCtr">
-		Welcome to iNetVOD! iNetVOD is a service for accessing a vast array of
-		Internet-based content, such as movies, TV shows, and radio programs.<br>
+		Use of iNetVOD requires a FREE one-time registration before accessing the service.<br>
 		<br>
 		<br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Are you already registered with iNetVOD?<br>
+		Are you already registered with iNetVOD?<br>
 		<br>
 	</td></tr>
 	<tr><td align="center"
@@ -200,7 +189,7 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="Setup001_NeedLogonIDControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=864>
 	<tr><td id="Setup001_NeedLogonIDControl_RegisterText" class="textCtr">
 		You may register for iNetVOD by visiting www.iNetVOD.com/register or by
 		calling 1-800-999-9999.<br>
@@ -220,7 +209,7 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="Setup001_HaveLogonIDControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=864>
 	<tr><td id="Setup001_HaveLogonIDControl_DescriptionID" class="textCtr">
 		Please enter your registered Logon ID and your chosen PIN:<br>
 		<br>
@@ -228,7 +217,7 @@ function init()
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=6 border=0
-			><tr><td class="textLbl" >Logon ID:</td
+			><tr><td class="textLbl">Logon ID:</td
 				><td><span id="Setup001_HaveLogonIDControl_Logon" class="editCtr225_normal"
 					><span id="Setup001_HaveLogonIDControl_Logon_0" class="editCtrCharNum_normal"></span
 					><span id="Setup001_HaveLogonIDControl_Logon_1" class="editCtrCharNum_normal"></span
@@ -240,7 +229,7 @@ function init()
 					><span id="Setup001_HaveLogonIDControl_Logon_7" class="editCtrCharNum_normal"></span
 					><span id="Setup001_HaveLogonIDControl_Logon_8" class="editCtrCharNum_normal"></span
 				></span></td></tr
-			><tr><td class="textLbl" >PIN:</td
+			><tr><td class="textLbl">PIN:</td
 				><td><span id="Setup001_HaveLogonIDControl_PIN" class="editCtr150_normal"
 					><span id="Setup001_HaveLogonIDControl_PIN_0" class="editCtrCharNum_normal"></span
 					><span id="Setup001_HaveLogonIDControl_PIN_1" class="editCtrCharNum_normal"></span
@@ -257,7 +246,7 @@ function init()
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=0 border=0
-			><tr><td id="Setup001_HaveLogonIDControl_Continue" class="buttonCtr140_normal">Continue</td></tr
+			><tr><td id="Setup001_HaveLogonIDControl_Continue" class="buttonCtr180_normal">Continue</td></tr
 		></table
 	></td></tr>
 </table>
@@ -294,8 +283,8 @@ function init()
 <table cellpadding=0 cellspacing=6 border=0 width=964>
 	<tr><td
 		><span class="listCtrHeader" style="width: 522;">Show</span
-		><span class="listCtrHeader" style="width: 90;">Date</span
-		><span class="listCtrHeader" style="width: 220;">Provider</span
+		><span class="listCtrHeader" style="width: 95;">Date</span
+		><span class="listCtrHeader" style="width: 215;">Provider</span
 		><span class="listCtrHeader" style="width: 120;">Price</span
 		></td>
 	</tr>
@@ -521,7 +510,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=0 border=0
-			><tr><td id="Rent001_HaveProviderControl_Continue" class="buttonCtr140_normal">Continue</td></tr
+			><tr><td id="Rent001_HaveProviderControl_Continue" class="buttonCtr180_normal">Continue</td></tr
 		></table
 	></td></tr>
 </table>
@@ -593,7 +582,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 
 <!-- *********************************************************************** -->
 
-<div id="Show002_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
+<div id="Show002_NoShowsText" class="textCtr" style="position:relative; left:100; top:80; width:764; display:none">
 Your Now Playing list is empty. Shows that you rent will be listed here.<br>
 <br>
 It is a good idea to rent multiple shows at a time. This will allow new shows to
@@ -651,7 +640,7 @@ be downloaded while your are watching another show.
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
 
-<div id="SVP" style="position:absolute; left:0; top:574; width:274; height:194; background-color: #0F0F0F">
+<div id="SVP" style="display:inline; position:absolute; left:0; top:574; width:274; height:194; background-color: #0F0F0F">
 <div style="position:relative; left:43; top:0; width:227; height:176; background-color: #FF0000;">
 </div>
 </div>

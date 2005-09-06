@@ -33,7 +33,7 @@ function SetupScreen()
 {
 	this.ScreenID = SetupScreen.ScreenID;
 
-	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
+	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 
 	this.fStepControlID = AskSignedUpControl.ControlID;
 	this.fSetupData = new SetupData();

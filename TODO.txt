@@ -1,3 +1,5 @@
+When a exception is raised on the server and the full response is not returned, MCE is throwing an exepction message (not just the message returned from the server).
+
 NowPlayingList needs to handle deletion of show.
 
 ShowCost should include RentalHours

@@ -28,7 +28,7 @@ function AskPINScreen()
 
 	this.ScreenID = AskPINScreen.ScreenID;
 
-	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 150);
+	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
 	oControl = new EditControl(AskPINScreen.PINID, this.ScreenID, 6);
 	this.fContainerControl.newControl(oControl);
 	oControl.MaxLength = 6;

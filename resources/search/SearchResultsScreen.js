@@ -27,8 +27,8 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 522));
-	oRowItemList.push(new ListControlRowItem("Year", 90));
-	oRowItemList.push(new ListControlRowItem("Provider", 220));
+	oRowItemList.push(new ListControlRowItem("Year", 95));
+	oRowItemList.push(new ListControlRowItem("Provider", 215));
 	oRowItemList.push(new ListControlRowItem("Cost", 120));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
