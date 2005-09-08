@@ -68,6 +68,28 @@ function DoScale()
 }
 
 /******************************************************************************/
+
+function DoShowSVP(show)
+{
+	var oDiv = document.getElementById("SVP");
+	var oLink = document.getElementById("ShowSVPLink");
+
+	if(show == undefined)
+		show = oDiv.style.display == "none";
+
+	if(show)
+	{
+		oDiv.style.display = "inline";
+		oLink.innerHTML = "Hide SVP";
+	}
+	else
+	{
+		oDiv.style.display = "none";
+		oLink.innerHTML = "Show SVP";
+	}
+}
+
+/******************************************************************************/
 /******************************************************************************/
 
 MainApp.getThe = function()
@@ -104,7 +126,12 @@ function MainApp()
 	this.fMainTable = document.getElementById("MainTable");
 
 	if(!window.external.MediaCenter)
+	{
+		DoShowSVP(false);
+		document.getElementById("ShowSVPDiv").style.display = "inline";
+		DoScale();
 		document.getElementById("ScaleDiv").style.display = "inline";
+	}
 
 	StartScreen.newInstance();
 }
@@ -210,7 +237,12 @@ function MainApp()
 	var newScale = "";
 
 	if(document.body.style.zoom.length == 0)
-		newScale = document.body.getBoundingClientRect().right / 1024;
+	{
+		var horzScale = document.body.getBoundingClientRect().right / 1024;
+		var vertScale = document.body.getBoundingClientRect().bottom / 768;
+
+		newScale = (horzScale > vertScale) ? vertScale : horzScale;
+	}
 
 	onScaleEvent(newScale);
 	this.onResize();
