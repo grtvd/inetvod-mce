@@ -128,7 +128,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /*boolean*/ RentScreen.prototype.key = function(/*int*/ key)
 {
-	if(key == ek_Back)
+	if((key == ek_Back) || (key == ek_Backspace))
 	{
 		if(this.fCurStep == ss_AskHaveProviderStep)
 		{

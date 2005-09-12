@@ -89,7 +89,7 @@ function SetupScreen()
 
 /*boolean*/ SetupScreen.prototype.key = function(/*int*/ key)
 {
-	if(key == ek_Back)
+	if((key == ek_Back) || (key == ek_Backspace))
 	{
 		if(this.fCurStep == ss_NeedLogonIDStep)
 		{
