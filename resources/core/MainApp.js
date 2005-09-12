@@ -73,6 +73,8 @@ function DoShowSVP(show)
 {
 	var oDiv = document.getElementById("SVP");
 	var oLink = document.getElementById("ShowSVPLink");
+	var oBlockTop = document.getElementById("MCEBlock_Top");
+	var oBlockBottom = document.getElementById("MCEBlock_Bottom");
 
 	if(show == undefined)
 		show = oDiv.style.display == "none";
@@ -81,11 +83,15 @@ function DoShowSVP(show)
 	{
 		oDiv.style.display = "inline";
 		oLink.innerHTML = "Hide SVP";
+		oBlockTop.style.display = "inline";
+		oBlockBottom.style.display = "inline";
 	}
 	else
 	{
 		oDiv.style.display = "none";
 		oLink.innerHTML = "Show SVP";
+		oBlockTop.style.display = "none";
+		oBlockBottom.style.display = "none";
 	}
 }
 
