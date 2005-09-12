@@ -7,6 +7,7 @@
 <script language="javascript" src="core/Debugger.js"></script>
 <script language="javascript" src="core/DateTimeUtil.js"></script>
 <script language="javascript" src="core/Cookie.js"></script>
+<script language="javascript" src="core/NameValuePair.js"></script>
 <script language="javascript" src="core/Money.js"></script>
 <script language="javascript" src="core/MainApp.js"></script>
 <script language="javascript" src="core/Screen.js"></script>
@@ -24,6 +25,7 @@
 <script language="javascript" src="core/XmlDataWriter.js"></script>
 <script language="javascript" src="core/WaitScreen.js"></script>
 
+<script language="javascript" src="controls/TextListControl.js"></script>
 <script language="javascript" src="controls/ShowSearchListControl.js"></script>
 <script language="javascript" src="controls/ShowProviderListControl.js"></script>
 <script language="javascript" src="controls/RentedShowListControl.js"></script>
@@ -95,6 +97,7 @@
 <script language="javascript" src="setup/NeedLogonIDControl.js"></script>
 <script language="javascript" src="setup/HaveLogonIDControl.js"></script>
 
+<script language="javascript" src="search/CategorySearchScreen.js"></script>
 <script language="javascript" src="search/SearchScreen.js"></script>
 <script language="javascript" src="search/SearchData.js"></script>
 <script language="javascript" src="search/SearchResultsScreen.js"></script>
@@ -285,6 +288,67 @@ function init()
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
 
+<div id="Search010" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0>
+	<tr><td width=344 class="textCtr" valign="top">Please select which Category you would like to search:</td
+		><td width=30><img src="images/spacer.gif" border=0 width=1 height=1></td
+		><td width=438 align="right"
+			><table id=Search010_Categories cellpadding=0 cellspacing=0 border=0>
+				<tr><td>
+					<table cellpadding=0 cellspacing=6 border=0>
+						<tr><td id="Search010_Categories_0" class="listCtrRow438_normal"
+							><span id="Search010_Categories_0_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search010_Categories_1" class="listCtrRow438_normal"
+							><span id="Search010_Categories_1_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search010_Categories_2" class="listCtrRow438_normal"
+							><span id="Search010_Categories_2_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search010_Categories_3" class="listCtrRow438_normal"
+							><span id="Search010_Categories_3_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search010_Categories_4" class="listCtrRow438_normal"
+							><span id="Search010_Categories_4_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search010_Categories_5" class="listCtrRow438_normal"
+							><span id="Search010_Categories_5_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						</tr>
+						<tr><td id="Search010_Categories_6" class="listCtrRow438_normal"
+							><span id="Search010_Categories_6_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						</tr>
+						<tr><td id="Search010_Categories_7" class="listCtrRow438_normal"
+							><span id="Search010_Categories_7_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+					</table
+				></td></tr>
+				<tr><td align="right"
+					><table cellpadding=0 cellspacing=5 border=0>
+						<tr><td id="Search010_Categories_Count" class="listCtrCount">0 of 0</td
+							><td width=5><img src="images/spacer.gif" border=0 width=1 height=1></td
+							><td id="Search010_Categories_Up" class="listCtrPrev_normal"></td
+							><td id="Search010_Categories_Down" class="listCtrNext_normal"></td
+						></tr>
+					</table
+				></td></tr>
+			</table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
 <div id="Search003" style="position:absolute; display:none">
 <div id="Search003_ShowList" style="position:relative; display:inline">
 <table cellpadding=0 cellspacing=6 border=0 width=964>
@@ -370,7 +434,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 	<tr><td align="center"
 		><table id=Search009_ProviderList cellpadding=0 cellspacing=0 border=0>
 			<tr><td>
-				<table id=Search009_ProviderList cellpadding=0 cellspacing=6 border=0>
+				<table cellpadding=0 cellspacing=6 border=0>
 					<tr><td
 						><span class="listCtrHeader" style="width: 318;">Provider</span
 						><span class="listCtrHeader" style="width: 120;">Price</span

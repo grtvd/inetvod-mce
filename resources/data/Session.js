@@ -107,6 +107,13 @@ function Session()
 
 /******************************************************************************/
 
+/*CategoryList*/ Session.prototype.getCategoryList = function()
+{
+	return this.fCategoryList;
+}
+
+/******************************************************************************/
+
 /*string*/ Session.prototype.getCategoryName = function(/*string*/ categoryID)
 {
 	if(categoryID == Category.AllCategoriesID)
