@@ -3,6 +3,17 @@
 /******************************************************************************/
 /******************************************************************************/
 
+MemberProvider.newInstance = function(/*string*/ providerID)
+{
+	var oMemberProvider = new MemberProvider();
+
+	oMemberProvider.ProviderID = providerID;
+
+	return oMemberProvider;
+}
+
+/******************************************************************************/
+
 function MemberProvider(reader)
 {
 	this.ProviderID = null;

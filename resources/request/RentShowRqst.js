@@ -1,40 +1,36 @@
-/* RentData.js */
+/* RentShowRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function RentData(/*ShowDetail*/ oShowDetail)
+RentShowRqst.newInstance = function()
 {
-	var oSession = MainApp.getThe().getSession();
-
-	this.ShowDetail = oShowDetail;
-	this.Provider = oSession.getProvider(oShowDetail.ProviderID);
-
-	this.UserID = null;
-	this.Password = null;
-
-	this.ShowCost = null;
+	return new RentShowRqst();
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getShowID = function()
+function RentShowRqst()
 {
-	return this.ShowDetail.ShowID;
+	this.ShowID = null;
+	this.ProviderID = null;
+	this.ApprovedCost = null;
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getProviderID = function()
+/*string*/ RentShowRqst.prototype.className = function()
 {
-	return this.Provider.ProviderID;
+	return "RentShowRqst";
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getProviderName = function()
+/*void*/ RentShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	return this.Provider.Name;
+	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+	writer.writeObject("ApprovedCost", this.ApprovedCost);
 }
 
 /******************************************************************************/

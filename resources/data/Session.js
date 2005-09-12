@@ -417,8 +417,38 @@ function Session()
 
 /*StatusCode*/ Session.prototype.providerEnroll = function(/*string*/ providerID)
 {
-	showMsg("Session.providerEnroll: to-do");
-	return sc_Success;
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var providerEnrollRqst;
+
+	providerEnrollRqst = ProviderEnrollRqst.newInstance();
+	providerEnrollRqst.ProviderID = providerID;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		statusCode = dataRequestor.providerEnrollRequest(providerEnrollRqst);
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+		{
+			this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
+			return statusCode;
+		}
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.providerEnroll", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return statusCode;
 }
 
 /******************************************************************************/
@@ -426,8 +456,43 @@ function Session()
 /*StatusCode*/ Session.prototype.setProvider = function(/*string*/ providerID,
 	/*string*/ userID, /*string*/ password)
 {
-	showMsg("Session.setProvider: to-do");
-	return sc_Success;
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var setProviderRqst;
+
+	//TODO: encrypt UserID and Password
+
+	setProviderRqst = SetProviderRqst.newInstance();
+	setProviderRqst.ProviderID = providerID;
+	setProviderRqst.UserID = userID;
+	setProviderRqst.Password = password;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		statusCode = dataRequestor.setProviderRequest(setProviderRqst);
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+		{
+			if(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(providerID)) == null)
+				this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
+			return statusCode;
+		}
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.setProvider", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return statusCode;
 }
 
 /******************************************************************************/
@@ -435,8 +500,38 @@ function Session()
 /*CheckShowAvailResp*/ Session.prototype.checkShowAvail = function(/*string*/ showID,
 	/*string*/ providerID, /*StatusCode reference*/ statusCodeRef)
 {
-	showMsg("Session.checkShowAvail: to-do");
-	statusCodeRef.value = sc_InvalidProviderUserIDPassword;
+	var statusMessage = null;
+
+	statusCodeRef.value = sc_GeneralError;
+
+	var checkShowAvailRqst;
+	var checkShowAvailResp;
+
+	checkShowAvailRqst = CheckShowAvailRqst.newInstance();
+	checkShowAvailRqst.ShowID = showID;
+	checkShowAvailRqst.ProviderID = providerID;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		checkShowAvailResp = dataRequestor.checkShowAvailRequest(checkShowAvailRqst);
+		statusCodeRef.value = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCodeRef.value == sc_Success)
+			return checkShowAvailResp;
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.checkShowAvail", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
 	return null;
 }
 
@@ -445,7 +540,38 @@ function Session()
 /*RentShowResp*/ Session.prototype.rentShow = function(/*string*/ showID,
 	/*string*/ providerID, /*ShowCost*/ oApprovedCost)
 {
-	showMsg("Session.rentShow: to-do");
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var rentShowRqst;
+	var rentShowResp;
+
+	rentShowRqst = RentShowRqst.newInstance();
+	rentShowRqst.ShowID = showID;
+	rentShowRqst.ProviderID = providerID;
+	rentShowRqst.ApprovedCost = oApprovedCost;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		rentShowResp = dataRequestor.rentShowRequest(rentShowRqst);
+		statusCode = dataRequestor.getStatusCode();
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+			return rentShowResp;
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.rentShow", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
 	return null;
 }
 

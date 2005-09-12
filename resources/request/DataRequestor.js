@@ -49,7 +49,7 @@ function DataRequestor(/*string*/ sessionData)
 	//TODO: should we check StatusCode here?
 
 	if(isNull(response.ResponseData))
-		throw new Exception("DataRequestor.parseHeader", "response.getResponseData() is null");
+		throw "DataRequestor.parseHeader: response.getResponseData() is null";
 
 	return response.ResponseData.Response;
 }
@@ -113,16 +113,54 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*ShowSearchResp*/ DataRequestor.prototype.showSearchRequest = function(/*ShowSearchRqst*/ showSearchRqst)
+/*ShowSearchResp*/ DataRequestor.prototype.showSearchRequest = function(
+	/*ShowSearchRqst*/ showSearchRqst)
 {
 	return this.sendRequest(showSearchRqst);
 }
 
 /******************************************************************************/
 
-/*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(/*ShowDetailRqst*/ showDetailRqst)
+/*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(
+	/*ShowDetailRqst*/ showDetailRqst)
 {
 	return this.sendRequest(showDetailRqst);
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ DataRequestor.prototype.providerEnrollRequest = function(
+	/*ProviderEnrollRqst*/ providerEnrollRqst)
+{
+	var providerEnrollResp = this.sendRequest(providerEnrollRqst);
+
+	return this.fStatusCode;
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ DataRequestor.prototype.setProviderRequest = function(
+	/*SetProviderRqst*/ setProviderRqst)
+{
+	var setProviderResp = this.sendRequest(setProviderRqst);
+
+	return this.fStatusCode;
+}
+
+/******************************************************************************/
+
+/*CheckShowAvailResp*/ DataRequestor.prototype.checkShowAvailRequest = function(
+	/*CheckShowAvailRqst*/ checkShowAvailRqst)
+{
+	return this.sendRequest(checkShowAvailRqst);
+}
+
+/******************************************************************************/
+
+/*RentShowResp*/ DataRequestor.prototype.rentShowRequest = function(
+	/*RentShowRqst*/ rentShowRqst)
+{
+	return this.sendRequest(rentShowRqst);
 }
 
 /******************************************************************************/

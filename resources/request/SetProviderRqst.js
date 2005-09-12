@@ -1,41 +1,41 @@
-/* SignonRqst */
+/* SetProviderRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-SignonRqst.UserIDMaxLength = 128;
-SignonRqst.PasswordMaxLength = 32;
+SetProviderRqst.UserIDMaxLength = 128;
+SetProviderRqst.PasswordMaxLength = 32;
 
 /******************************************************************************/
 
-SignonRqst.newInstance = function()
+SetProviderRqst.newInstance = function()
 {
-	return new SignonRqst();
+	return new SetProviderRqst();
 }
 
 /******************************************************************************/
 
-function SignonRqst()
+function SetProviderRqst()
 {
+	this.ProviderID = null;
 	this.UserID = null;
 	this.Password = null;
-	this.Player = null;
 }
 
 /******************************************************************************/
 
-/*string*/ SignonRqst.prototype.className = function()
+/*string*/ SetProviderRqst.prototype.className = function()
 {
-	return "SignonRqst";
+	return "SetProviderRqst";
 }
 
 /******************************************************************************/
 
-/*void*/ SignonRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ SetProviderRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	writer.writeString("UserID", this.UserID, SignonRqst.UserIDMaxLength);
-	writer.writeString("Password", this.Password, SignonRqst.PasswordMaxLength);
-	writer.writeObject("Player", this.Player);
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+	writer.writeString("UserID", this.UserID, SetProviderRqst.UserIDMaxLength);
+	writer.writeString("Password", this.Password, SetProviderRqst.PasswordMaxLength);
 }
 
 /******************************************************************************/

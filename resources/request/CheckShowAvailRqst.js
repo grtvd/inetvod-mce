@@ -1,40 +1,34 @@
-/* RentData.js */
+/* CheckShowAvailRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function RentData(/*ShowDetail*/ oShowDetail)
+CheckShowAvailRqst.newInstance = function()
 {
-	var oSession = MainApp.getThe().getSession();
-
-	this.ShowDetail = oShowDetail;
-	this.Provider = oSession.getProvider(oShowDetail.ProviderID);
-
-	this.UserID = null;
-	this.Password = null;
-
-	this.ShowCost = null;
+	return new CheckShowAvailRqst();
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getShowID = function()
+function CheckShowAvailRqst()
 {
-	return this.ShowDetail.ShowID;
+	this.ShowID = null;
+	this.ProviderID = null;
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getProviderID = function()
+/*string*/ CheckShowAvailRqst.prototype.className = function()
 {
-	return this.Provider.ProviderID;
+	return "CheckShowAvailRqst";
 }
 
 /******************************************************************************/
 
-/*string*/ RentData.prototype.getProviderName = function()
+/*void*/ CheckShowAvailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	return this.Provider.Name;
+	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
 }
 
 /******************************************************************************/

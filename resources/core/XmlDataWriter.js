@@ -71,7 +71,7 @@ function XmlDataWriter()
 
 /*void*/ XmlDataWriter.prototype.writeShort = function(/*string*/ fieldName, /*int*/ data)
 {
-	if(isUndefined(data))
+	if(isNull(data) || isUndefined(data))
 		return;
 
 	this.writeElement(fieldName, data.toString());
@@ -82,7 +82,18 @@ function XmlDataWriter()
 
 /*void*/ XmlDataWriter.prototype.writeInt = function(/*string*/ fieldName, /*int*/ data)
 {
-	if(isUndefined(data))
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, data.toString());
+}
+
+/******************************************************************************/
+/* Write an Double */
+
+/*void*/ XmlDataWriter.prototype.writeDouble = function(/*string*/ fieldName, /*float*/ data)
+{
+	if(isNull(data) || isUndefined(data))
 		return;
 
 	this.writeElement(fieldName, data.toString());

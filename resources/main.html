@@ -67,6 +67,14 @@
 <script language="javascript" src="request/ShowSearchResp.js"></script>
 <script language="javascript" src="request/ShowDetailRqst.js"></script>
 <script language="javascript" src="request/ShowDetailResp.js"></script>
+<script language="javascript" src="request/ProviderEnrollRqst.js"></script>
+<script language="javascript" src="request/ProviderEnrollResp.js"></script>
+<script language="javascript" src="request/SetProviderRqst.js"></script>
+<script language="javascript" src="request/SetProviderResp.js"></script>
+<script language="javascript" src="request/CheckShowAvailRqst.js"></script>
+<script language="javascript" src="request/CheckShowAvailResp.js"></script>
+<script language="javascript" src="request/RentShowRqst.js"></script>
+<script language="javascript" src="request/RentShowResp.js"></script>
 <script language="javascript" src="request/RentedShowListRqst.js"></script>
 <script language="javascript" src="request/RentedShowListResp.js"></script>
 <script language="javascript" src="request/RentedShowRqst.js"></script>
@@ -98,6 +106,7 @@
 <script language="javascript" src="rent/AskHaveProviderControl.js"></script>
 <script language="javascript" src="rent/NeedProviderControl.js"></script>
 <script language="javascript" src="rent/HaveProviderControl.js"></script>
+<script language="javascript" src="rent/ConfirmChargeControl.js"></script>
 
 <script language="javascript" src="nowPlaying/NowPlayingScreen.js"></script>
 <script language="javascript" src="nowPlaying/RentedShowDetailScreen.js"></script>
@@ -169,18 +178,17 @@ function init()
 <div id="Setup001" style="position:absolute; display:none">
 
 <div id="Setup001_AskSignedUpControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=864>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Setup001_AskSignedUpControl_WelecomeText" class="textCtr">
 		Use of iNetVOD requires a FREE one-time registration before accessing the service.<br>
-		<br>
 		<br>
 		Are you already registered with iNetVOD?<br>
 		<br>
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=6 border=0
-			><tr><td id="Setup001_AskSignedUpControl_AlreadyRegistered" class="buttonCtr700_normal">Yes, I am already registered</td></tr
-			><tr><td id="Setup001_AskSignedUpControl_NotRegistered" class="buttonCtr700_normal">No, I am not yet registered</td></tr
+			><tr><td id="Setup001_AskSignedUpControl_AlreadyRegistered" class="buttonCtr600_normal">Yes, I am already registered</td></tr
+			><tr><td id="Setup001_AskSignedUpControl_NotRegistered" class="buttonCtr600_normal">No, I am not yet registered</td></tr
 		></table
 	></td></tr>
 </table>
@@ -189,7 +197,7 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="Setup001_NeedLogonIDControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=864>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Setup001_NeedLogonIDControl_RegisterText" class="textCtr">
 		You may register for iNetVOD by visiting www.iNetVOD.com/register or by
 		calling 1-800-999-9999.<br>
@@ -200,7 +208,7 @@ function init()
 	</td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=6 border=0
-			><tr><td id="Setup001_NeedLogonIDControl_HaveLogon" class="buttonCtr700_normal">I have my Logon ID</td></tr
+			><tr><td id="Setup001_NeedLogonIDControl_HaveLogon" class="buttonCtr600_normal">I have my Logon ID</td></tr
 		></table
 	></td></tr>
 </table>
@@ -209,10 +217,9 @@ function init()
 <!-- *********************************************************************** -->
 
 <div id="Setup001_HaveLogonIDControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=864>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Setup001_HaveLogonIDControl_DescriptionID" class="textCtr">
 		Please enter your registered Logon ID and your chosen PIN:<br>
-		<br>
 		<br>
 	</td></tr>
 	<tr><td align="center"
@@ -445,15 +452,15 @@ No shows were found matching your search criteria.  Please try again.<br>
 <div id="Rent001" style="position:absolute; display:none">
 
 <div id="Rent001_AskHaveProviderControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=1 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Rent001_AskHaveProviderControl_WelcomeText" class="textCtr"></td></tr>
 	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
 	<tr><td id="Rent001_AskHaveProviderControl_MembershipText" class="textCtr"></td></tr>
 	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=6 border=0
-			><tr><td id="Rent001_AskHaveProviderControl_HaveMembership" class="buttonCtr700_normal">Yes, I already have a membership</td></tr
-			><tr><td id="Rent001_AskHaveProviderControl_NeedMembership" class="buttonCtr700_normal">No, but please sign me up</td></tr
+			><tr><td id="Rent001_AskHaveProviderControl_HaveMembership" class="buttonCtr600_normal">Yes, I already have a membership</td></tr
+			><tr><td id="Rent001_AskHaveProviderControl_NeedMembership" class="buttonCtr600_normal">No, but please sign me up</td></tr
 		></table
 	></td></tr>
 </table>
@@ -462,7 +469,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 <!-- *********************************************************************** -->
 
 <div id="Rent001_NeedProviderControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=1 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Rent001_NeedProviderControl_MemberText" class="textCtr"></td></tr>
 	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
 	<tr><td id="Rent001_NeedProviderControl_PlanText" class="textCtr"></td></tr>
@@ -478,7 +485,7 @@ No shows were found matching your search criteria.  Please try again.<br>
 <!-- *********************************************************************** -->
 
 <div id="Rent001_HaveProviderControl" style="position:relative; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=964>
+<table cellpadding=0 cellspacing=0 border=0 width=764>
 	<tr><td id="Rent001_HaveProviderControl_Description" class="textCtr"></td></tr>
 	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
 	<tr><td align="center"
@@ -511,6 +518,23 @@ No shows were found matching your search criteria.  Please try again.<br>
 	<tr><td align="center"
 		><table cellpadding=0 cellspacing=0 border=0
 			><tr><td id="Rent001_HaveProviderControl_Continue" class="buttonCtr180_normal">Continue</td></tr
+		></table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+
+<div id="Rent001_ConfirmChargeControl" style="position:relative; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=764>
+	<tr><td id="Rent001_ConfirmChargeControl_ChargeText" class="textCtr"></td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td class="textCtr">Do you wish to proceed?</td></tr>
+	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1></td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td id="Rent001_ConfirmChargeControl_ChargeAccount" class="buttonCtr600_normal">Yes, charge my account</td></tr
+			><tr><td id="Rent001_ConfirmChargeControl_DontChargeAccount" class="buttonCtr600_normal">No, don't charge my account</td></tr
 		></table
 	></td></tr>
 </table>

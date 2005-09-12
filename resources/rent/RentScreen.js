@@ -35,7 +35,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 {
 	this.ScreenID = RentScreen.ScreenID;
 
-	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
+	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 
 	this.fStepControlID = AskHaveProviderControl.ControlID;
 	this.fRentData = new RentData(oShowDetail);
@@ -44,12 +44,26 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /******************************************************************************/
 
+/*void*/ RentScreen.prototype.close = function()
+{
+	if(this.fContainerControl != null)
+	{
+		var oContainerControl = this.fContainerControl.findControl(this.fStepControlID);
+		if(oContainerControl != null)
+			oContainerControl.show(false);
+	}
+	Screen.prototype.close.call(this);
+}
+
+/******************************************************************************/
+
 /*void*/ RentScreen.prototype.createControls = function()
 {
 	var oSession = MainApp.getThe().getSession();
 	var oShowDetail = this.fRentData.ShowDetail;
+	var oShowCost = oShowDetail.ShowCostList[0];	//TODO: is this OK to check "first" showCost as Free?
 
-	if((oShowDetail.ShowCost.ShowCostType == sct_Free) ||
+	if((oShowCost.ShowCostType == sct_Free) ||
 		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
 	{
 		var nextStep = this.checkShowAvail();
@@ -134,7 +148,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 			{
 				var oSession = MainApp.getThe().getSession();
 
-				if(oSession.isMemberOfProvider(this.fRentData.ProviderID))
+				if(oSession.isMemberOfProvider(this.fRentData.getProviderID()))
 					this.close();
 				else
 					this.openStep(ss_AskHaveProviderStep);
@@ -221,8 +235,8 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(controlID == ConfirmChargeControl.ChargeAccountID)
 		{
 			this.rentShow();
-			if(this.fRentedShowID)
-				this.close();
+			//if(this.fRentedShowID)
+			//	this.close();
 			return;
 		}
 		else if(controlID == ConfirmChargeControl.DontChargeAccountID)
@@ -244,15 +258,16 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	var statusCodeRef = new Object();
 	var statusCode;
 
-	oCheckShowAvailResp = oSession.checkShowAvail(this.fRentData.ShowID, this.fRentData.ProviderID,
-		statusCodeRef);
+	oCheckShowAvailResp = oSession.checkShowAvail(this.fRentData.getShowID(),
+		this.fRentData.getProviderID(), statusCodeRef);
 	statusCode = statusCodeRef.value;
 	if(statusCode == sc_InvalidProviderUserIDPassword)
 		return ss_HaveProviderStep;
 	if(statusCode != sc_Success)
 		return ss_Undefined;
 
-	var oShowCost = oCheckShowAvailResp.ShowCost;
+	var oShowCost = oCheckShowAvailResp.ShowCostList[0];	//TODO: If multiple, need to confirm rental period/cost with user
+
 	this.fRentData.ShowCost = oShowCost;
 	if(oShowCost.ShowCostType == sct_PayPerView)
 		return ss_ConfirmChargeStep;
@@ -268,10 +283,22 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	var oSession = MainApp.getThe().getSession();
 	var oRentShowResp;
 
-	oRentShowResp = oSession.rentShow(this.fRentData.ShowID, this.fRentData.ProviderID,
-		this.fRentData.ShowCost);
+	oRentShowResp = oSession.rentShow(this.fRentData.getShowID(),
+		this.fRentData.getProviderID(), this.fRentData.ShowCost);
 	if(oRentShowResp != null)
-		this.fRentedShowID = oRentShowResp.RentedShowID;
+	{
+		// close the SearchDetailScreen and this screen
+		var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
+		if(oScreen != null)
+			oScreen.close();
+		this.close();
+
+		// fetch the rentedShow and open the
+		var rentedShow = oSession.rentedShow(oRentShowResp.RentedShowID);
+		if(rentedShow != null)
+			RentedShowDetailScreen.newInstance(rentedShow);
+		//this.fRentedShowID = oRentShowResp.RentedShowID;
+	}
 }
 
 /******************************************************************************/
@@ -281,7 +308,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	var oSession = MainApp.getThe().getSession();
 	var statusCode;
 
-	statusCode = oSession.setProvider(this.fRentData.ShowDetail.ProviderID,
+	statusCode = oSession.setProvider(this.fRentData.getProviderID(),
 		this.fRentData.UserID, this.fRentData.Password);
 
 	return (statusCode == sc_Success);
@@ -295,7 +322,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	var statusCode;
 	var tempStr;
 
-	statusCode = oSession.providerEnroll(this.fRentData.ShowDetail.ProviderID);
+	statusCode = oSession.providerEnroll(this.fRentData.getProviderID());
 
 	if(statusCode == sc_Success)
 	{
@@ -304,9 +331,10 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		tempStr += "'s membership.";
 
 		showMsg(tempStr);
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 /******************************************************************************/

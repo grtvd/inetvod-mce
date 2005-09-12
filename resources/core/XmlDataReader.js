@@ -16,7 +16,7 @@ function XmlDataReader(xml)
 /*Node*/ XmlDataReader.prototype.findChildNode = function(/*string*/ fieldName)
 {
 	if(this.fCurNodeList.length == 0)
-		throw new Exception("No current node");
+		throw "XmlDataReader.findChildNode: No current node";
 
 	var nodeList = this.fCurNodeList[this.fCurNodeList.length - 1].childNodes;
 	var node;
@@ -36,7 +36,7 @@ function XmlDataReader(xml)
 /*Array*/ XmlDataReader.prototype.findChildNodes = function(/*string*/ fieldName)
 {
 	if(this.fCurNodeList.length == 0)
-		throw new Exception("No current node");
+		throw "XmlDataReader.findChildNodes: No current node";
 
 	var nodeList = this.fCurNodeList[this.fCurNodeList.length - 1].childNodes;
 	var nodes = new Array();
@@ -139,7 +139,7 @@ function XmlDataReader(xml)
 	var len = data.length;
 
 	if(len > maxLength)
-		throw new Exception("invalid len(" + len + "), maxLength(" + maxLength + ")");
+		throw "XmlDataReader.readString: invalid len(" + len + "), maxLength(" + maxLength + ")";
 
 	return data;
 }

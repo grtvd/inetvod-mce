@@ -305,10 +305,10 @@ body
 	cursor: hand;
 }
 
-.buttonCtr700_normal
+.buttonCtr600_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 680px;
+	width: 580px;
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
@@ -316,13 +316,13 @@ body
 	font-family: Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
-	background-image: url(../images/buttonCtr700Normal.gif);
+	background-image: url(../images/buttonCtr600Normal.gif);
 	cursor: hand;
 }
-.buttonCtr700_hilite
+.buttonCtr600_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 680px;
+	width: 580px;
 	padding-left: 20px;
 	height: 54px;
 	font-weight: bold;
@@ -330,7 +330,7 @@ body
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	text-align: left;
-	background-image: url(../images/buttonCtr700Hilite.gif);
+	background-image: url(../images/buttonCtr600Hilite.gif);
 	cursor: hand;
 }
 

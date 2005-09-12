@@ -27,4 +27,12 @@ function Money(reader)
 }
 
 /******************************************************************************/
+
+/*void*/ Money.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("CurrencyID", this.CurrencyID, CurrencyIDMaxLength);
+	writer.writeDouble("Amount", this.Amount);
+}
+
+/******************************************************************************/
 /******************************************************************************/

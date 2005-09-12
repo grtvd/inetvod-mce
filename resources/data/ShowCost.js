@@ -3,6 +3,10 @@
 /******************************************************************************/
 /******************************************************************************/
 
+ShowCost.CostDisplayMaxLength = 32;
+
+/******************************************************************************/
+
 function ShowCost(reader)
 {
 	this.ShowCostType = null;
@@ -20,8 +24,18 @@ function ShowCost(reader)
 {
 	this.ShowCostType = reader.readString("ShowCostType", ShowCostTypeMaxLength);
 	this.Cost = reader.readObject("Cost", Money);
-	this.CostDisplay = reader.readString("CostDisplay", 32);
+	this.CostDisplay = reader.readString("CostDisplay", ShowCost.CostDisplayMaxLength);
 	this.RentalHours = reader.readShort("RentalHours");
+}
+
+/******************************************************************************/
+
+/*void*/ ShowCost.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ShowCostType", this.ShowCostType, ShowCostTypeMaxLength);
+	writer.writeObject("Cost", this.Cost);
+	writer.writeString("CostDisplay", this.CostDisplay, ShowCost.CostDisplayMaxLength);
+	writer.writeShort("RentalHours", this.RentalHours);
 }
 
 /******************************************************************************/
