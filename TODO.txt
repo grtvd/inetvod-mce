@@ -1,15 +1,7 @@
-When a exception is raised on the server and the full response is not returned, MCE is throwing an exepction message (not just the message returned from the server).
+In both MCE full screen (and MCX), getting mouse move events when mouse is not being used, forcing focus to center of screen.
 
-NowPlayingList needs to handle deletion of show.
-
-ShowCost should include RentalHours
 
 HTTPS support for webapi (Session).
-
-Setup Flow - hitting back button during setup should go back to Start page
-
-AskPINScreen needs to handle Back
-
 
 Playing Media
 if(window.external.MediaCenter)
