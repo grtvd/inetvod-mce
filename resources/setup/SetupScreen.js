@@ -91,7 +91,13 @@ function SetupScreen()
 {
 	if((key == ek_Back) || (key == ek_Backspace))
 	{
-		if(this.fCurStep == ss_NeedLogonIDStep)
+		if(this.fCurStep == ss_AskSignedUpStep)
+		{
+			StartScreen.newInstance();
+			this.close();
+			return true;
+		}
+		else if(this.fCurStep == ss_NeedLogonIDStep)
 		{
 			if(this.closeStep(false))
 				this.openStep(ss_AskSignedUpStep);

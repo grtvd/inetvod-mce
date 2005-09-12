@@ -41,6 +41,21 @@ function AskPINScreen()
 
 /******************************************************************************/
 
+/*boolean*/ AskPINScreen.prototype.key = function(/*int*/ key)
+{
+	var handled = Screen.prototype.key.call(this, key);
+
+	if((key == ek_Back) || (key == ek_Backspace))
+	{
+		if(!this.isOpen())
+			StartScreen.newInstance();
+	}
+
+	return handled;
+}
+
+/******************************************************************************/
+
 /*void*/ AskPINScreen.prototype.onButton = function(/*string*/ controlID)
 {
 	var data;

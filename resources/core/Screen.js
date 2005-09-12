@@ -11,6 +11,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*booealn*/ Screen.prototype.isOpen = function()
+{
+	return (MainApp.getThe().findScreen(this.ScreenID) != null);
+}
+
+/******************************************************************************/
+
 /*void*/ Screen.prototype.close = function()
 {
 	MainApp.getThe().closeScreen(this.ScreenID);
