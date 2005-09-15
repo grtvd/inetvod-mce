@@ -91,6 +91,9 @@ function SetupScreen()
 {
 	if((key == ek_Back) || (key == ek_Backspace))
 	{
+		if(this.fContainerControl.key(key))
+			return true;
+
 		if(this.fCurStep == ss_AskSignedUpStep)
 		{
 			StartScreen.newInstance();
