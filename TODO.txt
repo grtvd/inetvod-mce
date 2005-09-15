@@ -1,6 +1,3 @@
-Use this.newControl instead of this.fContainterContorl.newControl
-Search for this.fContainerControl
-
 return Screen from newInstance
 
 In both MCE full screen (and MCX), getting mouse move events when mouse is not being used, forcing focus to center of screen.
