@@ -378,6 +378,27 @@ body
 	/*border: 1px solid blue;*/
 }
 
+.editCtr500_normal
+{
+	behavior: url(styles/controls.htc);
+	width: 500px;
+	height: 54px;
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr500Normal.gif);
+	cursor: hand;
+}
+.editCtr500_hilite
+{
+	behavior: url(styles/controls.htc);
+	width: 500px;
+	height: 54px;
+	padding: 9px;
+	overflow: hidden;
+	background-image: url(../images/editCtr500Hilite.gif);
+	cursor: hand;
+}
+
 .editCtrCharNum_normal
 {
 	width: 22px;
@@ -401,6 +422,37 @@ body
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	background-color: #0E4C97;
+	overflow: hidden;
+	text-overflow: clip;
+	#F0F0F0-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+
+.editCtrCharAlpha_normal
+{
+	width: 30px;
+	height: 36px;
+	font-weight: bold;
+	font-size: 22pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #0F0F0F;
+	background-color: #F0F0F0;
+	text-align: center;
+	overflow: hidden;
+	text-overflow: clip;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+.editCtrCharAlpha_hilite
+{
+	width: 30px;
+	height: 36px;
+	font-weight: bold;
+	font-size: 22pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #F0F0F0;
+	background-color: #0E4C97;
+	text-align: center;
 	overflow: hidden;
 	text-overflow: clip;
 	#F0F0F0-space: nowrap;
@@ -438,25 +490,4 @@ body
 	height: 50px;
 	background-image: url(../images/checkCtrHiliteChk.gif);
 	cursor: hand;
-}
-
-.labelCtr
-{
-	font-weight: bold;
-	font-size: 18pt;
-	font-family: serif;
-	color: #F0F0F0;
-	text-align: left;
-}
-
-.ttInput_normal
-{
-	behavior: url(controls.htc);
-	background: #FF00FF;
-}
-
-.ttInput_hilite
-{
-	behavior: url(controls.htc);
-	background: #FFFF00;
 }

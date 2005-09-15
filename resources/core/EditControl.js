@@ -78,26 +78,29 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 
 //		EditControl.AlphaNumericValidCharArray = arr;
 //	}
-//	else if(editControlType == ect_UpperAlphaNumeric)
-//	{
-//		if(EditControl.UpperAlphaNumericValidCharArray != null)
-//			return EditControl.UpperAlphaNumericValidCharArray;
-
-//		for(ch = 'A'; ch <= 'Z'; ++ch)
-//			arr.push(ch);
-//		for(ch = '0'; ch <= '9'; ++ch)
-//			arr.push(ch);
-//		arr.push(' ');
-//
-//		EditControl.UpperAlphaNumericValidCharArray = arr;
-//	}
 //	else
-	if(editControlType == ect_Numeric)
+	if(editControlType == ect_UpperAlphaNumeric)
 	{
+		if(EditControl.UpperAlphaNumericValidCharArray != null)
+			return EditControl.UpperAlphaNumericValidCharArray;
+
 		arr = new Array();
 
+		for(ch = 65; ch <= 90; ch++)
+			arr.push(ch);
+		for(ch = 48; ch <= 57; ch++)
+			arr.push(ch);
+		arr.push(32);
+
+		EditControl.UpperAlphaNumericValidCharArray = arr;
+		return EditControl.UpperAlphaNumericValidCharArray;
+	}
+	if(editControlType == ect_Numeric)
+	{
 		if(EditControl.NumericValidCharArray != null)
 			return EditControl.NumericValidCharArray;
+
+		arr = new Array();
 
 		for(ch = 48; ch <= 57; ch++)
 			arr.push(ch);
@@ -252,8 +255,9 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 		}
 	}
 
-	var validCharArray = this.getValidCharArray(this.Type);
-	var pos;
+	// force upper case
+	if ((key >= 97) && (key <= 122))
+		key -= 32;
 
 	pos = arrayIndexOf(validCharArray, key);
 	if(pos >= 0)

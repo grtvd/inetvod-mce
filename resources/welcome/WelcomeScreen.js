@@ -69,6 +69,12 @@ function WelcomeScreen()
 		return;
 	}
 
+	if(controlID == WelcomeScreen.SearchByNameID)
+	{
+		SearchScreen.newInstance();
+		return;
+	}
+
 	showMsg("WelcomeScreen.onButton: to-do");
 	//Screen.prototype.onButton.call(this, controlID);
 }
