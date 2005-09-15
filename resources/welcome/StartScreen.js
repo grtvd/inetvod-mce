@@ -25,9 +25,9 @@ function StartScreen()
 	this.ScreenID = StartScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 200);
-	this.fContainerControl.newControl(new ButtonControl(StartScreen.StartID, this.ScreenID));
+	this.newControl(new ButtonControl(StartScreen.StartID, this.ScreenID));
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

@@ -30,13 +30,13 @@ function AskPINScreen()
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
 	oControl = new EditControl(AskPINScreen.PINID, this.ScreenID, 6);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 	oControl.MaxLength = 6;
 	oControl.AutoButton = true;
-	this.fContainerControl.newControl(new ButtonControl(AskPINScreen.ContinueID, this.ScreenID));
+	this.newControl(new ButtonControl(AskPINScreen.ContinueID, this.ScreenID));
 
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/
@@ -60,7 +60,7 @@ function AskPINScreen()
 {
 	var data;
 
-	data = this.fContainerControl.getControl(AskPINScreen.PINID).getText();
+	data = this.getControl(AskPINScreen.PINID).getText();
 	if(!testStrHasLen(data))
 	{
 		showMsg("PIN must be entered.");

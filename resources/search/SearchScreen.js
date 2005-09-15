@@ -44,7 +44,7 @@ function SearchScreen()
 	this.fSearchData = new SearchData();
 
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

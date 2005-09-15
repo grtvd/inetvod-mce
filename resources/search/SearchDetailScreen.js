@@ -41,12 +41,12 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 
-	this.fContainerControl.newControl(new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID));
+	this.newControl(new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID));
 
 
 	oControl = new TextControl(SearchDetailScreen.NameID, this.ScreenID);
 	oControl.setText(this.fShowDetail.Name);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(testStrHasLen(this.fShowDetail.EpisodeName) || testStrHasLen(this.fShowDetail.EpisodeNumber))
@@ -63,11 +63,11 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	}
 	oControl = new TextControl(SearchDetailScreen.EpisodeID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.DescriptionID, this.ScreenID);
 	oControl.setText(this.fShowDetail.Description);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(this.fShowDetail.ReleasedOn)
@@ -76,39 +76,39 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 		tempStr = this.fShowDetail.ReleasedYear;
 	oControl = new TextControl(SearchDetailScreen.ReleasedID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(this.fShowDetail.RunningMins)
 		tempStr = this.fShowDetail.RunningMins + " mins";
 	oControl = new TextControl(SearchDetailScreen.RunningMinsID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
 	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(this.fShowDetail.ProviderID));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(this.fShowDetail.ProviderID));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	var showCost = this.fShowDetail.ShowCostList[0];	//TODO: Need to deal with multiple
 
 	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
 	oControl.setText(showCost.CostDisplay);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.RentalHoursID, this.ScreenID);
 	oControl.setText(showCost.RentalHours + " hrs.");
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

@@ -44,13 +44,13 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 
-	this.fContainerControl.newControl(new ButtonControl(RentedShowDetailScreen.WatchNowID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(RentedShowDetailScreen.DeleteNowID, this.ScreenID));
+	this.newControl(new ButtonControl(RentedShowDetailScreen.WatchNowID, this.ScreenID));
+	this.newControl(new ButtonControl(RentedShowDetailScreen.DeleteNowID, this.ScreenID));
 
 
 	oControl = new TextControl(RentedShowDetailScreen.NameID, this.ScreenID);
 	oControl.setText(this.fRentedShow.Name);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(testStrHasLen(this.fRentedShow.EpisodeName) || testStrHasLen(this.fRentedShow.EpisodeNumber))
@@ -67,11 +67,11 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	}
 	oControl = new TextControl(RentedShowDetailScreen.EpisodeID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.DescriptionID, this.ScreenID);
 	oControl.setText(this.fRentedShow.Description);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(this.fRentedShow.ReleasedOn)
@@ -80,45 +80,45 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 		tempStr = this.fRentedShow.ReleasedYear;
 	oControl = new TextControl(RentedShowDetailScreen.ReleasedID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	tempStr = "";
 	if(this.fRentedShow.RunningMins)
 		tempStr = this.fRentedShow.RunningMins + " mins";
 	oControl = new TextControl(RentedShowDetailScreen.RunningMinsID, this.ScreenID);
 	oControl.setText(tempStr);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.CategoryID, this.ScreenID);
 	oControl.setText(oSession.getCategoryNames(this.fRentedShow.CategoryIDList));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(this.fRentedShow.ProviderID));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(this.fRentedShow.ProviderID));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.CostID, this.ScreenID);
 	oControl.setText(this.fRentedShow.ShowCost.CostDisplay);
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentalHoursID, this.ScreenID);
 	oControl.setText(this.fRentedShow.ShowCost.RentalHours + " hrs.");
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentedOnID, this.ScreenID);
 	oControl.setText(dateTimeToString(this.fRentedShow.RentedOn, dtf_M_D_H_MM_AM));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.AvailableUntilID, this.ScreenID);
 	oControl.setText(dateTimeToString(this.fRentedShow.AvailableUntil, dtf_M_D_H_MM_AM));
-	this.fContainerControl.newControl(oControl);
+	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/
@@ -139,11 +139,11 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 			return;
 		}
 
-		var oControl = this.fContainerControl.findControl(ViewPortControl.ControlID);
+		var oControl = this.findControl(ViewPortControl.ControlID);
 		if(oControl == null)
 		{
 			oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
-			this.fContainerControl.newControl(oControl);
+			this.newControl(oControl);
 		}
 
 		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);

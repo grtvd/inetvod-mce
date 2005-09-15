@@ -30,14 +30,14 @@ function WelcomeScreen()
 	this.ScreenID = WelcomeScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 122, 182);
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.NowPlayingID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.FeaturedID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByCategoryID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.SearchByNameID, this.ScreenID));
-	this.fContainerControl.newControl(new ButtonControl(WelcomeScreen.PreferencesID, this.ScreenID));
-	this.fContainerControl.newControl(new TextControl(WelcomeScreen.HelpID, this.ScreenID));
+	this.newControl(new ButtonControl(WelcomeScreen.NowPlayingID, this.ScreenID));
+	this.newControl(new ButtonControl(WelcomeScreen.FeaturedID, this.ScreenID));
+	this.newControl(new ButtonControl(WelcomeScreen.SearchByCategoryID, this.ScreenID));
+	this.newControl(new ButtonControl(WelcomeScreen.SearchByNameID, this.ScreenID));
+	this.newControl(new ButtonControl(WelcomeScreen.PreferencesID, this.ScreenID));
+	this.newControl(new TextControl(WelcomeScreen.HelpID, this.ScreenID));
 	if(ViewPortControl.isOpen())
-		this.fContainerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

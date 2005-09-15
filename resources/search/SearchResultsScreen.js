@@ -38,12 +38,12 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	oControl = new ShowSearchListControl(SearchResultsScreen.ShowListID, this.ScreenID,
 		6, oRowItemList, showSearchList);
 	if(showSearchList.length > 0)
-		this.fContainerControl.newControl(oControl);
+		this.newControl(oControl);
 	oControl.show(showSearchList.length > 0);
 
 	oControl = new TextControl(SearchResultsScreen.NoShowsTextID, this.ScreenID);
 	if(showSearchList.length == 0)
-		this.fContainerControl.newControl(oControl);
+		this.newControl(oControl);
 	oControl.show(showSearchList.length == 0);
 }
 

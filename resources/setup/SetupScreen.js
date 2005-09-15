@@ -62,7 +62,7 @@ function SetupScreen()
 
 	oContainerControl.show(true);
 	oContainerControl.setFocus(true);
-	this.fContainerControl.newControl(oContainerControl);
+	this.newControl(oContainerControl);
 	this.fStepControlID = oContainerControl.ControlID;
 	this.fCurStep = step;
 	oContainerControl.loadData(this.fSetupData);
@@ -72,7 +72,7 @@ function SetupScreen()
 
 /*boolean*/ SetupScreen.prototype.closeStep = function(/*boolean*/ doUnload)
 {
-	var oContainerControl = this.fContainerControl.getControl(this.fStepControlID);
+	var oContainerControl = this.getControl(this.fStepControlID);
 
 	if(doUnload)
 	{
@@ -175,7 +175,7 @@ function SetupScreen()
 
 /*void*/ SetupScreen.prototype.doSetupSignon = function()
 {
-	var oContainerControl = this.fContainerControl.getControl(this.fStepControlID);
+	var oContainerControl = this.getControl(this.fStepControlID);
 
 	if(oContainerControl.unloadData(this.fSetupData))
 	{

@@ -32,6 +32,15 @@ function Screen()
 
 /******************************************************************************/
 
+/*Control*/ Screen.prototype.findControl = function(/*string*/ controlID)
+{
+	if(this.fContainerControl != null)
+		return this.fContainerControl.findControl(controlID);
+	return null;
+}
+
+/******************************************************************************/
+
 /*Control*/ Screen.prototype.getControl = function(/*string*/ controlID)
 {
 	return this.fContainerControl.getControl(controlID);

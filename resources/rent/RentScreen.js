@@ -46,12 +46,9 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /*void*/ RentScreen.prototype.close = function()
 {
-	if(this.fContainerControl != null)
-	{
-		var oContainerControl = this.fContainerControl.findControl(this.fStepControlID);
-		if(oContainerControl != null)
-			oContainerControl.show(false);
-	}
+	var oContainerControl = this.findControl(this.fStepControlID);
+	if(oContainerControl != null)
+		oContainerControl.show(false);
 	Screen.prototype.close.call(this);
 }
 
@@ -101,7 +98,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 	oContainerControl.show(true);
 	oContainerControl.setFocus(true);
-	this.fContainerControl.newControl(oContainerControl);
+	this.newControl(oContainerControl);
 	this.fStepControlID = oContainerControl.ControlID;
 	this.fCurStep = step;
 	oContainerControl.loadData(this.fRentData);
@@ -111,7 +108,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /*boolean*/ RentScreen.prototype.closeStep = function(/*boolean*/ doUnload)
 {
-	var oContainerControl = this.fContainerControl.getControl(this.fStepControlID);
+	var oContainerControl = this.getControl(this.fStepControlID);
 
 	if(doUnload)
 	{
