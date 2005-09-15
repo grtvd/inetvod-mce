@@ -11,7 +11,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /******************************************************************************/
 
-function ContainerControl.prototype.init(/*int*/ controlID, /*int*/ left, /*int*/ top)
+/*void*/ ContainerControl.prototype.init = function(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	this.ControlID = controlID;
 	this.fUIObj = document.getElementById(controlID);
