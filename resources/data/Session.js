@@ -88,6 +88,13 @@ function Session()
 
 /******************************************************************************/
 
+/*ProviderList*/ Session.prototype.getProviderList = function()
+{
+	return this.fProviderList;
+}
+
+/******************************************************************************/
+
 /*Provider*/ Session.prototype.getProvider = function(/*string*/ providerID)
 {
 	var provider = arrayFindItemByCmpr(this.fProviderList, new ProviderIDCmpr(providerID));
@@ -102,6 +109,9 @@ function Session()
 
 /*string*/ Session.prototype.getProviderName = function(/*string*/ providerID)
 {
+	if(Provider.AllProvidersID == providerID)
+		return Provider.AllProvidersName;
+
 	return this.getProvider(providerID).Name;
 }
 
@@ -140,6 +150,27 @@ function Session()
 	}
 
 	return names;
+}
+
+/******************************************************************************/
+
+/*RatingList*/ Session.prototype.getRatingList = function()
+{
+	return this.fRatingList;
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getRatingName = function(/*string*/ ratingID)
+{
+	if(ratingID == Rating.AllRatingsID)
+		return Rating.AllRatingsName;
+
+	for(var i = 0; i < this.fRatingList.length; i++)
+		if(this.fRatingList[i].RatingID == ratingID)
+			return this.fRatingList[i].Name;
+
+	throw "Session.getRatingName: can't find RatingID(" + ratingID + ")";
 }
 
 /******************************************************************************/

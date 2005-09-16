@@ -100,6 +100,9 @@
 <script type="text/javascript" src="search/CategorySearchScreen.js"></script>
 <script type="text/javascript" src="search/SearchScreen.js"></script>
 <script type="text/javascript" src="search/SearchData.js"></script>
+<script type="text/javascript" src="search/ProviderSelectScreen.js"></script>
+<script type="text/javascript" src="search/CategorySelectScreen.js"></script>
+<script type="text/javascript" src="search/RatingSelectScreen.js"></script>
 <script type="text/javascript" src="search/SearchResultsScreen.js"></script>
 <script type="text/javascript" src="search/PickProviderScreen.js"></script>
 <script type="text/javascript" src="search/SearchDetailScreen.js"></script>
@@ -419,6 +422,183 @@ function init()
 			></table
 		></td>
 	</tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Search001" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0>
+	<tr><td width=344 class="textCtr" valign="top">Please select the Provider you would like to search:</td
+		><td width=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+		><td width=438 align="right"
+			><table id=Search001_Providers cellpadding=0 cellspacing=0 border=0>
+				<tr><td>
+					<table cellpadding=0 cellspacing=6 border=0>
+						<tr><td id="Search001_Providers_0" class="listCtrRow438_normal"
+							><span id="Search001_Providers_0_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_1" class="listCtrRow438_normal"
+							><span id="Search001_Providers_1_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_2" class="listCtrRow438_normal"
+							><span id="Search001_Providers_2_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_3" class="listCtrRow438_normal"
+							><span id="Search001_Providers_3_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_4" class="listCtrRow438_normal"
+							><span id="Search001_Providers_4_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_5" class="listCtrRow438_normal"
+							><span id="Search001_Providers_5_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_6" class="listCtrRow438_normal"
+							><span id="Search001_Providers_6_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search001_Providers_7" class="listCtrRow438_normal"
+							><span id="Search001_Providers_7_Provider" class="listCtrItem"></span
+							></td>
+						</tr>
+					</table
+				></td></tr>
+				<tr><td align="right"
+					><table cellpadding=0 cellspacing=5 border=0>
+						<tr><td id="Search001_Providers_Count" class="listCtrCount">0 of 0</td
+							><td width=5><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+							><td id="Search001_Providers_Up" class="listCtrPrev_normal"></td
+							><td id="Search001_Providers_Down" class="listCtrNext_normal"></td
+						></tr>
+					</table
+				></td></tr>
+			</table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Search002" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0>
+	<tr><td width=344 class="textCtr" valign="top">Please select which Category you would like to search:</td
+		><td width=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+		><td width=438 align="right"
+			><table id=Search002_Categories cellpadding=0 cellspacing=0 border=0>
+				<tr><td>
+					<table cellpadding=0 cellspacing=6 border=0>
+						<tr><td id="Search002_Categories_0" class="listCtrRow438_normal"
+							><span id="Search002_Categories_0_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_1" class="listCtrRow438_normal"
+							><span id="Search002_Categories_1_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_2" class="listCtrRow438_normal"
+							><span id="Search002_Categories_2_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_3" class="listCtrRow438_normal"
+							><span id="Search002_Categories_3_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_4" class="listCtrRow438_normal"
+							><span id="Search002_Categories_4_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_5" class="listCtrRow438_normal"
+							><span id="Search002_Categories_5_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_6" class="listCtrRow438_normal"
+							><span id="Search002_Categories_6_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search002_Categories_7" class="listCtrRow438_normal"
+							><span id="Search002_Categories_7_Category" class="listCtrItem"></span
+							></td>
+						</tr>
+					</table
+				></td></tr>
+				<tr><td align="right"
+					><table cellpadding=0 cellspacing=5 border=0>
+						<tr><td id="Search002_Categories_Count" class="listCtrCount">0 of 0</td
+							><td width=5><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+							><td id="Search002_Categories_Up" class="listCtrPrev_normal"></td
+							><td id="Search002_Categories_Down" class="listCtrNext_normal"></td
+						></tr>
+					</table
+				></td></tr>
+			</table
+	></td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Search008" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0>
+	<tr><td width=344 class="textCtr" valign="top">Please select which Rating you would like to search:</td
+		><td width=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+		><td width=438 align="right"
+			><table id=Search008_Ratings cellpadding=0 cellspacing=0 border=0>
+				<tr><td>
+					<table cellpadding=0 cellspacing=6 border=0>
+						<tr><td id="Search008_Ratings_0" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_0_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_1" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_1_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_2" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_2_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_3" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_3_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_4" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_4_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_5" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_5_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_6" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_6_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+						<tr><td id="Search008_Ratings_7" class="listCtrRow438_normal"
+							><span id="Search008_Ratings_7_Rating" class="listCtrItem"></span
+							></td>
+						</tr>
+					</table
+				></td></tr>
+				<tr><td align="right"
+					><table cellpadding=0 cellspacing=5 border=0>
+						<tr><td id="Search008_Ratings_Count" class="listCtrCount">0 of 0</td
+							><td width=5><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+							><td id="Search008_Ratings_Up" class="listCtrPrev_normal"></td
+							><td id="Search008_Ratings_Down" class="listCtrNext_normal"></td
+						></tr>
+					</table
+				></td></tr>
+			</table
+	></td></tr>
 </table>
 </div>
 

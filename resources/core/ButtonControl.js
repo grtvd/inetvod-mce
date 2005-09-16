@@ -22,6 +22,13 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
+/*void*/ ButtonControl.prototype.setText = function(/*string*/ text)
+{
+	this.fUIObj.innerHTML = text;
+}
+
+/******************************************************************************/
+
 /*void*/ ButtonControl.prototype.setFocus = function(/*boolean*/ set)
 {
 	var wasFocused = this.fFocused;

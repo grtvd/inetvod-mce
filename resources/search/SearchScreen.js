@@ -68,19 +68,19 @@ function SearchScreen()
 
 	if(controlID == SearchScreen.ProviderID)
 	{
-		showMsg("SearchScreen.onButton: to-do");
+		ProviderSelectScreen.newInstance(this.fSearchData);
 		return;
 	}
 
 	if(controlID == SearchScreen.CategoryID)
 	{
-		showMsg("SearchScreen.onButton: to-do");
+		CategorySelectScreen.newInstance(this.fSearchData);
 		return;
 	}
 
 	if(controlID == SearchScreen.RatingID)
 	{
-		showMsg("SearchScreen.onButton: to-do");
+		RatingSelectScreen.newInstance(this.fSearchData);
 		return;
 	}
 
