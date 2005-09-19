@@ -1,4 +1,4 @@
-return Screen from newInstance
+Do we want a disabled button to be in gray? (style buttonCtr180_disabled)
 
 In both MCE full screen (and MCX), getting mouse move events when mouse is not being used, forcing focus to center of screen.
 
