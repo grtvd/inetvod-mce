@@ -10,7 +10,7 @@ StartScreen.StartID = "StartUp001_Start";
 
 StartScreen.newInstance = function()
 {
-	MainApp.getThe().openScreen(new StartScreen());
+	return MainApp.getThe().openScreen(new StartScreen());
 }
 
 /******************************************************************************/

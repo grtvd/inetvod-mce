@@ -15,7 +15,9 @@ NowPlayingScreen.newInstance = function()
 	var rentedShowSearchListRef = new Object();
 
 	if(oSession.rentedShowList(rentedShowSearchListRef) == sc_Success)
-		MainApp.getThe().openScreen(new NowPlayingScreen(rentedShowSearchListRef.value));
+		return MainApp.getThe().openScreen(new NowPlayingScreen(rentedShowSearchListRef.value));
+
+	return null;
 }
 
 /******************************************************************************/

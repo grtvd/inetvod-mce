@@ -11,7 +11,7 @@ SearchResultsScreen.NoShowsTextID = "Search003_NoShowsText";
 
 SearchResultsScreen.newInstance = function(/*Array*/ showSearchList)
 {
-	MainApp.getThe().openScreen(new SearchResultsScreen(showSearchList));
+	return MainApp.getThe().openScreen(new SearchResultsScreen(showSearchList));
 }
 
 /******************************************************************************/

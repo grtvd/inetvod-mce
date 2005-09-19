@@ -15,7 +15,7 @@ WelcomeScreen.HelpID = "Welcome001_Help";
 
 WelcomeScreen.newInstance = function()
 {
-	MainApp.getThe().openScreen(new WelcomeScreen());
+	return MainApp.getThe().openScreen(new WelcomeScreen());
 }
 
 /******************************************************************************/
