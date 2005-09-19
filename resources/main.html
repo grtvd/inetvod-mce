@@ -65,6 +65,8 @@
 <script type="text/javascript" src="request/SignonResp.js"></script>
 <script type="text/javascript" src="request/SystemDataRqst.js"></script>
 <script type="text/javascript" src="request/SystemDataResp.js"></script>
+<script type="text/javascript" src="request/EnableAdultAccessRqst.js"></script>
+<script type="text/javascript" src="request/EnableAdultAccessResp.js"></script>
 <script type="text/javascript" src="request/ShowSearchRqst.js"></script>
 <script type="text/javascript" src="request/ShowSearchResp.js"></script>
 <script type="text/javascript" src="request/ShowDetailRqst.js"></script>
@@ -116,6 +118,9 @@
 
 <script type="text/javascript" src="nowPlaying/NowPlayingScreen.js"></script>
 <script type="text/javascript" src="nowPlaying/RentedShowDetailScreen.js"></script>
+
+<script type="text/javascript" src="prefs/PreferencesScreen.js"></script>
+<script type="text/javascript" src="prefs/AskAdultPINScreen.js"></script>
 
 <script type="text/javascript">
 function init()
@@ -673,7 +678,7 @@ function init()
 
 <!-- *********************************************************************** -->
 
-<div id="Search003_NoShowsText" class="textCtr" style="position:relative; left:10; top:10; width:930; display:none">
+<div id="Search003_NoShowsText" class="textCtr" style="position:relative; left:100; top:80; width:764; display:none">
 No shows were found matching your search criteria.  Please try again.<br>
 </div>
 </div>
@@ -977,6 +982,48 @@ be downloaded while your are watching another show.
 				</table>
 			</td></tr>
 		</table>
+	</td></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Prefs001" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=6 border=0 width=624>
+	<tr><td class="textLbl">Access Adult:</td
+		><td id="Prefs001_AccessAdultValue" class="textCtr">Disabled</td
+		><td align="center"
+			><table cellpadding=0 cellspacing=0 border=0
+				><tr><td id="Prefs001_AccessAdultButton" class="buttonCtr180_disabled">Enable</td></tr
+			></table
+		></td
+	></tr>
+</table>
+</div>
+
+<!-- *********************************************************************** -->
+<!-- *********************************************************************** -->
+
+<div id="Prefs002" style="position:absolute; display:none">
+<table cellpadding=0 cellspacing=0 border=0 width=624>
+	<tr><td class="textCtr">
+		Please enter your Adult Access PIN:<br>
+		<br>
+	</td></tr>
+	<tr><td align="center"
+		><table cellpadding=0 cellspacing=6 border=0
+			><tr><td class="textLbl" >PIN:</td
+				><td><span id="Prefs002_PIN" class="editCtr150_normal"
+					><span id="Prefs002_PIN_0" class="editCtrCharNum_normal"></span
+					><span id="Prefs002_PIN_1" class="editCtrCharNum_normal"></span
+					><span id="Prefs002_PIN_2" class="editCtrCharNum_normal"></span
+					><span id="Prefs002_PIN_3" class="editCtrCharNum_normal"></span
+					><span id="Prefs002_PIN_4" class="editCtrCharNum_normal"></span
+					><span id="Prefs002_PIN_5" class="editCtrCharNum_normal"></span
+				></span></td
+			></tr
+		></table>
 	</td></tr>
 </table>
 </div>

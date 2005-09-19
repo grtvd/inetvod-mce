@@ -244,6 +244,17 @@ body
 	background-image: url(../images/buttonCtr180Hilite.gif);
 	cursor: hand;
 }
+.buttonCtr180_disabled
+{
+	width: 180px;
+	height: 54px;
+	font-weight: bold;
+	font-size: 22pt;
+	font-family: Verdana, Arial, Helvetica;
+	color: #C0C0C0;
+	text-align: center;
+	background-image: url(../images/buttonCtr180Normal.gif);
+}
 
 .buttonCtr220_normal
 {

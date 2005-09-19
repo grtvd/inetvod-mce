@@ -29,6 +29,14 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
+/*void*/ ButtonControl.prototype.setEnabled = function(/*boolean*/ enable)
+{
+	this.fEnabled = enable;
+	checkClassName(this.fUIObj, this.fEnabled ? (this.fFocused ? 'hilite' : 'normal') : 'disabled');
+}
+
+/******************************************************************************/
+
 /*void*/ ButtonControl.prototype.setFocus = function(/*boolean*/ set)
 {
 	var wasFocused = this.fFocused;

@@ -8,6 +8,7 @@ function Control()
 	this.ControlID = null;
 	this.ScreenID = null;
 	this.fUIObj = null;
+	this.fEnabled = true;
 	this.fFocused = false;
 }
 
@@ -27,7 +28,14 @@ function Control()
 
 /******************************************************************************/
 
-/*boolean*/ Control.prototype.canFocus = function() { return true; }
+/*void*/ Control.prototype.setEnabled = function(/*boolean*/ enable)
+{
+	this.fEnabled = enable;
+}
+
+/******************************************************************************/
+
+/*boolean*/ Control.prototype.canFocus = function() { return this.fEnabled; }
 
 /******************************************************************************/
 

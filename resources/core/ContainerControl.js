@@ -190,8 +190,12 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	oControl = this.findFocusedControl();
 	if(oControl != null)
 	{
-		oControl.setFocus(set);
-		return;
+		if(oControl.canFocus())		// check canFocus in case control became disabled
+		{
+			oControl.setFocus(set);
+			return;
+		}
+		this.fFocusedControlPos = -1;	// clear focused control
 	}
 
 	// if setting, give first child the focus

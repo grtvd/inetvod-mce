@@ -30,8 +30,8 @@ function Session()
 	this.fMemberPrefs = null;
 	this.fMemberProviderList = new Array();
 
-	this.fIncludeAdult = ina_Never;
-	this.fCanAccessAdult = false;
+	this.IncludeAdult = ina_Never;
+	this.CanAccessAdult = false;
 
 	this.fIsSystemDataLoaded = false;
 	this.fProviderList = null;
@@ -290,8 +290,8 @@ function Session()
 			this.fSessionData = signonResp.SessionData;
 			this.fSessionExpires = signonResp.SessionExpires;
 			this.fMemberPrefs = signonResp.MemberState.MemberPrefs;
-			this.fIncludeAdult = this.fMemberPrefs.IncludeAdult;
-			this.fCanAccessAdult = (this.fIncludeAdult == ina_Always);
+			this.IncludeAdult = this.fMemberPrefs.IncludeAdult;
+			this.CanAccessAdult = (this.IncludeAdult == ina_Always);
 			this.fMemberProviderList = signonResp.MemberState.MemberProviderList;
 
 			this.fIsUserLoggedOn = true;
@@ -356,6 +356,46 @@ function Session()
 	this.showRequestError(statusMessage);
 
 	return this.fIsSystemDataLoaded;
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.enableAdultAccess = function(/*string*/ password)
+{
+	var statusCode = sc_GeneralError;
+	var statusMessage = null;
+
+	var enableAdultAccessRqst;
+
+	//TODO: encrypt Password
+
+	enableAdultAccessRqst = EnableAdultAccessRqst.newInstance();
+	enableAdultAccessRqst.Password = password;
+
+	var oWaitScreen = WaitScreen.newInstance();
+	try
+	{
+		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
+		statusCode = dataRequestor.enableAdultAccessRequest(enableAdultAccessRqst);
+
+		oWaitScreen.close();
+		if(statusCode == sc_Success)
+		{
+			this.CanAccessAdult = true;
+			return statusCode;
+		}
+
+		statusMessage = dataRequestor.getStatusMessage();
+	}
+	catch(e)
+	{
+		showError("Session.enableAdultAccess", e);
+	}
+	oWaitScreen.close();
+
+	this.showRequestError(statusMessage);
+
+	return statusCode;
 }
 
 /******************************************************************************/
