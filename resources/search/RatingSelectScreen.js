@@ -10,7 +10,15 @@ RatingSelectScreen.RatingsID = "Search008_Ratings";
 
 RatingSelectScreen.newInstance = function(/*SearchDataPtr*/ oSearchData)
 {
-	return MainApp.getThe().openScreen(new RatingSelectScreen(oSearchData));
+	var oScreen = MainApp.getThe().openScreen(new RatingSelectScreen(oSearchData));
+
+	if(testStrHasLen(oSearchData.RatingID))
+	{
+		var oTextListControl = oScreen.getControl(RatingSelectScreen.RatingsID);
+		oTextListControl.setFocusedItemByName(oSearchData.RatingID);
+	}
+
+	return oScreen;
 }
 
 /******************************************************************************/

@@ -10,7 +10,15 @@ ProviderSelectScreen.ProvidersID = "Search001_Providers";
 
 ProviderSelectScreen.newInstance = function(/*SearchDataPtr*/ oSearchData)
 {
-	return MainApp.getThe().openScreen(new ProviderSelectScreen(oSearchData));
+	var oScreen = MainApp.getThe().openScreen(new ProviderSelectScreen(oSearchData));
+
+	if(testStrHasLen(oSearchData.ProviderID))
+	{
+		var oTextListControl = oScreen.getControl(ProviderSelectScreen.ProvidersID);
+		oTextListControl.setFocusedItemByName(oSearchData.ProviderID);
+	}
+
+	return oScreen;
 }
 
 /******************************************************************************/

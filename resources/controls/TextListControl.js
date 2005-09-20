@@ -18,6 +18,14 @@ function TextListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numR
 
 /******************************************************************************/
 
+/*void*/ TextListControl.prototype.setFocusedItemByName = function(/*string*/ name)
+{
+	var pos = arrayIndexOfByCmpr(this.NameValuePairList, new NameValuePairCmpr(name));
+	this.setFocusedItemByPos(pos);
+}
+
+/******************************************************************************/
+
 /*NameValuePair*/ TextListControl.prototype.getFocusedItemValue = function()
 {
 	var focusedItem = this.getFocusedItemPos();

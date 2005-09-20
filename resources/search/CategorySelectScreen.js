@@ -10,7 +10,15 @@ CategorySelectScreen.CategoriesID = "Search002_Categories";
 
 CategorySelectScreen.newInstance = function(/*SearchDataPtr*/ oSearchData)
 {
-	return MainApp.getThe().openScreen(new CategorySelectScreen(oSearchData));
+	var oScreen = MainApp.getThe().openScreen(new CategorySelectScreen(oSearchData));
+
+	if(testStrHasLen(oSearchData.CategoryID))
+	{
+		var oTextListControl = oScreen.getControl(CategorySelectScreen.CategoriesID);
+		oTextListControl.setFocusedItemByName(oSearchData.CategoryID);
+	}
+
+	return oScreen;
 }
 
 /******************************************************************************/

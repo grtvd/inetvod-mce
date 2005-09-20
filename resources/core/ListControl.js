@@ -194,6 +194,30 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
+/*void*/ ListControl.prototype.setFocusedItemByPos = function(/*int*/ focusedItem)
+{
+	if((focusedItem >= 0) && (focusedItem < this.getItemCount()))
+	{
+		if(focusedItem < this.fTopItem)
+			focusedItem = this.fTopItem;
+		this.recalcBottomItemFromTopItem();
+
+		if(focusedItem > this.fBottomItem)
+		{
+			this.fBottomItem = focusedItem;
+			this.recalcTopItemFromBottomItem();
+		}
+
+		this.setFocusedItem(this.fRowList[focusedItem - this.fTopItem]);
+		this.drawItems(true);
+		this.drawUpIcon(false);
+		this.drawDownIcon(false);
+		this.drawCount();
+	}
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.drawUpIcon = function(/*boolean*/ showFocus)
 {
 	var enabled = (this.fTopItem > 0);
