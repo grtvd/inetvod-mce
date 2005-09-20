@@ -13,6 +13,7 @@ var ect_Numeric = 2;			// only 0 - 9
 EditControl.AlphaNumericValidCharArray = null;
 EditControl.UpperAlphaNumericValidCharArray = null;
 EditControl.NumericValidCharArray = null;
+EditControl.TripleTapKeyArray = null;
 
 /******************************************************************************/
 
@@ -36,6 +37,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	this.fViewableChars = viewableChars;
 	this.fFirstPos = 0;
 	this.fCurPos = -1;
+	this.fNextTTKeyTime = -1;
 	this.MaxLength = 25;
 	this.AutoButton = false;
 
@@ -90,7 +92,9 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 			arr.push(ch);
 		for(ch = 48; ch <= 57; ch++)
 			arr.push(ch);
-		arr.push(32);
+		arr.push(64);	// @
+		arr.push(46);	// .
+		arr.push(32);	// space
 
 		EditControl.UpperAlphaNumericValidCharArray = arr;
 		return EditControl.UpperAlphaNumericValidCharArray;
@@ -110,6 +114,88 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	}
 	else
 		throw "EditControl.getValidCharArray: Invalid fType(" + editControlType + ")";
+}
+
+/******************************************************************************/
+
+/*Array*/ EditControl.prototype.getTripleTapKeyArray = function()
+{
+	if(EditControl.TripleTapKeyArray != null)
+		return EditControl.TripleTapKeyArray;
+
+	EditControl.TripleTapKeyArray = new Array();
+
+	/* 0: 0, space */
+	EditControl.TripleTapKeyArray.push(new Array(48, 32));
+
+	/* 1: 1, @, . */
+	EditControl.TripleTapKeyArray.push(new Array(49, 64, 46));
+
+	/* 2: 2, A, B, C */
+	EditControl.TripleTapKeyArray.push(new Array(50, 65, 66, 67));
+
+	/* 3: 3, D, E, F */
+	EditControl.TripleTapKeyArray.push(new Array(51, 68, 69, 70));
+
+	/* 4: 4, G, H, I */
+	EditControl.TripleTapKeyArray.push(new Array(52, 71, 72, 73));
+
+	/* 5: 5, J, K, L */
+	EditControl.TripleTapKeyArray.push(new Array(53, 74, 75, 76));
+
+	/* 6: 6, M, N, O */
+	EditControl.TripleTapKeyArray.push(new Array(54, 77, 78, 79));
+
+	/* 7: 7, P, Q, R, S */
+	EditControl.TripleTapKeyArray.push(new Array(55, 80, 81, 82, 83));
+
+	/* 8: 8, T, U, V */
+	EditControl.TripleTapKeyArray.push(new Array(56, 84, 85, 86));
+
+	/* 9: 9, W, X, Y, Z */
+	EditControl.TripleTapKeyArray.push(new Array(57, 87, 88, 89, 90));
+
+	return EditControl.TripleTapKeyArray;
+}
+
+/******************************************************************************/
+
+/*boolean*/ EditControl.prototype.isTripleTapKey = function(/*int*/ key)
+{
+	if(this.Type != ect_UpperAlphaNumeric)
+		return false;
+	return ((key >= 48) && (key <= 57));
+}
+
+
+/******************************************************************************/
+
+/*boolean*/ EditControl.prototype.sameTripleTapKey = function(/*int*/ key, /*int*/ curKey)
+{
+	if(!this.isTripleTapKey(key))
+		return false;
+
+	var ttKeyArray = this.getTripleTapKeyArray()[key - 48];
+	return (arrayIndexOf(ttKeyArray, curKey) >= 0);
+}
+
+
+/******************************************************************************/
+
+/*int*/ EditControl.prototype.mapTripleTapKey = function(/*int*/ key, /*int*/ curKey)
+{
+	if(!this.isTripleTapKey(key))
+		return key;
+
+	var ttKeyArray = this.getTripleTapKeyArray()[key - 48];
+	var curPos = arrayIndexOf(ttKeyArray, curKey)
+
+	if(curPos < 0)
+		return ttKeyArray[0];
+	if(curPos < ttKeyArray.length - 1)
+		return ttKeyArray[curPos + 1];
+
+	return ttKeyArray[0];
 }
 
 /******************************************************************************/
@@ -163,6 +249,13 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 		this.fFirstPos = this.fCurPos;
 	else if(this.fFirstPos < this.fCurPos - this.fViewableChars + 1)
 		this.fFirstPos = this.fCurPos - this.fViewableChars + 1;
+
+	if((this.fFirstPos > 0) & (this.fText.length + 1 <= this.fFirstPos + this.fViewableChars))
+	{
+		this.fFirstPos = this.fText.length + 1 - this.fViewableChars;
+		if(this.fFirstPos < 0)
+			this.fFirstPos = 0;
+	}
 }
 
 /******************************************************************************/
@@ -236,10 +329,12 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	{
 		if(this.fCurPos > 0)
 		{
-			if(this.fCurPos < this.fText.length)
+			if(this.fCurPos >= this.fText.length)
+				this.fCurPos--;
+
+			if(this.fCurPos <= this.fText.length)
 				this.fText.splice(this.fCurPos, 1);
 
-			this.fCurPos--;
 			this.checkPositions();
 			this.drawChars(this.fFocused);
 			return true;
@@ -259,9 +354,26 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	if ((key >= 97) && (key <= 122))
 		key -= 32;
 
+	var ttKey = key;
+	var curKey = 0;
+	var isTripleTapKey = this.isTripleTapKey(key);
+	if(isTripleTapKey)
+	{
+		if(this.fCurPos < this.fText.length)
+			curKey = this.fText[this.fCurPos].charCodeAt(0);
+		key = this.mapTripleTapKey(key, curKey);
+		this.fNextTTKeyTime = (new Date()).getTime() + 2000;
+	}
+	else
+		this.fNextTTKeyTime = -1;
+
 	pos = arrayIndexOf(validCharArray, key);
 	if(pos >= 0)
 	{
+		if(isTripleTapKey && !this.sameTripleTapKey(ttKey, curKey))
+			if((this.fCurPos < this.fText.length) && (this.fCurPos < this.MaxLength - 1))
+				this.fCurPos++;
+
 		if(this.fCurPos >= this.fText.length)
 		{
 			this.fText.push(" ");
@@ -271,7 +383,8 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 
 		if(this.fCurPos < this.fText.length)
 			if(this.fCurPos < this.MaxLength - 1)
-				this.fCurPos++;
+				if(!isTripleTapKey)
+					this.fCurPos++;
 		this.checkPositions();
 		this.drawChars(this.fFocused);
 
@@ -282,6 +395,23 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	}
 
 	return Control.prototype.key.call(this, key);
+}
+
+/******************************************************************************/
+
+/*void*/ EditControl.prototype.idle = function()
+{
+	if((this.fNextTTKeyTime >= 0) && ((new Date()) >= this.fNextTTKeyTime))
+	{
+		this.fNextTTKeyTime = -1;
+		if(this.fCurPos < this.fText.length)
+			if(this.fCurPos < this.MaxLength - 1)
+			{
+				this.fCurPos++;
+				this.checkPositions();
+				this.drawChars(this.fFocused);
+			}
+	}
 }
 
 /******************************************************************************/

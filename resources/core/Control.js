@@ -63,6 +63,12 @@ function Control()
 
 /******************************************************************************/
 
+/*void*/ Control.prototype.idle = function()
+{
+}
+
+/******************************************************************************/
+
 /*void*/ Control.prototype.mouseClick = function(/*string*/ controlID)
 {
 }

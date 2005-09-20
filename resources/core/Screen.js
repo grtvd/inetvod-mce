@@ -99,6 +99,13 @@ function Screen()
 
 /******************************************************************************/
 
+/*void*/ Screen.prototype.idle = function()
+{
+	this.fContainerControl.idle();
+}
+
+/******************************************************************************/
+
 /*void*/ Screen.prototype.mouseClick = function(/*string*/ controlID)
 {
 	this.fContainerControl.mouseClick(controlID);

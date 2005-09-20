@@ -1,3 +1,9 @@
+LeftArrow, RightArrow navigation.
+
+Encryption of userid/passwords.
+
+Unique ID for player.
+
 Do we want a disabled button to be in gray? (style buttonCtr180_disabled)
 
 In both MCE full screen (and MCX), getting mouse move events when mouse is not being used, forcing focus to center of screen.

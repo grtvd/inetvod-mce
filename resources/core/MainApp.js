@@ -139,6 +139,7 @@ function MainApp()
 		document.getElementById("ScaleDiv").style.display = "inline";
 	}
 
+	window.setTimeout("MainAppIdle()", 500);
 	StartScreen.newInstance();
 }
 
@@ -284,6 +285,18 @@ function MainApp()
 
 /******************************************************************************/
 
+/*void*/ MainApp.prototype.idle = function()
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.idle();
+	}
+}
+
+/******************************************************************************/
+
 /*void*/ MainApp.prototype.mouseClick = function(/*string*/ controlID)
 {
 	if(this.fScreenList.length > 0)
@@ -406,6 +419,21 @@ function MainAppMapKey(key)
 		key = ek_DownButton;
 
 	return key;
+}
+
+/******************************************************************************/
+
+function MainAppIdle()
+{
+	window.setTimeout("MainAppIdle()", 500);
+	try
+	{
+		MainApp.getThe().idle();
+	}
+	catch(e)
+	{
+		showError("MainAppIdle", e);
+	}
 }
 
 /******************************************************************************/

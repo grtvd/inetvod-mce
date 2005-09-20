@@ -298,6 +298,15 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /******************************************************************************/
 
+/*void*/ ContainerControl.prototype.idle = function()
+{
+	var focusedPos = this.fFocusedControlPos;
+	if(focusedPos != -1)
+		(this.fControlArray[focusedPos]).idle();
+}
+
+/******************************************************************************/
+
 /*void*/ ContainerControl.prototype.mouseClick = function(/*string*/ controlID)
 {
 	var oControl = this.findControl(controlID);
