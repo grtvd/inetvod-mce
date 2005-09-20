@@ -5,6 +5,7 @@
 
 /* Event Keys */
 var ek_Backspace = 8;
+var ek_Tab = 9;
 var ek_Select = 256;
 var ek_Back = 257;
 var ek_NextValue = 258;
@@ -113,6 +114,7 @@ function MainApp()
 	this.fScreenList = new Array();
 	this.fSession = Session.newInstance();
 	this.fMainTable = null;
+	this.fFirstMouseMove = true;
 }
 
 /******************************************************************************/
@@ -154,6 +156,7 @@ function MainApp()
 
 	this.fScreenList.push(oScreen);
 
+	this.fFirstMouseMove = true;
 	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
 	oScreen.show(true);
 	oScreen.setFocus(true);
@@ -273,6 +276,9 @@ function MainApp()
 		//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
 		if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
 			handled = true;
+		//IE don't let IE/MCE handle Tab key
+		if(keyCode == ek_Tab)
+			handled = true;
 
 		if(!handled)
 			;	//TODO: beep sound
@@ -311,6 +317,14 @@ function MainApp()
 
 /*void*/ MainApp.prototype.mouseMove = function(/*string*/ controlID)
 {
+	// One MCX and full-screen MCE at console, a bogus mouse move event if shifting focus to center of screen.
+	// Need to "eat" first event, subsequent events are valid.
+	if(this.fFirstMouseMove)
+	{
+		this.fFirstMouseMove = false;
+		return;
+	}
+
 	if(this.fScreenList.length > 0)
 	{
 		var oScreen = this.fScreenList[this.fScreenList.length - 1];
@@ -357,6 +371,7 @@ function MainApp()
 function MainAppOnKeyDown()
 {
 	if((event.keyCode == 8)
+			|| (event.keyCode == 9)
 			|| (event.keyCode == 13)
 			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
 			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
@@ -376,6 +391,7 @@ function MainAppOnKeyUp()
 function MainAppOnKeyPress()
 {
 	if((event.keyCode != 8)
+			&& (event.keyCode != 9)
 			&& (event.keyCode != 13))
 		return MainAppOnRemoteEvent(event.keyCode);
 	return false;

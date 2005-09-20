@@ -263,6 +263,9 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 			return true;
 	}
 
+	if(keyCode == ek_Tab)
+		keyCode = ek_DownButton;
+
 	if(keyCode == ek_DownButton)
 	{
 		for(var i = focusedPos + 1; i < this.fControlArray.length; i++)
