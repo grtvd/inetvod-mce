@@ -120,6 +120,15 @@ function MainApp()
 /******************************************************************************/
 /******************************************************************************/
 
+/*void*/ MainApp.prototype.reset = function()
+{
+	this.closeAllScreens();
+	this.fSession = Session.newInstance();
+	StartScreen.newInstance();
+}
+
+/******************************************************************************/
+
 /*void*/ MainApp.prototype.init = function()
 {
 	if(this.fInit)
@@ -196,6 +205,14 @@ function MainApp()
 		oScreen.show(true);
 		oScreen.setFocus(true);
 	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.closeAllScreens = function()
+{
+	for(var i = this.fScreenList.length - 1; i >= 0; i--)
+		this.fScreenList[i].close();
 }
 
 /******************************************************************************/

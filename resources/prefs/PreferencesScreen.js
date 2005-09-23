@@ -6,6 +6,7 @@
 PreferencesScreen.ScreenID = "Prefs001";
 PreferencesScreen.AccessAdultValueID = "Prefs001_AccessAdultValue";
 PreferencesScreen.AccessAdultButtonID = "Prefs001_AccessAdultButton";
+PreferencesScreen.ResetFactoryButtonID = "Prefs001_ResetFactoryButton";
 
 /******************************************************************************/
 
@@ -39,6 +40,8 @@ function PreferencesScreen()
 	this.newControl(oControl);
 	oControl.setEnabled(!oSession.CanAccessAdult && (oSession.IncludeAdult == ina_PromptPassword));
 
+	this.newControl(new ButtonControl(PreferencesScreen.ResetFactoryButtonID, this.ScreenID));
+
 	if(ViewPortControl.isOpen())
 		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
@@ -50,6 +53,13 @@ function PreferencesScreen()
 	if(controlID == PreferencesScreen.AccessAdultButtonID)
 	{
 		AskAdultPINScreen.newInstance();
+		return;
+	}
+
+	if(controlID == PreferencesScreen.ResetFactoryButtonID)
+	{
+		MainApp.getThe().getSession().resetDataSettings();
+		MainApp.getThe().reset();
 		return;
 	}
 

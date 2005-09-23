@@ -204,6 +204,15 @@ function Session()
 
 /******************************************************************************/
 
+/*void*/ Session.prototype.resetDataSettings = function()
+{
+	deleteCookie("user");
+	deleteCookie("password");
+	deleteCookie("remember");
+}
+
+/******************************************************************************/
+
 /*void*/ Session.prototype.showRequestError = function(/*string*/ message)
 {
 	if(!testStrHasLen(message))
