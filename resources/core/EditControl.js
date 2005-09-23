@@ -299,32 +299,32 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 		this.getScreen().onButton(this.ControlID);
 		return true;
 	}
-	else if(key == ek_RightButton)
-	{
-		if(this.fCurPos < this.MaxLength - 1)
-		{
-			if(this.fCurPos < this.fText.length)
-			{
-				this.fCurPos++;
-				this.checkPositions();
-				this.drawChars(this.fFocused);
-				return true;
-			}
-			else if((this.fText.length == 0) || (this.fText[this.fText.length - 1] != " "))
-			{
-				// see if spaces are supported, add a space char
-				pos = arrayIndexOf(validCharArray, 32);
-				if(pos >= 0)
-				{
-					this.fText.push(" ");
-					this.fCurPos = this.fText.length;
-					this.checkPositions();
-					this.drawChars(this.fFocused);
-					return true;
-				}
-			}
-		}
-	}
+//	else if(key == ek_RightButton)
+//	{
+//		if(this.fCurPos < this.MaxLength - 1)
+//		{
+//			if(this.fCurPos < this.fText.length)
+//			{
+//				this.fCurPos++;
+//				this.checkPositions();
+//				this.drawChars(this.fFocused);
+//				return true;
+//			}
+//			else if((this.fText.length == 0) || (this.fText[this.fText.length - 1] != " "))
+//			{
+//				// see if spaces are supported, add a space char
+//				pos = arrayIndexOf(validCharArray, 32);
+//				if(pos >= 0)
+//				{
+//					this.fText.push(" ");
+//					this.fCurPos = this.fText.length;
+//					this.checkPositions();
+//					this.drawChars(this.fFocused);
+//					return true;
+//				}
+//			}
+//		}
+//	}
 	else if((key == ek_Backspace) || (key == ek_LeftButton))
 	{
 		if(this.fCurPos > 0)
