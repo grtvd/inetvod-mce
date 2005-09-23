@@ -167,54 +167,54 @@ body
 
 .listCtrCount
 {
-	font-weight: normal;
-	font-size: 18pt;
+	font-weight: bold;
+	font-size: 20pt;
 	font-family : Verdana, Arial, Helvetica;
-	color: #F0F0F0;
+	color: #0E4797;
 }
 
 .listCtrPrev_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrPrevNormal.gif);
 	cursor: hand;
 }
 .listCtrPrev_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrPrevHilite.gif);
 	cursor: hand;
 }
 .listCtrPrev_disabled
 {
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrPrevDisabled.gif);
 }
 .listCtrNext_normal
 {
 	behavior: url(styles/controls.htc);
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrNextNormal.gif);
 	cursor: hand;
 }
 .listCtrNext_hilite
 {
 	behavior: url(styles/controls.htc);
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrNextHilite.gif);
 	cursor: hand;
 }
 .listCtrNext_disabled
 {
-	width: 52px;
-	height: 52px;
+	width: 27px;
+	height: 32px;
 	background-image: url(../images/listCtrNextDisabled.gif);
 }
 

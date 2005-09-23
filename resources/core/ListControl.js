@@ -250,7 +250,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 		if(current == -1)
 			current = this.fTopItem + 1;
 
-		value = "" + current + " of " + itemCount;
+		value = "" + current + "/" + itemCount;
 	}
 
 	this.fUICountObj.innerHTML = value;
