@@ -46,10 +46,15 @@ function DataRequestor(/*string*/ sessionData)
 	this.fStatusCode = response.StatusCode;
 	this.fStatusMessage = response.StatusMessage;
 
-	//TODO: should we check StatusCode here?
+	if(this.fStatusCode == sc_InvalidSession)
+		MainApp.getThe().reset();
 
 	if(isNull(response.ResponseData))
-		throw "DataRequestor.parseHeader: response.getResponseData() is null";
+	{
+		if(this.fStatusCode == sc_Success)
+			this.fStatusCode = sc_GeneralError;
+		return null;
+	}
 
 	return response.ResponseData.Response;
 }
