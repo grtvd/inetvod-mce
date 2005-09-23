@@ -29,9 +29,21 @@ function showMsg(msg)
 
 /******************************************************************************/
 
+var gShowErrors = false;
+
+function enableErrors(/*boolean*/ enable)
+{
+	gShowErrors = enable;
+}
+
+/******************************************************************************/
+
 function showError(loc, e)
 {
 	var msg;
+
+	if(!gShowErrors)
+		return;
 
 	if(isUndefined(e.message))
 		msg = e.toString();

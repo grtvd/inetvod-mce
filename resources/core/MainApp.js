@@ -150,6 +150,7 @@ function MainApp()
 		document.getElementById("ScaleDiv").style.display = "inline";
 	}
 
+	enableErrors(!window.external.MediaCenter);
 	window.setTimeout("MainAppIdle()", 500);
 	StartScreen.newInstance();
 }
