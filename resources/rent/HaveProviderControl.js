@@ -15,6 +15,8 @@ HaveProviderControl.ContinueID = "Rent001_HaveProviderControl_Continue";
 HaveProviderControl.newInstance = function()
 {
 	var containerControl = new HaveProviderControl(HaveProviderControl.ControlID, 0, 0);
+	containerControl.onNavigate = HaveProviderControl.onNavigate;
+
 	var oControl;
 
 	containerControl.newControl(new TextControl(HaveProviderControl.DescriptionID, RentScreen.ScreenID));
@@ -86,6 +88,25 @@ function HaveProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	oRentData.Password = data;
 
 	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ HaveProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return HaveProviderControl.ContinueID;
+
+	if((fromControl == HaveProviderControl.UserID)
+		|| (fromControl == HaveProviderControl.PasswordID)
+		|| (fromControl == HaveProviderControl.ContinueID))
+	{
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+	}
+
+	return null;
 }
 
 /******************************************************************************/

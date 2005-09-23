@@ -29,6 +29,7 @@ function PreferencesScreen()
 	this.ScreenID = PreferencesScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 122, 182);
+	this.fContainerControl.onNavigate = PreferencesScreen.onNavigate;
 
 	oControl = new TextControl(PreferencesScreen.AccessAdultValueID, this.ScreenID);
 	oControl.setText(oSession.CanAccessAdult ? "Enabled" : "Disabled");
@@ -75,6 +76,17 @@ function PreferencesScreen()
 	}
 
 	return false;
+}
+
+/******************************************************************************/
+
+/*string*/ PreferencesScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == PreferencesScreen.AccessAdultButtonID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

@@ -28,6 +28,8 @@ function AskAdultPINScreen()
 	this.ScreenID = AskAdultPINScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
+	this.fContainerControl.onNavigate = AskAdultPINScreen.onNavigate;
+
 	oControl = new EditControl(AskAdultPINScreen.PINID, this.ScreenID, 6);
 	this.newControl(oControl);
 	oControl.Type = ect_Numeric;
@@ -54,6 +56,17 @@ function AskAdultPINScreen()
 	var oScreen = MainApp.getThe().getScreen(PreferencesScreen.ScreenID);
 	if(oScreen.doPIN(data))
 		this.close();
+}
+
+/******************************************************************************/
+
+/*string*/ AskAdultPINScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == AskAdultPINScreen.PINID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

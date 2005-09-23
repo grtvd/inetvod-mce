@@ -14,6 +14,7 @@ NeedProviderControl.CreateMembershipID = "Rent001_NeedProviderControl_CreateMemb
 NeedProviderControl.newInstance = function()
 {
 	var containerControl = new NeedProviderControl(NeedProviderControl.ControlID, 0, 0);
+	containerControl.onNavigate = NeedProviderControl.onNavigate;
 
 	containerControl.newControl(new TextControl(NeedProviderControl.MemberTextID, RentScreen.ScreenID));
 	containerControl.newControl(new TextControl(NeedProviderControl.PlanTextID, RentScreen.ScreenID));
@@ -58,6 +59,21 @@ function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	oControl.setText(tempStr);
 
 	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ NeedProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return NeedProviderControl.CreateMembershipID;
+
+	if(fromControl == NeedProviderControl.CreateMembershipID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

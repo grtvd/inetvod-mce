@@ -36,6 +36,7 @@ function CategorySelectScreen(/*SearchDataPtr*/ oSearchData)
 	oRowItemList.push(new ListControlRowItem("Category", 438));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
+	this.fContainerControl.onNavigate = CategorySelectScreen.onNavigate;
 
 	this.fSearchData = oSearchData;
 
@@ -68,6 +69,17 @@ function CategorySelectScreen(/*SearchDataPtr*/ oSearchData)
 	oButtonControl.setText(oSession.getCategoryName(this.fSearchData.CategoryID));
 
 	this.close();
+}
+
+/******************************************************************************/
+
+/*string*/ CategorySelectScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if(fromControl == CategorySelectScreen.CategoriesID)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

@@ -31,6 +31,7 @@ function PickProviderScreen(/*ShowSearch*/ oShowSearch)
 	oRowItemList.push(new ListControlRowItem("Price", 120));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 212, 150);
+	this.fContainerControl.onNavigate = PickProviderScreen.onNavigate;
 
 	var oControl = new TextControl(PickProviderScreen.AvailTextID, this.ScreenID);
 	var tempStr = "'" + oShowSearch.Name + "' is available from multiple providers.";
@@ -66,6 +67,17 @@ function PickProviderScreen(/*ShowSearch*/ oShowSearch)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*string*/ PickProviderScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if(fromControl == PickProviderScreen.ProviderListID)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

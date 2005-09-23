@@ -45,6 +45,9 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	if(showSearchList.length == 0)
 		this.newControl(oControl);
 	oControl.show(showSearchList.length == 0);
+
+	if(ViewPortControl.isOpen())
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
 }
 
 /******************************************************************************/

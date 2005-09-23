@@ -14,6 +14,7 @@ ConfirmChargeControl.DontChargeAccountID = "Rent001_ConfirmChargeControl_DontCha
 ConfirmChargeControl.newInstance = function()
 {
 	var containerControl = new ConfirmChargeControl(ConfirmChargeControl.ControlID, 0, 0);
+	containerControl.onNavigate = ConfirmChargeControl.onNavigate;
 
 	containerControl.newControl(new TextControl(ConfirmChargeControl.ChargeTextID, RentScreen.ScreenID));
 	containerControl.newControl(new ButtonControl(ConfirmChargeControl.ChargeAccountID, RentScreen.ScreenID));
@@ -54,6 +55,24 @@ function ConfirmChargeControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	oTextControl.setText(tempStr);
 
 	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ ConfirmChargeControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return ConfirmChargeControl.DontChargeAccountID;
+
+	if((fromControl == ConfirmChargeControl.ChargeAccountID)
+		|| (fromControl == ConfirmChargeControl.DontChargeAccountID))
+	{
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+	}
+
+	return null;
 }
 
 /******************************************************************************/

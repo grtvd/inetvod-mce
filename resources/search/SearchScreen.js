@@ -31,6 +31,7 @@ function SearchScreen()
 	this.ScreenID = SearchScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
+	this.fContainerControl.onNavigate = SearchScreen.onNavigate;
 
 	oControl = new EditControl(SearchScreen.ShowNameID, this.ScreenID, 16);
 	this.newControl(oControl);
@@ -85,6 +86,45 @@ function SearchScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*string*/ SearchScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+	{
+		if(fromControl == SearchScreen.SearchID)
+			return SearchScreen.ShowNameID;
+		if((fromControl == SearchScreen.ShowNameID)
+				|| (fromControl == SearchScreen.ProviderID)
+				|| (fromControl == SearchScreen.CategoryID)
+				|| (fromControl == SearchScreen.RatingID))
+			return ViewPortControl.ControlID;
+	}
+
+	if(key == ek_RightButton)
+	{
+		if((fromControl == SearchScreen.ShowNameID)
+				|| (fromControl == SearchScreen.ProviderID)
+				|| (fromControl == SearchScreen.CategoryID)
+				|| (fromControl == SearchScreen.RatingID))
+			return SearchScreen.SearchID;
+	}
+
+	if(key == ek_DownButton)
+	{
+		if(fromControl == SearchScreen.ShowNameID)
+			return SearchScreen.ProviderID;
+	}
+
+	if(key == ek_UpButton)
+	{
+		if(fromControl == SearchScreen.ProviderID)
+			return SearchScreen.ShowNameID;
+	}
+
+	return null;
 }
 
 /******************************************************************************/

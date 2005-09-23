@@ -29,6 +29,8 @@ function AskPINScreen()
 	this.ScreenID = AskPINScreen.ScreenID;
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
+	this.fContainerControl.onNavigate = AskPINScreen.onNavigate;
+
 	oControl = new EditControl(AskPINScreen.PINID, this.ScreenID, 6);
 	this.newControl(oControl);
 	oControl.MaxLength = 6;
@@ -74,6 +76,17 @@ function AskPINScreen()
 	}
 
 	//Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*string*/ AskPINScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if((fromControl == AskPINScreen.PINID) || (fromControl == AskPINScreen.ContinueID))
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

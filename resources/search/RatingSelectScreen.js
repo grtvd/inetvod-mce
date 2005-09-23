@@ -36,6 +36,7 @@ function RatingSelectScreen(/*SearchDataPtr*/ oSearchData)
 	oRowItemList.push(new ListControlRowItem("Rating", 438));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
+	this.fContainerControl.onNavigate = RatingSelectScreen.onNavigate;
 
 	this.fSearchData = oSearchData;
 
@@ -68,6 +69,17 @@ function RatingSelectScreen(/*SearchDataPtr*/ oSearchData)
 	oButtonControl.setText(oSession.getRatingName(this.fSearchData.RatingID));
 
 	this.close();
+}
+
+/******************************************************************************/
+
+/*string*/ RatingSelectScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if(fromControl == RatingSelectScreen.RatingsID)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/

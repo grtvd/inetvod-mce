@@ -21,6 +21,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	this.fTop = top;
 	this.fControlArray = new Array();
 	this.fFocusedControlPos = -1;
+	this.onNavigate = new Function("return null;");
 }
 
 /******************************************************************************/
@@ -255,45 +256,49 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	var oCurControl = null;
 	var focusedPos = this.fFocusedControlPos;
+	var nextfocusPos = -1;
 
 	if(focusedPos != -1)
 	{
 		oCurControl = this.fControlArray[focusedPos];
 		if(oCurControl.key(keyCode))
 			return true;
+
+		var nextControlID = this.onNavigate(oCurControl.ControlID, keyCode);
+		if(nextControlID != null)
+			nextfocusPos = this.findControlPos(nextControlID);
 	}
 
-	if(keyCode == ek_Tab)
-		keyCode = ek_DownButton;
-
-	if(keyCode == ek_DownButton)
+	if(nextfocusPos == -1)
 	{
-		for(var i = focusedPos + 1; i < this.fControlArray.length; i++)
+		if((keyCode == ek_DownButton) || (keyCode == ek_Tab))
 		{
-			if(this.fControlArray[i].canFocus())
-			{
-				if(oCurControl != null)
-					oCurControl.setFocus(false);
-				this.fFocusedControlPos = i;
-				this.fControlArray[i].setFocus(true);
-				return true;
-			}
+			for(var i = focusedPos + 1; i < this.fControlArray.length; i++)
+				if(this.fControlArray[i].canFocus())
+				{
+					nextfocusPos = i;
+					break;
+				}
+		}
+
+		if(keyCode == ek_UpButton)
+		{
+			for(var i = focusedPos - 1; i >= 0; i--)
+				if(this.fControlArray[i].canFocus())
+				{
+					nextfocusPos = i;
+					break;
+				}
 		}
 	}
 
-	if(keyCode == ek_UpButton)
+	if(nextfocusPos != -1)
 	{
-		for(var i = focusedPos - 1; i >= 0; i--)
-		{
-			if(this.fControlArray[i].canFocus())
-			{
-				if(oCurControl != null)
-					oCurControl.setFocus(false);
-				this.fFocusedControlPos = i;
-				this.fControlArray[i].setFocus(true);
-				return true;
-			}
-		}
+		if(oCurControl != null)
+			oCurControl.setFocus(false);
+		this.fFocusedControlPos = nextfocusPos;
+		this.fControlArray[nextfocusPos].setFocus(true);
+		return true;
 	}
 
 	return false;
