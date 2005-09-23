@@ -42,6 +42,16 @@ function SetupScreen()
 
 /******************************************************************************/
 
+/*void*/ SetupScreen.prototype.close = function()
+{
+	var oContainerControl = this.findControl(this.fStepControlID);
+	if(oContainerControl != null)
+		oContainerControl.show(false);
+	Screen.prototype.close.call(this);
+}
+
+/******************************************************************************/
+
 /*void*/ SetupScreen.prototype.openStep = function(/*int*/ step)
 {
 	var oContainerControl;

@@ -1,5 +1,7 @@
 Screen Titles.
 
+The check for first mouse move is a bit flawed.  Maybe check for full screen mode in MCE.
+
 Adjust lists in SearchResultsScreen and NowPlayingScreen.
 
 Encryption of userid/passwords.
