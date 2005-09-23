@@ -93,6 +93,17 @@ function IsMCExtender()
 }
 
 /******************************************************************************/
+
+// This function tries to determine if MCE is in full-screen mode to testing the
+// mouse position relative to the client and to the screen.
+
+/*boolean*/ function IsMCEFullScreen()
+{
+	if(window.external.MediaCenter)
+		return ((event.screenX == event.clientX) && (event.screenY == event.clientY));
+	return false;
+}
+/******************************************************************************/
 /******************************************************************************/
 
 function isAlien(a)

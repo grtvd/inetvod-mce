@@ -114,7 +114,7 @@ function MainApp()
 	this.fScreenList = new Array();
 	this.fSession = Session.newInstance();
 	this.fMainTable = null;
-	this.fFirstMouseMove = true;
+	this.fFirstMouseMove = false;
 }
 
 /******************************************************************************/
@@ -165,7 +165,7 @@ function MainApp()
 
 	this.fScreenList.push(oScreen);
 
-	this.fFirstMouseMove = true;
+	this.fFirstMouseMove = IsMCEFullScreen();
 	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
 	oScreen.show(true);
 	oScreen.setFocus(true);
