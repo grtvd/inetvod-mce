@@ -154,10 +154,9 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 		this.getControl(NowPlayingScreen.NameID).setText(rentedShowSearch.Name);
 		this.getControl(NowPlayingScreen.EpisodeNameID).setText(rentedShowSearch.EpisodeName);
 
-		tempStr = oSession.getProviderName(rentedShowSearch.ProviderID);
-		if(rentedShowSearch.AvailableUntil != null)
-			tempStr += ", Until " + this.formatAvailableUntil(rentedShowSearch.AvailableUntil);
-		this.getControl(NowPlayingScreen.ProviderID).setText(tempStr);
+		this.getControl(NowPlayingScreen.ProviderID).setText(
+			oSession.getProviderName(rentedShowSearch.ProviderID)
+			+ this.formatAvailableUntil(rentedShowSearch.AvailableUntil));
 		return;
 	}
 
@@ -203,19 +202,18 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 
 /*string*/ NowPlayingScreen.prototype.formatAvailableUntil = function(/*Date*/ availableUntil)
 {
-	var expires = "n/a";
+	if(availableUntil == null)
+		return "";
 
-	if(availableUntil != null)
-	{
-		var now = new Date();
-		var totalDays = (availableUntil.getTime() - now.getTime()) / MillsPerDay;
+	var expires;
+	var now = new Date();
+	var totalDays = (availableUntil.getTime() - now.getTime()) / MillsPerDay;
 
-		if(totalDays < 0)
-			expires = "Expired";
-		else
-			expires = dayOfWeekToString(availableUntil.getDay(), false)
-				+ " " + dateTimeToString(availableUntil, dtf_M_D_H_MM_AM);
-	}
+	if(totalDays < 0)
+		expires = ", Expired";
+	else
+		expires = ", Until " + dayOfWeekToString(availableUntil.getDay(), false)
+			+ " " + dateTimeToString(availableUntil, dtf_M_D_H_MM_AM);
 
 	return expires;
 }
