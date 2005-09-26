@@ -181,7 +181,10 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	if(this.fFocusedItem != null)
 	{
 		if((oRow != null) && (this.fFocusedItem.ControlID == oRow.ControlID))
+		{
+			this.getScreen().onListItem(this.ControlID);
 			return;
+		}
 
 		this.fFocusedItem.setFocus(false);
 		this.fFocusedItem = null;
