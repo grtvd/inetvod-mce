@@ -102,6 +102,20 @@ body
 	#F0F0F0-space: nowrap;
 	/*border: 1px solid blue;*/
 }
+.listCtrSmallHeader
+{
+	padding-left: 10px;
+	padding-right: 5px;
+	font-weight: normal;
+	font-size: 18pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #9AB4D7;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	#F0F0F0-space: nowrap;
+	/*border: 1px solid blue;*/
+}
 
 .listCtrRow438_normal
 {
@@ -195,6 +209,20 @@ body
 	padding-right: 5px;
 	font-weight: bold;
 	font-size: 22pt;
+	font-family : Verdana, Arial, Helvetica;
+	color: #F0F0F0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	/*border: 1px solid blue;*/
+}
+.listCtrSmallItem
+{
+	/*behavior: url(styles/listControlItem.htc);*/
+	padding-left: 10px;
+	padding-right: 5px;
+	font-weight: normal;
+	font-size: 18pt;
 	font-family : Verdana, Arial, Helvetica;
 	color: #F0F0F0;
 	overflow: hidden;
