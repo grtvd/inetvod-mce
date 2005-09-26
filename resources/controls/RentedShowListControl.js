@@ -77,9 +77,7 @@ function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 		tempStr += ' - "' + rentedShowSearch.EpisodeName + '"';
 
 	oRow.drawRowItem(0, tempStr);
-	oRow.drawRowItem(1, MainApp.getThe().getSession().getProviderName(
-		rentedShowSearch.ProviderID));
-	oRow.drawRowItem(2, expires);
+	oRow.drawRowItem(1, expires);
 }
 
 /******************************************************************************/

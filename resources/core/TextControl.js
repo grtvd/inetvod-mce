@@ -25,7 +25,7 @@ function TextControl(/*string*/ controlID, /*string*/ screenID)
 
 /*void*/ TextControl.prototype.setText = function(/*string*/ text)
 {
-	this.fUIObj.innerHTML = text;
+	this.fUIObj.innerHTML = (testStrHasLen(text) ? text : "");
 }
 
 /******************************************************************************/

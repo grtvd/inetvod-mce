@@ -189,7 +189,10 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 	this.fFocusedItem = oRow;
 	if(this.fFocusedItem != null)
+	{
 		this.fFocusedItem.setFocus(true);
+		this.getScreen().onListItem(this.ControlID);
+	}
 }
 
 /******************************************************************************/
