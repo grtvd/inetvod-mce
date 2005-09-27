@@ -116,6 +116,8 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 		if(oControl.ControlID == controlID)
 		{
 			this.fControlArray.splice(i, 1);
+			if(this.fFocusedControlPos >= this.fControlArray.length)
+				this.fFocusedControlPos = this.fControlArray.length - 1;
 			return;
 		}
 	}
