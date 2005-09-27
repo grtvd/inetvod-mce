@@ -43,8 +43,8 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	this.ScreenID = NowPlayingScreen.ScreenID;
 
 	var oRowItemList = new Array();
-	oRowItemList.push(new ListControlRowItem("Show", 508));
-	oRowItemList.push(new ListControlRowItem("Until", 172));
+	oRowItemList.push(new ListControlRowItem("Show", 550));
+	oRowItemList.push(new ListControlRowItem("Until", 130));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.onNavigate = NowPlayingScreen.onNavigate;
