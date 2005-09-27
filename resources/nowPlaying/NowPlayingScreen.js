@@ -97,6 +97,8 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 		oControl = this.getControl(NowPlayingScreen.ShowListID);
 		oControl.show(false);
 		this.deleteControl(NowPlayingScreen.ShowListID);
+		this.deleteControl(NowPlayingScreen.SortByNameID);
+		this.deleteControl(NowPlayingScreen.SortByUntilID);
 		this.deleteControl(NowPlayingScreen.NameID);
 		this.deleteControl(NowPlayingScreen.EpisodeNameID);
 		this.deleteControl(NowPlayingScreen.ProviderID);
