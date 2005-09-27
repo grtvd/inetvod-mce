@@ -27,8 +27,8 @@ function PickProviderScreen(/*ShowSearch*/ oShowSearch)
 	this.ScreenID = PickProviderScreen.ScreenID;
 
 	var oRowItemList = new Array();
-	oRowItemList.push(new ListControlRowItem("Provider", 318));
-	oRowItemList.push(new ListControlRowItem("Price", 120));
+	oRowItemList.push(new ListControlRowItem("Provider", 338));
+	oRowItemList.push(new ListControlRowItem("Price", 100));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 212, 150);
 	this.fContainerControl.onNavigate = PickProviderScreen.onNavigate;

@@ -1,5 +1,3 @@
-Use small text in lists: Now Playing, Pick Provider.
-
 Screen Titles.
 
 Test IsMCEFullScreen() under MCX.
