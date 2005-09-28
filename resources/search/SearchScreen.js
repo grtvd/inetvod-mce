@@ -29,6 +29,7 @@ function SearchScreen()
 	var oControl;
 
 	this.ScreenID = SearchScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
 	this.fContainerControl.onNavigate = SearchScreen.onNavigate;

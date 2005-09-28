@@ -31,6 +31,7 @@ RatingSelectScreen.prototype.constructor = RatingSelectScreen;
 function RatingSelectScreen(/*SearchDataPtr*/ oSearchData)
 {
 	this.ScreenID = RatingSelectScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Rating", 438));

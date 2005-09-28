@@ -114,6 +114,7 @@ function MainApp()
 	this.fScreenList = new Array();
 	this.fSession = Session.newInstance();
 	this.fMainTable = null;
+	this.fScreenTitle = null;
 	this.fFirstMouseMove = false;
 }
 
@@ -141,6 +142,7 @@ function MainApp()
 	document.body.focus;
 
 	this.fMainTable = document.getElementById("MainTable");
+	this.fScreenTitle = document.getElementById("ScreenTitle");
 
 	if(!window.external.MediaCenter)
 	{
@@ -167,6 +169,7 @@ function MainApp()
 	this.fScreenList.push(oScreen);
 
 	this.fFirstMouseMove = IsMCEFullScreen();
+	this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
 	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
 	oScreen.show(true);
 	oScreen.setFocus(true);
@@ -203,6 +206,7 @@ function MainApp()
 	if(this.fScreenList.length > 0)
 	{
 		oScreen = this.fScreenList[this.fScreenList.length - 1];
+		this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
 		oScreen.show(true);
 		oScreen.setFocus(true);
 	}

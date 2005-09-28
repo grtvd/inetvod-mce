@@ -32,6 +32,7 @@ SetupScreen.prototype.constructor = SetupScreen;
 function SetupScreen()
 {
 	this.ScreenID = SetupScreen.ScreenID;
+	this.ScreenTitle = "setup";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 

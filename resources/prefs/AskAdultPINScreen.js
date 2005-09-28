@@ -26,6 +26,7 @@ function AskAdultPINScreen()
 	var oControl;
 
 	this.ScreenID = AskAdultPINScreen.ScreenID;
+	this.ScreenTitle = "enter pin";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
 	this.fContainerControl.onNavigate = AskAdultPINScreen.onNavigate;

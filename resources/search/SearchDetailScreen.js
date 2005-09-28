@@ -38,6 +38,7 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 
 	this.fShowDetail = showDetail;
 	this.ScreenID = SearchDetailScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 

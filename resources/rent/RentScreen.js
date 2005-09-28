@@ -34,6 +34,7 @@ RentScreen.prototype.constructor = RentScreen;
 function RentScreen(/*ShowDetail*/ oShowDetail)
 {
 	this.ScreenID = RentScreen.ScreenID;
+	this.ScreenTitle = "rent";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 

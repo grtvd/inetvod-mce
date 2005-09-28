@@ -28,6 +28,7 @@ WelcomeScreen.prototype.constructor = WelcomeScreen;
 function WelcomeScreen()
 {
 	this.ScreenID = WelcomeScreen.ScreenID;
+	this.ScreenTitle = "welcome";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 122, 182);
 	this.newControl(new ButtonControl(WelcomeScreen.NowPlayingID, this.ScreenID));

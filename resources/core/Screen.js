@@ -6,6 +6,7 @@
 function Screen()
 {
 	this.ScreenID = null;
+	this.ScreenTitle = "";
 	this.fContainerControl = null;
 }
 

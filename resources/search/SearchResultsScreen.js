@@ -34,6 +34,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	this.fShowSearchList = showSearchList;
 	this.fShowSearchList.sort(ShowSearchByNameCmpr);
 	this.ScreenID = SearchResultsScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 500));

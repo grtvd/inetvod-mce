@@ -25,6 +25,7 @@ function PickProviderScreen(/*ShowSearch*/ oShowSearch)
 {
 	this.ShowSearch = oShowSearch;
 	this.ScreenID = PickProviderScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Provider", 338));

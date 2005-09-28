@@ -23,6 +23,7 @@ CategorySearchScreen.prototype.constructor = CategorySearchScreen;
 function CategorySearchScreen()
 {
 	this.ScreenID = CategorySearchScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Category", 438));

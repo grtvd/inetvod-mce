@@ -23,6 +23,7 @@ StartScreen.prototype.constructor = StartScreen;
 function StartScreen()
 {
 	this.ScreenID = StartScreen.ScreenID;
+	this.ScreenTitle = "welcome";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 200);
 	this.fContainerControl.onNavigate = StartScreen.onNavigate;

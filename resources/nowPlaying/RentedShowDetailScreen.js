@@ -41,6 +41,7 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 
 	this.fRentedShow = rentedShow;
 	this.ScreenID = RentedShowDetailScreen.ScreenID;
+	this.ScreenTitle = "playing";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 

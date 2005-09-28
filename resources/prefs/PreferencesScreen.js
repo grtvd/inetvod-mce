@@ -28,6 +28,7 @@ function PreferencesScreen()
 	var oControl;
 
 	this.ScreenID = PreferencesScreen.ScreenID;
+	this.ScreenTitle = "prefs";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 122, 182);
 	this.fContainerControl.onNavigate = PreferencesScreen.onNavigate;

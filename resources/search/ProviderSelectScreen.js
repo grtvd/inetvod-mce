@@ -31,6 +31,7 @@ ProviderSelectScreen.prototype.constructor = ProviderSelectScreen;
 function ProviderSelectScreen(/*SearchDataPtr*/ oSearchData)
 {
 	this.ScreenID = ProviderSelectScreen.ScreenID;
+	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Provider", 438));

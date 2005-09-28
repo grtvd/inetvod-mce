@@ -42,6 +42,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	this.fRentedShowSearchList = rentedShowSearchList;
 	this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
 	this.ScreenID = NowPlayingScreen.ScreenID;
+	this.ScreenTitle = "playing";
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 550));
