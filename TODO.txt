@@ -1,5 +1,3 @@
-Screen Titles.
-
 Test IsMCEFullScreen() under MCX.
 
 Encryption of userid/passwords.
