@@ -18,6 +18,15 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /******************************************************************************/
 
+/*void*/ ShowSearchListControl.prototype.setShowSearchList = function(
+	/*Array*/ showSearchList, /*boolean*/ reset)
+{
+	this.ShowSearchList = showSearchList;
+	this.recalcAfterDataChange(reset);
+}
+
+/******************************************************************************/
+
 /*ShowSearch*/ ShowSearchListControl.prototype.getFocusedItemValue = function()
 {
 	var focusedItem = this.getFocusedItemPos();

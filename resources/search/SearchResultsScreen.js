@@ -31,6 +31,8 @@ SearchResultsScreen.prototype.constructor = SearchResultsScreen;
 
 function SearchResultsScreen(/*Array*/ showSearchList)
 {
+	this.fShowSearchList = showSearchList;
+	this.fShowSearchList.sort(ShowSearchByNameCmpr);
 	this.ScreenID = SearchResultsScreen.ScreenID;
 
 	var oRowItemList = new Array();
@@ -76,10 +78,11 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 /*void*/ SearchResultsScreen.prototype.onButton = function(/*string*/ controlID)
 {
 	var oSession = MainApp.getThe().getSession();
+	var oShowSearchListControl;
 
 	if(controlID == SearchResultsScreen.ShowListID)
 	{
-		var oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
+		oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
 		var oShowSearch = oShowSearchListControl.getFocusedItemValue();
 		var showProviderList = oShowSearch.ShowProviderList;
 
@@ -99,15 +102,16 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		return;
 	}
 
-	if(controlID == SearchResultsScreen.SortByNameID)
+	if((controlID == SearchResultsScreen.SortByNameID) || (controlID == SearchResultsScreen.SortByPriceID))
 	{
-		showMsg("Not yet implemented");	//TODO: need to implement
-		return;
-	}
+		if(controlID == SearchResultsScreen.SortByNameID)
+			this.fShowSearchList.sort(ShowSearchByNameCmpr);
+		else
+			this.fShowSearchList.sort(ShowSearchByCostCmpr);
 
-	if(controlID == SearchResultsScreen.SortByPriceID)
-	{
-		showMsg("Not yet implemented");	//TODO: need to implement
+		oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
+		oShowSearchListControl.setShowSearchList(this.fShowSearchList, true);
+		this.focusControl(SearchResultsScreen.ShowListID, true);
 		return;
 	}
 

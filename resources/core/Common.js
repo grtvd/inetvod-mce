@@ -342,6 +342,22 @@ function compareStringsIgnoreCase(lhs, rhs)
 
 /******************************************************************************/
 
+function compareNumbers(lhs, rhs)
+{
+	if(!lhs)
+		lhs = 0;
+	if(!rhs)
+		rhs = 0;
+
+	if(lhs == rhs)
+		return 0;
+	if(lhs < rhs)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+
 function compareDates(lhs, rhs)
 {
 	if(!lhs)
