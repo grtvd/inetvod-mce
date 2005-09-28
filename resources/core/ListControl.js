@@ -94,11 +94,23 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
-/*void*/ ListControl.prototype.recalcAfterDataChange = function()
+/*void*/ ListControl.prototype.recalcAfterDataChange = function(/*boolrean*/ reset)
 {
-	this.recalcTopItemFromBottomItem();
-	if((this.fFocusedItem != null) && (this.fBottomItem >= 0) && (this.fFocusedItem.RowIndex > this.fBottomItem))
-		this.setFocusedItem(this.fRowList[this.fBottomItem]);
+	if(reset)
+	{
+		this.fTopItem = 0;
+		this.fBottomItem = -1;
+
+		this.recalcBottomItemFromTopItem();
+		if(this.getItemCount() > 0)
+			this.setFocusedItem(this.fRowList[0]);
+	}
+	else
+	{
+		this.recalcTopItemFromBottomItem();
+		if((this.fFocusedItem != null) && (this.fBottomItem >= 0) && (this.fFocusedItem.RowIndex > this.fBottomItem))
+			this.setFocusedItem(this.fRowList[this.fBottomItem]);
+	}
 	this.drawItems(false);
 	this.drawUpIcon(false);
 	this.drawDownIcon(false);

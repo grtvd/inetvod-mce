@@ -18,10 +18,11 @@ function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /******************************************************************************/
 
-/*void*/ RentedShowListControl.prototype.setRentedShowSearchList = function(/*Array*/ rentedShowSearchList)
+/*void*/ RentedShowListControl.prototype.setRentedShowSearchList = function(
+	/*Array*/ rentedShowSearchList, /*boolean*/ reset)
 {
 	this.RentedShowSearchList = rentedShowSearchList;
-	this.recalcAfterDataChange();
+	this.recalcAfterDataChange(reset);
 }
 
 /******************************************************************************/

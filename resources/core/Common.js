@@ -319,6 +319,46 @@ function forceRedraw(pauseMills)
 /******************************************************************************/
 /******************************************************************************/
 
+function compareStrings(lhs, rhs)
+{
+	if(!lhs)
+		lhs = "";
+	if(!rhs)
+		rhs = "";
+
+	if(lhs == rhs)
+		return 0;
+	if(lhs < rhs)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+
+function compareStringsIgnoreCase(lhs, rhs)
+{
+	return compareStrings((lhs ? lhs.toUpperCase() : lhs), (rhs ? rhs.toUpperCase() : rhs));
+}
+
+/******************************************************************************/
+
+function compareDates(lhs, rhs)
+{
+	if(!lhs)
+		lhs = (new Date());
+	if(!rhs)
+		rhs = (new Date());
+
+	if(lhs == rhs)
+		return 0;
+	if(lhs < rhs)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
 function arrayIndexOf(arr, item)
 {
 	for(var i = 0; i < arr.length; i++)

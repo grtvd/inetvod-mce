@@ -21,3 +21,18 @@ function RentedShowSearchToIDCmpr(rentedShowID)
 
 /******************************************************************************/
 /******************************************************************************/
+
+function RentedShowSearchByNameCmpr(lhs, rhs)
+{
+	return compareStringsIgnoreCase(lhs.Name, rhs.Name);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByAvailableUntilCmpr(lhs, rhs)
+{
+	return compareDates(lhs.AvailableUntil, rhs.AvailableUntil);
+}
+
+/******************************************************************************/
+/******************************************************************************/

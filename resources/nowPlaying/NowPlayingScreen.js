@@ -40,6 +40,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 {
 	this.fRentedShowSearchList = rentedShowSearchList;
+	this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
 	this.ScreenID = NowPlayingScreen.ScreenID;
 
 	var oRowItemList = new Array();
@@ -90,7 +91,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	if(this.fRentedShowSearchList.length > 0)
 	{
 		var oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
-		oRentedShowListControl.setRentedShowSearchList(this.fRentedShowSearchList);
+		oRentedShowListControl.setRentedShowSearchList(this.fRentedShowSearchList, false);
 	}
 	else
 	{
@@ -114,27 +115,29 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 /*void*/ NowPlayingScreen.prototype.onButton = function(/*string*/ controlID)
 {
 	var oSession = MainApp.getThe().getSession();
+	var oRentedShowListControl;
 
 	if(controlID == NowPlayingScreen.ShowListID)
 	{
-		var rentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
+		oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
 		var rentedShow = oSession.rentedShow(
-			rentedShowListControl.getFocusedItemValue().RentedShowID);
+			oRentedShowListControl.getFocusedItemValue().RentedShowID);
 
 		if(rentedShow != null)
 			RentedShowDetailScreen.newInstance(rentedShow);
 		return;
 	}
 
-	if(controlID == NowPlayingScreen.SortByNameID)
+	if((controlID == NowPlayingScreen.SortByNameID) || (controlID == NowPlayingScreen.SortByUntilID))
 	{
-		showMsg("Not yet implemented");	//TODO: need to implement
-		return;
-	}
+		if(controlID == NowPlayingScreen.SortByNameID)
+			this.fRentedShowSearchList.sort(RentedShowSearchByNameCmpr);
+		else
+			this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
 
-	if(controlID == NowPlayingScreen.SortByUntilID)
-	{
-		showMsg("Not yet implemented");	//TODO: need to implement
+		oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
+		oRentedShowListControl.setRentedShowSearchList(this.fRentedShowSearchList, true);
+		this.focusControl(NowPlayingScreen.ShowListID, true);
 		return;
 	}
 
