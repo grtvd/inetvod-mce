@@ -1,4 +1,4 @@
-/* RentedShowSearchToIDCmpr.js */
+/* RentedShowSearchCmprs.js */
 
 /******************************************************************************/
 /******************************************************************************/
@@ -24,7 +24,12 @@ function RentedShowSearchToIDCmpr(rentedShowID)
 
 function RentedShowSearchByNameCmpr(lhs, rhs)
 {
-	return compareStringsIgnoreCase(lhs.Name, rhs.Name);
+	var rc = compareStringsIgnoreCase(lhs.Name, rhs.Name);
+
+	if(rc != 0)
+		return rc;
+
+	return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
 }
 
 /******************************************************************************/
