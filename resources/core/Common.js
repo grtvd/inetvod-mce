@@ -111,8 +111,9 @@ function IsMCExtender()
 
 /*boolean*/ function IsMCEFullScreen()
 {
-	if(window.external.MediaCenter)
-		return ((event.screenX == event.clientX) && (event.screenY == event.clientY));
+// PROBLEM: event (and window.event) not set when remote control is pressed.
+//	if(window.external.MediaCenter)
+//		return ((event.screenX == event.clientX) && (event.screenY == event.clientY));
 	return false;
 }
 /******************************************************************************/
