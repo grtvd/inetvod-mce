@@ -135,6 +135,7 @@ function MainApp()
 	if(this.fInit)
 		return;
 	this.fInit = true;
+	//DebugOn(true);
 
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.BGColor = g_Color_Black;
@@ -168,7 +169,7 @@ function MainApp()
 
 	this.fScreenList.push(oScreen);
 
-	this.fFirstMouseMove = IsMCEFullScreen();
+	this.fFirstMouseMove = true;
 	this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
 	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
 	oScreen.show(true);
@@ -315,6 +316,11 @@ function MainApp()
 
 /*void*/ MainApp.prototype.idle = function()
 {
+	// If fFirstMouseMove has not yet been cleared, clear it.  IE and non full-screen MCE don't get the bogus
+	// mouse move events.
+	if(this.fFirstMouseMove)
+		this.fFirstMouseMove = false;
+
 	if(this.fScreenList.length > 0)
 	{
 		var oScreen = this.fScreenList[this.fScreenList.length - 1];
@@ -496,9 +502,6 @@ function MainAppOnMouseOver(obj)
 {
 	try
 	{
-		if(IsMCExtender())
-			return;
-
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().mouseMove(obj.id);

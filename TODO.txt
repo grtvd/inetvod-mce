@@ -1,4 +1,8 @@
-Test IsMCEFullScreen() under MCX.
+Add Copyright to all files (especially if downloaded)
+
+Rating not being shown (RentedShowDetail, ShowSearchDetail)
+
+Long descriptions being cutoff (RentedShowDetail, ShowSearchDetail)
 
 Encryption of userid/passwords.
 

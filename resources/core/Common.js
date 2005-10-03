@@ -42,15 +42,17 @@ function showError(loc, e)
 {
 	var msg;
 
-	if(!gShowErrors)
-		return;
-
 	if(isUndefined(e.message))
 		msg = e.toString();
 	else
 		msg = e.name + ": " + e.message;
 
 	msg = loc + ": caught: " + msg;
+
+	DebugOut(msg);
+
+	if(!gShowErrors)
+		return;
 
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.Dialog(msg, "Error", 1, 5, false);
@@ -104,18 +106,6 @@ function IsMCExtender()
 	}
 }
 
-/******************************************************************************/
-
-// This function tries to determine if MCE is in full-screen mode to testing the
-// mouse position relative to the client and to the screen.
-
-/*boolean*/ function IsMCEFullScreen()
-{
-// PROBLEM: event (and window.event) not set when remote control is pressed.
-//	if(window.external.MediaCenter)
-//		return ((event.screenX == event.clientX) && (event.screenY == event.clientY));
-	return false;
-}
 /******************************************************************************/
 /******************************************************************************/
 

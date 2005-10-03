@@ -3,16 +3,29 @@
 /******************************************************************************/
 /******************************************************************************/
 
+var gDebuggerID = "Debugger";
 var gDebugOutID = "Debugger_Out";
+var gDebugOn = false;
 var gDebugLines = new Array();
 var gDebugCount = 0;
 
 /******************************************************************************/
 
+function DebugOn(on)
+{
+	gDebugOn = on ? true : false;
+
+	var obj = document.getElementById(gDebuggerID);
+	obj.style.display = gDebugOn ? 'inline' : 'none';
+}
+
 function DebugOut(msg)
 {
 	try
 	{
+		if(!gDebugOn)
+			return;
+
 		gDebugCount++;
 		gDebugLines.push("" + gDebugCount + ": " + msg);
 		if(gDebugLines.length > 35)
