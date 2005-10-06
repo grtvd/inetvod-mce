@@ -18,7 +18,7 @@ function ShowSearchResp(reader)
 {
 	this.ShowSearchList = reader.readList("ShowSearch", ShowSearch);
 	this.ReachedMax = reader.readBoolean("ReachedMax");
-}								
+}
 
 /******************************************************************************/
 /******************************************************************************/

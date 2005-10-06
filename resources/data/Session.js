@@ -445,6 +445,9 @@ function Session()
 		oWaitScreen.close();
 		if(statusCode == sc_Success)
 		{
+			if(showSearchResp.ReachedMax)
+				showMsg("Over " + showSearchRqst.MaxResults + " shows were found.  Please try narrowing your search criteria.");
+
 			showSearchListRef.value = showSearchResp.ShowSearchList;
 			return true;
 		}
