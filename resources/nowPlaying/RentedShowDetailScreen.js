@@ -74,20 +74,25 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	oControl.setText(this.fRentedShow.Description);
 	this.newControl(oControl);
 
-	tempStr = "";
+	tempStr = "n/a";
 	if(this.fRentedShow.ReleasedOn)
 		tempStr = dateTimeToString(this.fRentedShow.ReleasedOn, dtf_M_D_YYYY, true);
 	else if(this.fRentedShow.ReleasedYear)
-		tempStr = this.fRentedShow.ReleasedYear;
+		tempStr = this.fRentedShow.ReleasedYear.toString();
 	oControl = new TextControl(RentedShowDetailScreen.ReleasedID, this.ScreenID);
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
-	tempStr = "";
+	tempStr = "n/a";
 	if(this.fRentedShow.RunningMins)
 		tempStr = this.fRentedShow.RunningMins + " mins";
 	oControl = new TextControl(RentedShowDetailScreen.RunningMinsID, this.ScreenID);
 	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	//TODO: show Rating
+	oControl = new TextControl(RentedShowDetailScreen.RatingID, this.ScreenID);
+	oControl.setText("n/a");
 	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.CategoryID, this.ScreenID);
@@ -106,8 +111,11 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	oControl.setText(this.fRentedShow.ShowCost.CostDisplay);
 	this.newControl(oControl);
 
+	tempStr = "n/a";
 	oControl = new TextControl(RentedShowDetailScreen.RentalHoursID, this.ScreenID);
-	oControl.setText(this.fRentedShow.ShowCost.RentalHours + " hrs.");
+	if(this.fRentedShow.ShowCost.RentalHours)
+		tempStr = this.fRentedShow.ShowCost.RentalHours + " hrs";
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentedOnID, this.ScreenID);

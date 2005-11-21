@@ -9,9 +9,10 @@
 //var dtf_ISO8601_DateTime = 1;
 //var dtf_M_D_YY = 2;				// 2/3/04
 var dtf_M_D_YYYY = 3;				// 2/3/2004
-var dtf_M_D = 4;					// 2/3
-//var dtf_M_D_YYYY_H_MM_AM = 5;		// 2/3/2004 1:05 PM
-//var dtf_M_D_YYYY_H_MM_SS_AM = 6;	// 2/3/2004 1:05:07 PM
+var dtf_M_YY = 4;					// 2/04
+var dtf_M_D = 5;					// 2/3
+//var dtf_M_D_YYYY_H_MM_AM = x;		// 2/3/2004 1:05 PM
+//var dtf_M_D_YYYY_H_MM_SS_AM = x;	// 2/3/2004 1:05:07 PM
 var dtf_M_D_H_MM_AM = 7;			// 2/3 1:05 PM
 //var dtf_H_AM = 8;					// 1 PM
 var dtf_Ha = 9;						// 1p
@@ -76,6 +77,10 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	{
 		case dtf_M_D_YYYY:
 			timeStr = month + DateSeparator + day + DateSeparator + year;
+			break;
+
+		case dtf_M_YY:
+			timeStr = month + DateSeparator + (((year % 100) < 10) ? "0" : "") + (year % 100);
 			break;
 
 		case dtf_M_D:

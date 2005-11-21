@@ -1,4 +1,4 @@
-/* NowPlayingScreen.js */
+/* SearchResultsScreen.js */
 
 /******************************************************************************/
 /******************************************************************************/
@@ -9,6 +9,7 @@ SearchResultsScreen.NameID = "Search003_Name";
 SearchResultsScreen.EpisodeNameID = "Search003_EpisodeName";
 SearchResultsScreen.ProviderID = "Search003_Provider";
 SearchResultsScreen.SortByNameID = "Search003_SortByName";
+SearchResultsScreen.SortByDateID = "Search003_SortByDate";
 SearchResultsScreen.SortByPriceID = "Search003_SortByPrice";
 SearchResultsScreen.NoShowsTextID = "Search003_NoShowsText";
 
@@ -37,8 +38,8 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	this.ScreenTitle = "search";
 
 	var oRowItemList = new Array();
-	oRowItemList.push(new ListControlRowItem("Show", 500));
-	oRowItemList.push(new ListControlRowItem("Year", 80));
+	oRowItemList.push(new ListControlRowItem("Show", 495));
+	oRowItemList.push(new ListControlRowItem("Year", 85));
 	oRowItemList.push(new ListControlRowItem("Cost", 100));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
@@ -49,6 +50,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	if(showSearchList.length > 0)
 	{
 		this.newControl(new ButtonControl(SearchResultsScreen.SortByNameID, this.ScreenID));
+		this.newControl(new ButtonControl(SearchResultsScreen.SortByDateID, this.ScreenID));
 		this.newControl(new ButtonControl(SearchResultsScreen.SortByPriceID, this.ScreenID));
 	}
 
@@ -103,10 +105,13 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		return;
 	}
 
-	if((controlID == SearchResultsScreen.SortByNameID) || (controlID == SearchResultsScreen.SortByPriceID))
+	if((controlID == SearchResultsScreen.SortByNameID) || (controlID == SearchResultsScreen.SortByDateID)
+		|| (controlID == SearchResultsScreen.SortByPriceID))
 	{
 		if(controlID == SearchResultsScreen.SortByNameID)
 			this.fShowSearchList.sort(ShowSearchByNameCmpr);
+		else if(controlID == SearchResultsScreen.SortByDateID)
+			this.fShowSearchList.sort(ShowSearchByDateDescCmpr);
 		else
 			this.fShowSearchList.sort(ShowSearchByCostCmpr);
 
@@ -162,6 +167,10 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	}
 
 	if(fromControl == SearchResultsScreen.SortByNameID)
+		if(key == ek_RightButton)
+			return SearchResultsScreen.ShowListID;
+
+	if(fromControl == SearchResultsScreen.SortByDateID)
 		if(key == ek_RightButton)
 			return SearchResultsScreen.ShowListID;
 

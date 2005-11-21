@@ -50,8 +50,15 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 {
 	var showSearch = this.ShowSearchList[item];
 	var showProvider;
+	var date;
 	var cost;
 	var tempStr;
+
+	date = "";
+	if(showSearch.ReleasedOn)
+		date = dateTimeToString(showSearch.ReleasedOn, dtf_M_YY, true);
+	else if(showSearch.ReleasedYear)
+		date = showSearch.ReleasedYear.toString();
 
 	if(showSearch.ShowProviderList.length == 1)
 	{
@@ -65,7 +72,7 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 	if(testStrHasLen(showSearch.EpisodeName))
 		tempStr += ' - "' + showSearch.EpisodeName + '"';
 	oRow.drawRowItem(0, tempStr);
-	oRow.drawRowItem(1, showSearch.ReleasedYear);
+	oRow.drawRowItem(1, date);
 	oRow.drawRowItem(2, cost);
 }
 

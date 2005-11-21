@@ -70,20 +70,25 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(this.fShowDetail.Description);
 	this.newControl(oControl);
 
-	tempStr = "";
+	tempStr = "n/a";
 	if(this.fShowDetail.ReleasedOn)
 		tempStr = dateTimeToString(this.fShowDetail.ReleasedOn, dtf_M_D_YYYY, true);
 	else if(this.fShowDetail.ReleasedYear)
-		tempStr = this.fShowDetail.ReleasedYear;
+		tempStr = this.fShowDetail.ReleasedYear.toString();
 	oControl = new TextControl(SearchDetailScreen.ReleasedID, this.ScreenID);
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
-	tempStr = "";
+	tempStr = "n/a";
 	if(this.fShowDetail.RunningMins)
 		tempStr = this.fShowDetail.RunningMins + " mins";
 	oControl = new TextControl(SearchDetailScreen.RunningMinsID, this.ScreenID);
 	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	//TODO: show Rating
+	oControl = new TextControl(SearchDetailScreen.RatingID, this.ScreenID);
+	oControl.setText("n/a");
 	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
@@ -104,8 +109,11 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(showCost.CostDisplay);
 	this.newControl(oControl);
 
+	tempStr = "n/a";
 	oControl = new TextControl(SearchDetailScreen.RentalHoursID, this.ScreenID);
-	oControl.setText(showCost.RentalHours + " hrs.");
+	if(showCost.RentalHours)
+		tempStr = showCost.RentalHours + " hrs";
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())

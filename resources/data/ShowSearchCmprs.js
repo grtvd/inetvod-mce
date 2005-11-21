@@ -15,6 +15,30 @@ function ShowSearchByNameCmpr(lhs, rhs)
 
 /******************************************************************************/
 
+function ShowSearchByDateCmpr(lhs, rhs)
+{
+	var rc = compareDates(lhs.ReleasedOn, rhs.ReleasedOn);
+
+	//if(rc != 0)
+		return rc;
+
+	//return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
+}
+
+/******************************************************************************/
+
+function ShowSearchByDateDescCmpr(lhs, rhs)
+{
+	var rc = compareDates(rhs.ReleasedOn, lhs.ReleasedOn);
+
+	//if(rc != 0)
+		return rc;
+
+	//return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
+}
+
+/******************************************************************************/
+
 function ShowSearchByCostCmpr(lhs, rhs)
 {
 	var lhsShowCost = lhs.ShowProviderList[0].ShowCost;

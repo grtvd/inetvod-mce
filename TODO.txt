@@ -1,3 +1,11 @@
+Add Logo - http://api.inetvod.com/mce/images/logo.gif
+
+Need to support ect_AlphaNumeric for EditControl (for Provider's User ID / Password)
+
+SearchResultScreen
+- Date sort is desc, should do asc also, need visual for user
+- Date is should use both ReleasedOn and ReleaseYear.
+
 Add Copyright to all files (especially if downloaded)
 
 Rating not being shown (RentedShowDetail, ShowSearchDetail)
