@@ -58,10 +58,8 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 /*void*/ RentScreen.prototype.createControls = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var oShowDetail = this.fRentData.ShowDetail;
-	var oShowCost = oShowDetail.ShowCostList[0];	//TODO: is this OK to check "first" showCost as Free?
 
-	if((oShowCost.ShowCostType == sct_Free) ||
+	if((this.fRentData.ShowCost.ShowCostType == sct_Free) ||
 		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
 	{
 		var nextStep = this.checkShowAvail();

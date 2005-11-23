@@ -87,20 +87,10 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	{
 		oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
 		var oShowSearch = oShowSearchListControl.getFocusedItemValue();
-		var showProviderList = oShowSearch.ShowProviderList;
 
-		if(showProviderList.length == 1)
-		{
-			var oShowProvider = showProviderList[0];
-			var oShowDetail = oSession.showDetail(oShowSearch.ShowID, oShowProvider.ProviderID);
-
-			if(oShowDetail != null)
-				SearchDetailScreen.newInstance(oShowDetail);
-		}
-		else
-		{
-			PickProviderScreen.newInstance(oShowSearch);
-		}
+		var oShowDetail = oSession.showDetail(oShowSearch.ShowID);
+		if(oShowDetail != null)
+			SearchDetailScreen.newInstance(oShowDetail);
 
 		return;
 	}
@@ -145,7 +135,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 			if(testStrHasLen(tempStr))
 				tempStr += ", ";
 			tempStr += oSession.getProviderName(showProviderList[i].ProviderID);
-			tempStr += " (" + showProviderList[i].ShowCost.CostDisplay + ")";
+			tempStr += " (" + showProviderList[i].ShowCostList[0].CostDisplay + ")";	//TODO: Showing first ShowCost
 		}
 		this.getControl(SearchResultsScreen.ProviderID).setText(tempStr);
 		return;

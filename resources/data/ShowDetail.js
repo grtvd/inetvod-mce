@@ -6,7 +6,6 @@
 function ShowDetail(reader)
 {
 	this.ShowID = null;
-	this.ProviderID = null;
 	this.Name = null;
 	this.EpisodeName = null;
 	this.EpisodeNumber= null;
@@ -21,7 +20,7 @@ function ShowDetail(reader)
 	this.RatingID = null;
 	this.IsAdult = false;
 
-	this.ShowCostList = null;
+	this.ShowProviderList = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -32,7 +31,6 @@ function ShowDetail(reader)
 /*void*/ ShowDetail.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
-	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
 	this.Name = reader.readString("Name", 64);
 	this.EpisodeName = reader.readString("EpisodeName", 64);
 	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
@@ -47,7 +45,7 @@ function ShowDetail(reader)
 	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
 	this.IsAdult = reader.readBoolean("IsAdult");
 
-	this.ShowCostList = reader.readList("ShowCost", ShowCost);
+	this.ShowProviderList = reader.readList("ShowProvider", ShowProvider);
 }
 
 /******************************************************************************/

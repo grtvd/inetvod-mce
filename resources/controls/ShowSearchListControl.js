@@ -63,7 +63,7 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 	if(showSearch.ShowProviderList.length == 1)
 	{
 		showProvider = showSearch.ShowProviderList[0];
-		cost = showProvider.ShowCost.CostDisplay;
+		cost = showProvider.ShowCostList[0].CostDisplay;	//TODO: Showing first ShowCost
 	}
 	else
 		cost = "(...)";

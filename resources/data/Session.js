@@ -467,7 +467,7 @@ function Session()
 
 /******************************************************************************/
 
-/*ShowDetail*/ Session.prototype.showDetail = function(/*string*/ showID, /*string*/ providerID)
+/*ShowDetail*/ Session.prototype.showDetail = function(/*string*/ showID)
 {
 	var statusCode = sc_GeneralError;
 	var statusMessage = null;
@@ -477,7 +477,6 @@ function Session()
 
 	showDetailRqst = ShowDetailRqst.newInstance();
 	showDetailRqst.ShowID = showID;
-	showDetailRqst.ProviderID = providerID;
 
 	var oWaitScreen = WaitScreen.newInstance();
 	try

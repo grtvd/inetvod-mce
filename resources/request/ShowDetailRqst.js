@@ -13,7 +13,6 @@ ShowDetailRqst.newInstance = function()
 function ShowDetailRqst()
 {
 	this.ShowID = null;
-	this.ProviderID = null;
 }
 
 /******************************************************************************/
@@ -28,7 +27,6 @@ function ShowDetailRqst()
 /*void*/ ShowDetailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
 	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
-	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
 }
 
 /******************************************************************************/

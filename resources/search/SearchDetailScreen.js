@@ -95,15 +95,13 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
 	this.newControl(oControl);
 
-	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
-	oControl.setText(oSession.getProviderName(this.fShowDetail.ProviderID));
-	this.newControl(oControl);
+	var showProvider = this.fShowDetail.ShowProviderList[0];	//TODO: Need to deal with multiple
 
 	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
-	oControl.setText(oSession.getProviderName(this.fShowDetail.ProviderID));
+	oControl.setText(oSession.getProviderName(showProvider.ProviderID));
 	this.newControl(oControl);
 
-	var showCost = this.fShowDetail.ShowCostList[0];	//TODO: Need to deal with multiple
+	var showCost = showProvider.ShowCostList[0];	//TODO: Need to deal with multiple
 
 	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
 	oControl.setText(showCost.CostDisplay);

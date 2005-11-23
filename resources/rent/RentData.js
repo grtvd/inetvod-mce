@@ -8,12 +8,14 @@ function RentData(/*ShowDetail*/ oShowDetail)
 	var oSession = MainApp.getThe().getSession();
 
 	this.ShowDetail = oShowDetail;
-	this.Provider = oSession.getProvider(oShowDetail.ProviderID);
+
+	var showProvider = this.ShowDetail.ShowProviderList[0];			//TODO: just get first provider for now
+	this.ShowCost = showProvider.ShowCostList[0];					//TODO: just get first show cost for now
+
+	this.Provider = oSession.getProvider(showProvider.ProviderID);
 
 	this.UserID = null;
 	this.Password = null;
-
-	this.ShowCost = null;
 }
 
 /******************************************************************************/
