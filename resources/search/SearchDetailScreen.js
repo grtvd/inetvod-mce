@@ -13,7 +13,7 @@ SearchDetailScreen.CategoryID = "Search004_Category";
 SearchDetailScreen.ProviderID = "Search004_Provider";
 SearchDetailScreen.RatingID = "Search004_Rating";
 SearchDetailScreen.CostID = "Search004_Cost";
-SearchDetailScreen.RentalHoursID = "Search004_RentalHours";
+SearchDetailScreen.RentalPeriodHoursID = "Search004_RentalPeriodHours";
 SearchDetailScreen.RentNowID = "Search004_RentNow";
 
 /******************************************************************************/
@@ -108,9 +108,9 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	this.newControl(oControl);
 
 	tempStr = "n/a";
-	oControl = new TextControl(SearchDetailScreen.RentalHoursID, this.ScreenID);
-	if(showCost.RentalHours)
-		tempStr = showCost.RentalHours + " hrs";
+	oControl = new TextControl(SearchDetailScreen.RentalPeriodHoursID, this.ScreenID);
+	if(showCost.RentalPeriodHours)
+		tempStr = showCost.RentalPeriodHours + " hrs";
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 

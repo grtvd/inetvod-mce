@@ -587,7 +587,7 @@ function Session()
 /******************************************************************************/
 
 /*CheckShowAvailResp*/ Session.prototype.checkShowAvail = function(/*string*/ showID,
-	/*string*/ providerID, /*StatusCode reference*/ statusCodeRef)
+	/*string*/ providerID, /*ShowCost*/ showCost, /*StatusCode reference*/ statusCodeRef)
 {
 	var statusMessage = null;
 
@@ -599,6 +599,7 @@ function Session()
 	checkShowAvailRqst = CheckShowAvailRqst.newInstance();
 	checkShowAvailRqst.ShowID = showID;
 	checkShowAvailRqst.ProviderID = providerID;
+	checkShowAvailRqst.ShowCost = showCost;
 
 	var oWaitScreen = WaitScreen.newInstance();
 	try

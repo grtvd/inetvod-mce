@@ -5,7 +5,7 @@
 
 function CheckShowAvailResp(reader)
 {
-	this.ShowCostList = null;
+	this.ShowCost = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -15,7 +15,7 @@ function CheckShowAvailResp(reader)
 
 /*void*/ CheckShowAvailResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ShowCostList = reader.readList("ShowCost", ShowCost);
+	this.ShowCost = reader.readObject("ShowCost", ShowCost);
 }
 
 /******************************************************************************/

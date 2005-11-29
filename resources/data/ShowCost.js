@@ -12,7 +12,8 @@ function ShowCost(reader)
 	this.ShowCostType = null;
 	this.Cost = null;
 	this.CostDisplay = null;
-	this.RentalHours = null;
+	this.RentalWindowDays = null;
+	this.RentalPeriodHours = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -25,7 +26,8 @@ function ShowCost(reader)
 	this.ShowCostType = reader.readString("ShowCostType", ShowCostTypeMaxLength);
 	this.Cost = reader.readObject("Cost", Money);
 	this.CostDisplay = reader.readString("CostDisplay", ShowCost.CostDisplayMaxLength);
-	this.RentalHours = reader.readShort("RentalHours");
+	this.RentalWindowDays = reader.readShort("RentalWindowDays");
+	this.RentalPeriodHours = reader.readShort("RentalPeriodHours");
 }
 
 /******************************************************************************/
@@ -35,7 +37,8 @@ function ShowCost(reader)
 	writer.writeString("ShowCostType", this.ShowCostType, ShowCostTypeMaxLength);
 	writer.writeObject("Cost", this.Cost);
 	writer.writeString("CostDisplay", this.CostDisplay, ShowCost.CostDisplayMaxLength);
-	writer.writeShort("RentalHours", this.RentalHours);
+	writer.writeShort("RentalWindowDays", this.RentalWindowDays);
+	writer.writeShort("RentalPeriodHours", this.RentalPeriodHours);
 }
 
 /******************************************************************************/

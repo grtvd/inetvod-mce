@@ -258,14 +258,14 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	var statusCode;
 
 	oCheckShowAvailResp = oSession.checkShowAvail(this.fRentData.getShowID(),
-		this.fRentData.getProviderID(), statusCodeRef);
+		this.fRentData.getProviderID(), this.fRentData.ShowCost, statusCodeRef);
 	statusCode = statusCodeRef.value;
 	if(statusCode == sc_InvalidProviderUserIDPassword)
 		return ss_HaveProviderStep;
 	if(statusCode != sc_Success)
 		return ss_Undefined;
 
-	var oShowCost = oCheckShowAvailResp.ShowCostList[0];	//TODO: If multiple, need to confirm rental period/cost with user
+	var oShowCost = oCheckShowAvailResp.ShowCost;
 
 	this.fRentData.ShowCost = oShowCost;
 	if(oShowCost.ShowCostType == sct_PayPerView)
