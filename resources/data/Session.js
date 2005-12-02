@@ -430,7 +430,7 @@ function Session()
 		ratingIDList.push(searchData.RatingID);
 
 	showSearchRqst = ShowSearchRqst.newInstance();
-	showSearchRqst.PartialName = searchData.PartialName;
+	showSearchRqst.Search = searchData.Search;
 	showSearchRqst.ProviderIDList = providerIDList;
 	showSearchRqst.CategoryIDList = categoryIDList;
 	showSearchRqst.RatingIDList = ratingIDList;

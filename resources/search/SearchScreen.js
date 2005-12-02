@@ -61,7 +61,7 @@ function SearchScreen()
 		var showSearchListRef = new Object();
 
 		oControl = this.getControl(SearchScreen.ShowNameID);
-		this.fSearchData.PartialName = oControl.getText();
+		this.fSearchData.Search = oControl.getText();
 
 		if(oSession.showSearch(this.fSearchData, showSearchListRef))
 			SearchResultsScreen.newInstance(showSearchListRef.value);

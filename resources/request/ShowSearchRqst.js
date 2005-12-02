@@ -12,7 +12,7 @@ ShowSearchRqst.newInstance = function()
 
 function ShowSearchRqst()
 {
-	this.PartialName = null;
+	this.Search = null;
 
 	this.ProviderIDList = null;
 	this.CategoryIDList = null;
@@ -32,7 +32,7 @@ function ShowSearchRqst()
 
 /*void*/ ShowSearchRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	writer.writeString("PartialName", this.PartialName, 64);	//TODO: Show_NameMaxLength
+	writer.writeString("Search", this.Search, 64);	//TODO: Show_NameMaxLength
 
 	writer.writeStringList("ProviderID", this.ProviderIDList, ProviderIDMaxLength);
 	writer.writeStringList("CategoryID", this.CategoryIDList, CategoryIDMaxLength);

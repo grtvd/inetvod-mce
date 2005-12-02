@@ -5,7 +5,7 @@
 
 function SearchData()
 {
-	this.PartialName = null;
+	this.Search = null;
 
 	this.ProviderID = Provider.AllProvidersID;
 	this.CategoryID = Category.AllCategoriesID;
