@@ -110,7 +110,7 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	tempStr = "n/a";
 	oControl = new TextControl(SearchDetailScreen.RentalPeriodHoursID, this.ScreenID);
 	if(showCost.RentalPeriodHours)
-		tempStr = showCost.RentalPeriodHours + " hrs";
+		tempStr = showCost.RentalPeriodHours + " hrs.";
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
