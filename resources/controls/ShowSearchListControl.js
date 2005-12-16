@@ -60,13 +60,10 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 	else if(showSearch.ReleasedYear)
 		date = showSearch.ReleasedYear.toString();
 
-	if(showSearch.ShowProviderList.length == 1)
-	{
-		showProvider = showSearch.ShowProviderList[0];
-		cost = showProvider.ShowCostList[0].CostDisplay;	//TODO: Showing first ShowCost
-	}
-	else
-		cost = "(...)";
+	showProvider = showSearch.ShowProviderList[0];
+	cost = showProvider.ShowCostList[0].CostDisplay;
+	if((showSearch.ShowProviderList.length > 1) || (showProvider.ShowCostList.length > 1))
+		cost = "*" + cost;
 
 	tempStr = showSearch.Name;
 	if(testStrHasLen(showSearch.EpisodeName))

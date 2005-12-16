@@ -14,6 +14,7 @@ SearchDetailScreen.ProviderID = "Search004_Provider";
 SearchDetailScreen.RatingID = "Search004_Rating";
 SearchDetailScreen.CostID = "Search004_Cost";
 SearchDetailScreen.RentalPeriodHoursID = "Search004_RentalPeriodHours";
+SearchDetailScreen.MultiRentalsID = "Search004_MultiRentals";
 SearchDetailScreen.RentNowID = "Search004_RentNow";
 
 /******************************************************************************/
@@ -95,23 +96,25 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
 	this.newControl(oControl);
 
-	var showProvider = this.fShowDetail.ShowProviderList[0];	//TODO: Need to deal with multiple
-
+	var showProvider = this.fShowDetail.ShowProviderList[0];
 	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(showProvider.ProviderID));
 	this.newControl(oControl);
 
-	var showCost = showProvider.ShowCostList[0];	//TODO: Need to deal with multiple
-
+	var showCost = showProvider.ShowCostList[0];
 	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
 	oControl.setText(showCost.CostDisplay);
 	this.newControl(oControl);
 
-	tempStr = "n/a";
 	oControl = new TextControl(SearchDetailScreen.RentalPeriodHoursID, this.ScreenID);
-	if(showCost.RentalPeriodHours)
-		tempStr = showCost.RentalPeriodHours + " hrs.";
-	oControl.setText(tempStr);
+	oControl.setText(showCost.formatRental());
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.MultiRentalsID, this.ScreenID);
+	if((this.fShowDetail.ShowProviderList.length > 1) || (showProvider.ShowCostList.length > 1))
+		oControl.setText("* Additional rentals available.");
+	else
+		oControl.setText("");
 	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
