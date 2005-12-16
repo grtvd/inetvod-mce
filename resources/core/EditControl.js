@@ -60,60 +60,105 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 
 /*Array*/ EditControl.prototype.getValidCharArray = function(/*EditControlType*/ editControlType)
 {
-	var arr;
-	var ch;
+	var invalidAlphaUpper = false;
+	var invalidAlphaLower = false;
+	var includeNumeric = false;
+	var includeSpecial = false;
 
-//	if(editControlType == ect_AlphaNumeric)
-//	{
-//		if(EditControl.AlphaNumericValidCharArray != null)
-//			return EditControl.AlphaNumericValidCharArray;
+	if(editControlType == ect_AlphaNumeric)
+	{
+		if(EditControl.AlphaNumericValidCharArray != null)
+			return EditControl.AlphaNumericValidCharArray;
 
-//		arr = new Array();
-//		for(ch = 'A'; ch <= 'Z'; ch++)
-//		{
-//			arr.push(ch);
-//			arr.push(tolower(ch));
-//		}
-//		for(ch = '0'; ch <= '9'; ++ch)
-//			arr.push(ch);
-//		arr.push(' ');
-
-//		EditControl.AlphaNumericValidCharArray = arr;
-//	}
-//	else
-	if(editControlType == ect_UpperAlphaNumeric)
+		invalidAlphaUpper = true;
+		invalidAlphaLower = true;
+		includeNumeric = true;
+		includeSpecial = true;
+	}
+	else if(editControlType == ect_UpperAlphaNumeric)
 	{
 		if(EditControl.UpperAlphaNumericValidCharArray != null)
 			return EditControl.UpperAlphaNumericValidCharArray;
 
-		arr = new Array();
-
-		for(ch = 65; ch <= 90; ch++)
-			arr.push(ch);
-		for(ch = 48; ch <= 57; ch++)
-			arr.push(ch);
-		arr.push(64);	// @
-		arr.push(46);	// .
-		arr.push(32);	// space
-
-		EditControl.UpperAlphaNumericValidCharArray = arr;
-		return EditControl.UpperAlphaNumericValidCharArray;
+		invalidAlphaUpper = true;
+		includeNumeric = true;
+		includeSpecial = true;
 	}
-	if(editControlType == ect_Numeric)
+	else if(editControlType == ect_Numeric)
 	{
 		if(EditControl.NumericValidCharArray != null)
 			return EditControl.NumericValidCharArray;
 
-		arr = new Array();
-
-		for(ch = 48; ch <= 57; ch++)
-			arr.push(ch);
-
-		EditControl.NumericValidCharArray = arr;
-		return EditControl.NumericValidCharArray;
+		includeNumeric = true;
 	}
 	else
 		throw "EditControl.getValidCharArray: Invalid fType(" + editControlType + ")";
+
+	var arr;
+	var ch;
+
+	arr = new Array();
+
+	if(invalidAlphaUpper)
+	{
+		for(ch = 65; ch <= 90; ch++)
+			arr.push(ch);
+	}
+	if(invalidAlphaLower)
+	{
+		for(ch = 97; ch <= 122; ch++)
+			arr.push(ch);
+	}
+	if(includeNumeric)
+	{
+		for(ch = 48; ch <= 57; ch++)
+			arr.push(ch);
+	}
+	if(includeSpecial)
+	{
+		arr.push(32);	// space
+		arr.push(64);	// @
+		arr.push(46);	// .
+		arr.push(45);	//-
+		arr.push(33);	//!
+		arr.push(34);	//"
+		arr.push(35);	//#
+		arr.push(36);	//$
+		arr.push(37);	//%
+		arr.push(38);	//&
+		arr.push(39);	//'
+		arr.push(40);	//(
+		arr.push(41);	//)
+		arr.push(42);	//*
+		arr.push(43);	//+
+		arr.push(44);	//,
+		arr.push(47);	///
+		arr.push(58);	//:
+		arr.push(59);	//;
+		arr.push(60);	//<
+		arr.push(61);	//=
+		arr.push(62);	//>
+		arr.push(63);	//?
+		arr.push(91);	//[
+		arr.push(92);	//\
+		arr.push(93);	//]
+		arr.push(94);	//^
+		arr.push(95);	//_
+		arr.push(96);	//`
+		arr.push(123);	//{
+		arr.push(124);	//|
+		arr.push(125);	//}
+		arr.push(126);	//~
+	}
+
+	if(editControlType == ect_AlphaNumeric)
+		EditControl.AlphaNumericValidCharArray = arr;
+	else if(editControlType == ect_UpperAlphaNumeric)
+		EditControl.UpperAlphaNumericValidCharArray = arr;
+	else if(editControlType == ect_Numeric)
+		EditControl.NumericValidCharArray = arr;
+
+	return arr;
 }
 
 /******************************************************************************/
@@ -128,32 +173,33 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	/* 0: 0, space */
 	EditControl.TripleTapKeyArray.push(new Array(48, 32));
 
-	/* 1: 1, @, . */
-	EditControl.TripleTapKeyArray.push(new Array(49, 64, 46));
+	/* 1: 1, @, ., -, !, ", #, $, %, &, ', (, ), *, +, ,, /, :, ;, <, =, >, ?, [, \. ], ^, _, `, {, |, }, ~ */
+	EditControl.TripleTapKeyArray.push(new Array(49, 64, 46, 45, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 47,
+		58, 59, 60, 61, 62, 63, 91, 92, 93, 94, 95, 96, 123, 124, 125, 126));
 
-	/* 2: 2, A, B, C */
-	EditControl.TripleTapKeyArray.push(new Array(50, 65, 66, 67));
+	/* 2: 2, A, B, C, a, b, c */
+	EditControl.TripleTapKeyArray.push(new Array(50, 65, 66, 67, 97, 98, 99));
 
-	/* 3: 3, D, E, F */
-	EditControl.TripleTapKeyArray.push(new Array(51, 68, 69, 70));
+	/* 3: 3, D, E, F, d, e, f */
+	EditControl.TripleTapKeyArray.push(new Array(51, 68, 69, 70, 100, 101, 102));
 
-	/* 4: 4, G, H, I */
-	EditControl.TripleTapKeyArray.push(new Array(52, 71, 72, 73));
+	/* 4: 4, G, H, I, g, h, i */
+	EditControl.TripleTapKeyArray.push(new Array(52, 71, 72, 73, 103, 104, 105));
 
-	/* 5: 5, J, K, L */
-	EditControl.TripleTapKeyArray.push(new Array(53, 74, 75, 76));
+	/* 5: 5, J, K, L, j, k, l */
+	EditControl.TripleTapKeyArray.push(new Array(53, 74, 75, 76, 106, 107, 108));
 
-	/* 6: 6, M, N, O */
-	EditControl.TripleTapKeyArray.push(new Array(54, 77, 78, 79));
+	/* 6: 6, M, N, O, m, n, o */
+	EditControl.TripleTapKeyArray.push(new Array(54, 77, 78, 79, 109, 110, 111));
 
-	/* 7: 7, P, Q, R, S */
-	EditControl.TripleTapKeyArray.push(new Array(55, 80, 81, 82, 83));
+	/* 7: 7, P, Q, R, S, p, q, r, s */
+	EditControl.TripleTapKeyArray.push(new Array(55, 80, 81, 82, 83, 112, 113, 114, 115));
 
-	/* 8: 8, T, U, V */
-	EditControl.TripleTapKeyArray.push(new Array(56, 84, 85, 86));
+	/* 8: 8, T, U, V, t, u, v */
+	EditControl.TripleTapKeyArray.push(new Array(56, 84, 85, 86, 116, 117, 118));
 
-	/* 9: 9, W, X, Y, Z */
-	EditControl.TripleTapKeyArray.push(new Array(57, 87, 88, 89, 90));
+	/* 9: 9, W, X, Y, Z, w, x, y, z */
+	EditControl.TripleTapKeyArray.push(new Array(57, 87, 88, 89, 90, 119, 120, 121, 122));
 
 	return EditControl.TripleTapKeyArray;
 }
@@ -162,7 +208,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 
 /*boolean*/ EditControl.prototype.isTripleTapKey = function(/*int*/ key)
 {
-	if(this.Type != ect_UpperAlphaNumeric)
+	if(this.Type == ect_Numeric)
 		return false;
 	return ((key >= 48) && (key <= 57));
 }
@@ -182,20 +228,28 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 
 /******************************************************************************/
 
-/*int*/ EditControl.prototype.mapTripleTapKey = function(/*int*/ key, /*int*/ curKey)
+/*int*/ EditControl.prototype.mapTripleTapKey = function(/*int*/ key, /*int*/ curKey, /*array*/ validCharArray)
 {
 	if(!this.isTripleTapKey(key))
 		return key;
 
 	var ttKeyArray = this.getTripleTapKeyArray()[key - 48];
-	var curPos = arrayIndexOf(ttKeyArray, curKey)
+	var nextKey = -1;
+	var curPos;
 
-	if(curPos < 0)
-		return ttKeyArray[0];
-	if(curPos < ttKeyArray.length - 1)
-		return ttKeyArray[curPos + 1];
+	while(true)
+	{
+		curPos = arrayIndexOf(ttKeyArray, curKey)
+		if(curPos < 0)
+			curKey = ttKeyArray[0];
+		else if(curPos < ttKeyArray.length - 1)
+			curKey = ttKeyArray[curPos + 1];
+		else
+			curKey = ttKeyArray[0];
 
-	return ttKeyArray[0];
+		if(arrayIndexOf(validCharArray, curKey) >= 0)
+			return curKey;
+	}
 }
 
 /******************************************************************************/
@@ -266,6 +320,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	var textLen = this.fText.length;
 	var numChars = textLen + 1;
 	var focusedChar;
+	var ch;
 
 	if(numChars > this.fViewableChars)
 		numChars = this.fViewableChars;
@@ -275,7 +330,12 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 		focusedChar = (showFocus && this.fFocused && (i + this.fFirstPos == this.fCurPos));
 
 		oUIChar = document.getElementById(this.ControlID + "_" + i);
-		oUIChar.innerHTML = (i + this.fFirstPos < textLen) ?  this.fText[i + this.fFirstPos] : "";
+		ch = (i + this.fFirstPos < textLen) ?  this.fText[i + this.fFirstPos] : "";
+		if(ch == "<")
+			ch = "&lt;";
+		else if(ch == "&")
+			ch = "&amp;";
+		oUIChar.innerHTML = ch; 
 		checkClassName(oUIChar, focusedChar ? 'hilite' : 'normal');
 	}
 
@@ -351,8 +411,11 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	}
 
 	// force upper case
-	if ((key >= 97) && (key <= 122))
-		key -= 32;
+	if(this.Type == ect_UpperAlphaNumeric)
+	{
+		if ((key >= 97) && (key <= 122))
+			key -= 32;
+	}
 
 	var ttKey = key;
 	var curKey = 0;
@@ -361,7 +424,7 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	{
 		if(this.fCurPos < this.fText.length)
 			curKey = this.fText[this.fCurPos].charCodeAt(0);
-		key = this.mapTripleTapKey(key, curKey);
+		key = this.mapTripleTapKey(key, curKey, validCharArray);
 		this.fNextTTKeyTime = (new Date()).getTime() + 2000;
 	}
 	else

@@ -34,6 +34,18 @@ function XmlDataWriter()
 }
 
 /******************************************************************************/
+
+/*string*/ XmlDataWriter.prototype.escapeString = function(str)
+{
+	if(str.indexOf("&") >= 0)
+		str = str.replace("&", "&amp;");
+	if(str.indexOf("<") >= 0)
+		str = str.replace("<", "&lt;");
+
+	return str;
+}
+
+/******************************************************************************/
 /* Write an opending XML element tag */
 
 /*void*/ XmlDataWriter.prototype.writeStartElement = function(/*string*/ name)
@@ -62,7 +74,7 @@ function XmlDataWriter()
 		return;
 
 	this.writeStartElement(name);
-	this.internalWriteString(value);	//TODO: need XML encoding
+	this.internalWriteString(this.escapeString(value));
 	this.writeEndElement(name);
 }
 

@@ -23,8 +23,10 @@ HaveProviderControl.newInstance = function()
 
 	oControl = new EditControl(HaveProviderControl.UserID, RentScreen.ScreenID, 9)
 	containerControl.newControl(oControl);
+	oControl.Type = ect_AlphaNumeric;
 	oControl.MaxLength = 64;
 	oControl = new EditControl(HaveProviderControl.PasswordID, RentScreen.ScreenID, 6);
+	oControl.Type = ect_AlphaNumeric;
 	oControl.MaxLength = 16;
 	containerControl.newControl(oControl);
 
