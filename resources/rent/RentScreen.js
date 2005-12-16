@@ -7,10 +7,11 @@ RentScreen.ScreenID = "Rent001";
 
 /* RentStep */
 var ss_Undefined = 0;
-var ss_AskHaveProviderStep = 1;
-var ss_NeedProviderStep = 2;
-var ss_HaveProviderStep = 3;
-var ss_ConfirmChargeStep = 4;
+var ss_PickRentalStep = 1;
+var ss_AskHaveProviderStep = 2;
+var ss_NeedProviderStep = 3;
+var ss_HaveProviderStep = 4;
+var ss_ConfirmChargeStep = 5;
 
 /******************************************************************************/
 
@@ -19,7 +20,7 @@ RentScreen.newInstance = function(/*ShowDetail*/ oShowDetail)
 	var oScreen = new RentScreen(oShowDetail);
 
 	MainApp.getThe().openScreen(oScreen);
-	oScreen.createControls(ss_AskHaveProviderStep);
+	oScreen.createControls();
 
 	return oScreen;
 }
@@ -59,17 +60,16 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 {
 	var oSession = MainApp.getThe().getSession();
 
-	if((this.fRentData.ShowCost.ShowCostType == sct_Free) ||
-		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
+	if(this.fRentData.HasMultipleRentals)
+		this.openStep(ss_PickRentalStep);
+	else
 	{
-		var nextStep = this.checkShowAvail();
+		var nextStep = this.allowAnonymous();
 		if (nextStep == ss_Undefined)
 			this.close();
 		else
 			this.openStep(nextStep);
 	}
-	else
-		this.openStep(ss_AskHaveProviderStep);
 }
 
 /******************************************************************************/
@@ -80,8 +80,11 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 	switch(step)
 	{
-		case ss_AskHaveProviderStep:
+		case ss_PickRentalStep:
 		default:
+			oContainerControl = PickRentalControl.newInstance();
+			break;
+		case ss_AskHaveProviderStep:
 			oContainerControl = AskHaveProviderControl.newInstance();
 			break;
 		case ss_NeedProviderStep:
@@ -96,11 +99,11 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	}
 
 	oContainerControl.show(true);
-	oContainerControl.setFocus(true);
 	this.newControl(oContainerControl);
 	this.fStepControlID = oContainerControl.ControlID;
 	this.fCurStep = step;
 	oContainerControl.loadData(this.fRentData);
+	this.fContainerControl.setFocus(true);
 }
 
 /******************************************************************************/
@@ -129,9 +132,22 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(this.fContainerControl.key(key))
 			return true;
 
-		if(this.fCurStep == ss_AskHaveProviderStep)
+		if(this.fCurStep == ss_PickRentalStep)
 		{
-			this.close();
+			if(this.closeStep(false))
+				this.close();
+			return true;
+		}
+		else if(this.fCurStep == ss_AskHaveProviderStep)
+		{
+			if(this.closeStep(false))
+			{
+				if(this.fRentData.HasMultipleRentals)
+					this.openStep(ss_PickRentalStep);
+				else
+					this.close();
+			}
+
 			return true;
 		}
 		else if(this.fCurStep == ss_NeedProviderStep)
@@ -157,7 +173,14 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		}
 		else if(this.fCurStep == ss_ConfirmChargeStep)
 		{
-			this.close();
+			if(this.closeStep(false))
+			{
+				if(this.fRentData.HasMultipleRentals)
+					this.openStep(ss_PickRentalStep);
+				else
+					this.close();
+			}
+
 			return true;
 		}
 	}
@@ -169,7 +192,22 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /*void*/ RentScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(this.fCurStep == ss_AskHaveProviderStep)
+	if(this.fCurStep == ss_PickRentalStep)
+	{
+		if(controlID == PickRentalControl.ProviderListID)
+		{
+			if(this.closeStep(true))
+			{
+				var nextStep = this.allowAnonymous();
+				if (nextStep == ss_Undefined)
+					this.close();
+				else
+					this.openStep(nextStep);
+			}
+			return;
+		}
+	}
+	else if(this.fCurStep == ss_AskHaveProviderStep)
 	{
 		if(controlID == AskHaveProviderControl.HaveMembershipID)
 		{
@@ -233,19 +271,36 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	{
 		if(controlID == ConfirmChargeControl.ChargeAccountID)
 		{
-			this.rentShow();
+			if(this.closeStep(true))
+				this.rentShow();
 			//if(this.fRentedShowID)
 			//	this.close();
 			return;
 		}
 		else if(controlID == ConfirmChargeControl.DontChargeAccountID)
 		{
-			this.close();
+			if(this.closeStep(true))
+				this.close();
 			return;
 		}
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*RentStep*/ RentScreen.prototype.allowAnonymous = function()
+{
+	var oSession = MainApp.getThe().getSession();
+
+	if((this.fRentData.ShowCost.ShowCostType == sct_Free) ||
+		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
+	{
+		return this.checkShowAvail();
+	}
+	else
+		return ss_AskHaveProviderStep;
 }
 
 /******************************************************************************/

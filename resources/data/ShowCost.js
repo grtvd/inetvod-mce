@@ -21,6 +21,31 @@ function ShowCost(reader)
 
 /******************************************************************************/
 
+/*string*/ ShowCost.prototype.formatRental = function()
+{
+	var tempStr = "";
+
+	if(this.RentalPeriodHours)
+	{
+		if(this.RentalPeriodHours > 48)
+			tempStr = (this.RentalPeriodHours / 24) + " days";
+		else
+			tempStr = this.RentalPeriodHours + " hrs.";
+	}
+	if(this.RentalWindowDays)
+	{
+		if(tempStr.length > 0)
+			tempStr += " / ";
+		tempStr += this.RentalWindowDays + " days";
+	}
+
+	if(tempStr.length == 0)
+		return "n/a";
+	return tempStr;
+}
+
+/******************************************************************************/
+
 /*void*/ ShowCost.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	this.ShowCostType = reader.readString("ShowCostType", ShowCostTypeMaxLength);

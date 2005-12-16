@@ -29,6 +29,7 @@
 <script type="text/javascript" src="controls/TextListControl.js"></script>
 <script type="text/javascript" src="controls/ShowSearchListControl.js"></script>
 <script type="text/javascript" src="controls/ShowProviderListControl.js"></script>
+<script type="text/javascript" src="controls/ShowProviderItem.js"></script>
 <script type="text/javascript" src="controls/RentedShowListControl.js"></script>
 
 <script type="text/javascript" src="data/Session.js"></script>
@@ -108,11 +109,11 @@
 <script type="text/javascript" src="search/CategorySelectScreen.js"></script>
 <script type="text/javascript" src="search/RatingSelectScreen.js"></script>
 <script type="text/javascript" src="search/SearchResultsScreen.js"></script>
-<script type="text/javascript" src="search/PickProviderScreen.js"></script>
 <script type="text/javascript" src="search/SearchDetailScreen.js"></script>
 
 <script type="text/javascript" src="rent/RentData.js"></script>
 <script type="text/javascript" src="rent/RentScreen.js"></script>
+<script type="text/javascript" src="rent/PickRentalControl.js"></script>
 <script type="text/javascript" src="rent/AskHaveProviderControl.js"></script>
 <script type="text/javascript" src="rent/NeedProviderControl.js"></script>
 <script type="text/javascript" src="rent/HaveProviderControl.js"></script>
@@ -703,50 +704,6 @@ No shows were found matching your search criteria.  Please try again.<br>
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
 
-<div id="Search009" style="position:absolute; display:none">
-<table cellpadding=0 cellspacing=0 border=0 width=600>
-	<tr><td id="Search009_AvailText" class="textCtr"></td></tr>
-	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td></tr>
-	<tr><td class="textCtr">Please select your desired provider:</td></tr>
-	<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td></tr>
-	<tr><td align="center"
-		><table id=Search009_ProviderList cellpadding=0 cellspacing=0 border=0>
-			<tr><td>
-				<table cellpadding=0 cellspacing=6 border=0>
-					<tr><td
-						><span class="listCtrHeader" style="width:338;">Provider</span
-						><span class="listCtrSmallHeader" style="width:100;">Price</span
-						></td>
-					</tr>
-					<tr><td id="Search009_ProviderList_0" class="listCtrRow438_normal"
-						><span id="Search009_ProviderList_0_Provider" class="listCtrItem"></span
-						><span id="Search009_ProviderList_0_Price" class="listCtrSmallItem"></span
-						></td>
-					</tr>
-					<tr><td id="Search009_ProviderList_1" class="listCtrRow438_normal"
-						><span id="Search009_ProviderList_1_Provider" class="listCtrItem"></span
-						><span id="Search009_ProviderList_1_Price" class="listCtrSmallItem"></span
-						></td>
-					</tr>
-				</table
-			></td></tr>
-			<tr><td align="right"
-				><table cellpadding=0 cellspacing=5 border=0>
-					<tr><td id="Search009_ProviderList_Count" class="listCtrCount">0 of 0</td
-						><td width=5><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
-						><td id="Search009_ProviderList_Up" class="listCtrPrev_normal"></td
-						><td id="Search009_ProviderList_Down" class="listCtrNext_normal"></td
-					></tr>
-				</table
-			></td></tr>
-		</table
-	></td></tr>
-</table>
-</div>
-
-<!-- *********************************************************************** -->
-<!-- *********************************************************************** -->
-
 <div id="Search004" style="position:absolute; display:none">
 <table cellpadding=0 cellspacing=0 border=0 width=964>
 	<tr><td align=left valign=top>
@@ -792,6 +749,58 @@ No shows were found matching your search criteria.  Please try again.<br>
 <!-- *********************************************************************** -->
 
 <div id="Rent001" style="position:absolute; display:none">
+
+<div id="Rent001_PickRentalControl" style="position:relative; display:none">
+	<table cellpadding=0 cellspacing=0 border=0 width=764>
+		<tr><td id="Rent001_PickRentalControl_AvailText" class="textCtr"></td></tr>
+		<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td></tr>
+		<tr><td class="textCtr">Please select your desired rental:</td></tr>
+		<tr><td height=30><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td></tr>
+		<tr><td align="center"
+			><table id=Rent001_PickRentalControl_ProviderList cellpadding=0 cellspacing=0 border=0>
+				<tr><td>
+					<table cellpadding=0 cellspacing=6 border=0>
+						<tr><td
+							><span class="listCtrHeader" style="width:350;">Provider</span
+							><span class="listCtrSmallHeader" style="width:230;">Rental</span
+							><span class="listCtrSmallHeader" style="width:100;">Price</span
+							></td>
+						</tr>
+						<tr><td id="Rent001_PickRentalControl_ProviderList_0" class="listCtrRow680_normal"
+							><span id="Rent001_PickRentalControl_ProviderList_0_Provider" class="listCtrItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_0_Rental" class="listCtrSmallItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_0_Price" class="listCtrSmallItem"></span
+							></td>
+						</tr>
+						<tr><td id="Rent001_PickRentalControl_ProviderList_1" class="listCtrRow680_normal"
+							><span id="Rent001_PickRentalControl_ProviderList_1_Provider" class="listCtrItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_1_Rental" class="listCtrSmallItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_1_Price" class="listCtrSmallItem"></span
+							></td>
+						</tr>
+						<tr><td id="Rent001_PickRentalControl_ProviderList_2" class="listCtrRow680_normal"
+							><span id="Rent001_PickRentalControl_ProviderList_2_Provider" class="listCtrItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_2_Rental" class="listCtrSmallItem"></span
+							><span id="Rent001_PickRentalControl_ProviderList_2_Price" class="listCtrSmallItem"></span
+							></td>
+						</tr>
+					</table
+				></td></tr>
+				<tr><td align="right"
+					><table cellpadding=0 cellspacing=5 border=0>
+						<tr><td id="Rent001_PickRentalControl_ProviderList_Count" class="listCtrCount">0 of 0</td
+							><td width=5><img src="images/spacer.gif" border=0 width=1 height=1 alt=""></td
+							><td id="Rent001_PickRentalControl_ProviderList_Up" class="listCtrPrev_normal"></td
+							><td id="Rent001_PickRentalControl_ProviderList_Down" class="listCtrNext_normal"></td
+						></tr>
+					</table
+				></td></tr>
+			</table
+		></td></tr>
+	</table>
+</div>
+
+<!-- *********************************************************************** -->
 
 <div id="Rent001_AskHaveProviderControl" style="position:relative; display:none">
 <table cellpadding=0 cellspacing=0 border=0 width=764>

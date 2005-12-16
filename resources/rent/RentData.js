@@ -9,10 +9,17 @@ function RentData(/*ShowDetail*/ oShowDetail)
 
 	this.ShowDetail = oShowDetail;
 
-	var showProvider = this.ShowDetail.ShowProviderList[0];			//TODO: just get first provider for now
-	this.ShowCost = showProvider.ShowCostList[0];					//TODO: just get first show cost for now
+	this.HasMultipleRentals = true;
+	this.Provider = null;
+	this.ShowCost = null;
 
-	this.Provider = oSession.getProvider(showProvider.ProviderID);
+	if(this.ShowDetail.ShowProviderList.length == 1)
+		if(this.ShowDetail.ShowProviderList[0].ShowCostList.length == 1)
+		{
+			this.HasMultipleRentals = false;
+			this.Provider = oSession.getProvider(this.ShowDetail.ShowProviderList[0].ProviderID);
+			this.ShowCost = this.ShowDetail.ShowProviderList[0].ShowCostList[0];
+		}
 
 	this.UserID = null;
 	this.Password = null;
@@ -37,6 +44,14 @@ function RentData(/*ShowDetail*/ oShowDetail)
 /*string*/ RentData.prototype.getProviderName = function()
 {
 	return this.Provider.Name;
+}
+
+/******************************************************************************/
+
+/*void*/ RentData.prototype.setRental = function(/*Provider*/ provider, /*ShowCost*/ showCost)
+{
+	this.Provider = provider;
+	this.ShowCost = showCost;
 }
 
 /******************************************************************************/

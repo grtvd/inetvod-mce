@@ -1,5 +1,3 @@
-Restore calls to PickProviderScreen (Implement new SEARCH009)
-
 Add support for DownloadShowRqst.
 
 Add Logo - http://api.inetvod.com/mce/images/logo.gif
