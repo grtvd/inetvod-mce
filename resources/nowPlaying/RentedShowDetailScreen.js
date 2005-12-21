@@ -122,8 +122,11 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	oControl.setText(dateTimeToString(this.fRentedShow.RentedOn, dtf_M_D_H_MM_AM));
 	this.newControl(oControl);
 
+	tempStr = "n/a";
 	oControl = new TextControl(RentedShowDetailScreen.AvailableUntilID, this.ScreenID);
-	oControl.setText(dateTimeToString(this.fRentedShow.AvailableUntil, dtf_M_D_H_MM_AM));
+	if(this.fRentedShow.AvailableUntil)
+		tempStr = dateTimeToString(this.fRentedShow.AvailableUntil, dtf_M_D_H_MM_AM);
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
