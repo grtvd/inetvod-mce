@@ -1,7 +1,7 @@
 <application
 	title="iNetVOD Movies and TV"
 	id="{68D9B2B0-8E13-4552-B845-90335BCB4232}"
-	url="http://api.inetvod.com/mce/main.html"
+	url="http://api.inetvod.com/mce/index.htm"
 	name="iNetVOD Movies and TV"
 	bgColor="RGB(15,15,15)"
 	>
