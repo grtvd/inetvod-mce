@@ -35,6 +35,11 @@ function StartupInitialCheck()
 		else
 			oSession.clearLogonInfo();
 	}
+	else if(statusCode == sc_InvalidUserIDPassword)
+	{
+		AskPINScreen.newInstance();
+		return true;
+	}
 
 	return false;
 }

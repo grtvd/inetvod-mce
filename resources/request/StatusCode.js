@@ -5,9 +5,8 @@
 
 var sc_Success = 0;
 
-var sc_InvalidUserID = 1000;
+var sc_InvalidUserIDPassword = 1000;
 var sc_InvalidSession = 1001;
-var sc_UserIDPasswordMismatch = 1002;
 var sc_InvalidProviderUserIDPassword = 1003;
 
 var sc_GeneralError = 9999;

@@ -306,8 +306,8 @@ function Session()
 			this.fIsUserLoggedOn = true;
 			return statusCode;
 		}
-		else if((statusCode == sc_UserIDPasswordMismatch) || (statusCode == sc_InvalidUserID))
-			this.UserPassword = null;
+		else if(statusCode == sc_InvalidUserIDPassword)
+			this.fUserPassword = null;
 
 		statusMessage = dataRequestor.getStatusMessage();
 	}
