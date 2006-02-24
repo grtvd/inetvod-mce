@@ -56,7 +56,19 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 	date = "";
 	if(showSearch.ReleasedOn)
-		date = dateTimeToString(showSearch.ReleasedOn, dtf_M_YY, true);
+	{
+		now = new Date();
+		totalDays = (now.getTime() - showSearch.ReleasedOn.getTime()) / MillsPerDay;
+
+		if(totalDays < 1)
+			date = "Today";
+		else if(totalDays <= 7)
+			date = dayOfWeekToString(showSearch.ReleasedOn.getUTCDay());
+		else if(totalDays <= 365)
+			date = dateTimeToString(showSearch.ReleasedOn, dtf_M_D, true);
+		else
+			date = showSearch.ReleasedOn.getUTCFullYear().toString();
+	}
 	else if(showSearch.ReleasedYear)
 		date = showSearch.ReleasedYear.toString();
 
