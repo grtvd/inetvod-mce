@@ -39,7 +39,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 	var oRowItemList = new Array();
 	oRowItemList.push(new ListControlRowItem("Show", 495));
-	oRowItemList.push(new ListControlRowItem("Year", 85));
+	oRowItemList.push(new ListControlRowItem("Date", 85));
 	oRowItemList.push(new ListControlRowItem("Cost", 100));
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);

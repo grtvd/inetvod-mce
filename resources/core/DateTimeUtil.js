@@ -116,7 +116,7 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 {
 	if(isPM)
 		return (longFormat) ? "pm" : "p";
-	return (longFormat) ? "pm" : "a";
+	return (longFormat) ? "am" : "a";
 }
 
 /******************************************************************************/
