@@ -352,6 +352,9 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(rentedShow != null)
 			RentedShowDetailScreen.newInstance(rentedShow);
 		//this.fRentedShowID = oRentShowResp.RentedShowID;
+
+		// show message last, or will have focus problems
+		showMsg("This Show has been successfully added to your Now Playing list.");
 	}
 }
 

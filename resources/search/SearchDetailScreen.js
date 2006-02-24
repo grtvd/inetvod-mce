@@ -41,9 +41,14 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	this.ScreenID = SearchDetailScreen.ScreenID;
 	this.ScreenTitle = "search";
 
+	var showProvider = this.fShowDetail.ShowProviderList[0];
+	var showCost = showProvider.ShowCostList[0];
+
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 
-	this.newControl(new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID));
+	oControl = new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID);
+	oControl.setText((showCost.ShowCostType == sct_Free) ? "Get Now" : "Rent Now");
+	this.newControl(oControl);
 
 
 	oControl = new TextControl(SearchDetailScreen.NameID, this.ScreenID);
@@ -96,12 +101,10 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
 	this.newControl(oControl);
 
-	var showProvider = this.fShowDetail.ShowProviderList[0];
 	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
 	oControl.setText(oSession.getProviderName(showProvider.ProviderID));
 	this.newControl(oControl);
 
-	var showCost = showProvider.ShowCostList[0];
 	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
 	oControl.setText(showCost.CostDisplay);
 	this.newControl(oControl);
