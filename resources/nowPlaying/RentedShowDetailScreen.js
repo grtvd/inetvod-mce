@@ -14,6 +14,7 @@ RentedShowDetailScreen.ProviderID = "Show003_Provider";
 RentedShowDetailScreen.RatingID = "Show003_Rating";
 RentedShowDetailScreen.CostID = "Show003_Cost";
 RentedShowDetailScreen.RentalPeriodHoursID = "Show003_RentalPeriodHours";
+RentedShowDetailScreen.RentedOnLabelID = "Show003_RentedOnLabel";
 RentedShowDetailScreen.RentedOnID = "Show003_RentedOn";
 RentedShowDetailScreen.AvailableUntilID = "Show003_AvailableUntil";
 RentedShowDetailScreen.WatchNowID = "Show003_WatchNow";
@@ -116,6 +117,10 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	if(this.fRentedShow.ShowCost.RentalPeriodHours)
 		tempStr = this.fRentedShow.ShowCost.RentalPeriodHours + " hrs";
 	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	oControl = new TextControl(RentedShowDetailScreen.RentedOnLabelID, this.ScreenID)
+	oControl.setText((this.fRentedShow.ShowCost.ShowCostType == sct_Free) ? "Added On:" : "Rented On:");
 	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.RentedOnID, this.ScreenID);
