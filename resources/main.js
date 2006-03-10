@@ -74,96 +74,6 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 /******************************************************************************/
-/* CheckControl */
-
-/******************************************************************************/
-/******************************************************************************/
-
-CheckControl.prototype = new Control();
-CheckControl.prototype.constructor = CheckControl;
-
-/******************************************************************************/
-
-function CheckControl(/*string*/ controlID, /*string*/ screenID)
-{
-	this.ControlID = controlID;
-	this.ScreenID = screenID;
-	this.fUIObj = document.getElementById(controlID);
-	if(this.fUIObj == null)
-		throw "CheckControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
-	this.fFocused = false;
-	this.fChecked = false;
-
-	this.setFocus(false);
-}
-
-/******************************************************************************/
-
-/*boolean*/ CheckControl.prototype.getChecked = function()
-{
-	return this.fChecked;
-}
-
-/******************************************************************************/
-
-/*void*/ CheckControl.prototype.setChecked = function(/*boolean*/ checked)
-{
-	this.fChecked = (checked ? true : false);
-	this.drawCheck();
-}
-
-/******************************************************************************/
-
-/*void*/ CheckControl.prototype.drawCheck = function()
-{
-	checkClassName(this.fUIObj, (this.fChecked
-		? (this.fFocused ? 'hilitechk' : 'normalchk')
-		: (this.fFocused ? 'hilite' : 'normal')));
-}
-
-/******************************************************************************/
-
-/*void*/ CheckControl.prototype.setFocus = function(/*boolean*/ set)
-{
-	var wasFocused = this.fFocused;
-	this.fFocused = set;
-	this.drawCheck();
-
-	if(set)
-	{
-		if(document.activeElement.id != this.fUIObj.id)
-			this.fUIObj.focus();
-
-		if(!wasFocused)
-			this.getScreen().onFocus(this.ControlID);
-	}
-}
-
-/******************************************************************************/
-
-/*boolean*/ CheckControl.prototype.key = function(/*int*/ key)
-{
-	if(key == ek_Select)
-	{
-		this.fChecked = !this.fChecked;
-		this.drawCheck();
-
-		return true;
-	}
-
-	return Control.prototype.key.call(this, key);
-}
-
-/******************************************************************************/
-
-/*void*/ CheckControl.prototype.mouseClick = function(/*string*/ controlID)
-{
-	this.fChecked = !this.fChecked;
-	this.drawCheck();
-}
-
-/******************************************************************************/
-/******************************************************************************/
 /* Common.js */
 
 /******************************************************************************/
@@ -577,6 +487,1245 @@ function arrayRemoveByCmpr(arr, itemComparer)
 
 /******************************************************************************/
 /******************************************************************************/
+/* Debugger.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+var gDebuggerID = "Debugger";
+var gDebugOutID = "Debugger_Out";
+var gDebugOn = false;
+var gDebugLines = new Array();
+var gDebugCount = 0;
+
+/******************************************************************************/
+
+function DebugOn(on)
+{
+	gDebugOn = on ? true : false;
+
+	var obj = document.getElementById(gDebuggerID);
+	obj.style.display = gDebugOn ? 'inline' : 'none';
+}
+
+function DebugOut(msg)
+{
+	try
+	{
+		if(!gDebugOn)
+			return;
+
+		gDebugCount++;
+		gDebugLines.push("" + gDebugCount + ": " + msg);
+		if(gDebugLines.length > 35)
+			gDebugLines.splice(0, 1);
+
+		var txt = "";
+		for(var i = 0; i < gDebugLines.length; i++)
+			txt += gDebugLines[i] + "<br>";
+
+		document.getElementById(gDebugOutID).innerHTML = txt;
+	}
+	catch(e)
+	{
+	}
+}
+
+/******************************************************************************/
+
+function DebugShow()
+{
+	var obj = document.getElementById(gDebugOutID);
+	obj.style.display = (obj.style.display == 'none') ? 'inline' : 'none';
+}
+
+/******************************************************************************/
+
+function DebugClear()
+{
+	gDebugLines = new Array();
+	gDebugCount = 0;
+	document.getElementById(gDebugOutID).innerHTML = "";
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* DateTimeUtil.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+
+/* DateTimeFormat */
+//var dtf_ISO8601_Date = 0;
+//var dtf_ISO8601_DateTime = 1;
+//var dtf_M_D_YY = 2;				// 2/3/04
+var dtf_M_D_YYYY = 3;				// 2/3/2004
+var dtf_M_YY = 4;					// 2/04
+var dtf_M_D = 5;					// 2/3
+//var dtf_M_D_YYYY_H_MM_AM = x;		// 2/3/2004 1:05 PM
+//var dtf_M_D_YYYY_H_MM_SS_AM = x;	// 2/3/2004 1:05:07 PM
+var dtf_M_D_H_MM_AM = 7;			// 2/3 1:05 PM
+//var dtf_H_AM = 8;					// 1 PM
+var dtf_Ha = 9;						// 1p
+//var dtf_H_MM_AM = 10;				// 1:05 PM
+var dtf_H_MMa = 11;					// 1:05p
+
+var DateSeparator = "/";
+var TimeSeparator = ":";
+
+var DaysOfWeekShort = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
+var DaysOfWeekLong = new Array("Sunday", "Monday", "Tuesday", "Wedneday", "Thursday", "Friday", "Saturday");
+
+var MillsPerDay = (24 * 60 * 60 * 1000);
+
+/******************************************************************************/
+
+/*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format, /*boolean*/ showInUTC)
+{
+	if(!isDate(dateTime))
+		return "";
+
+	var year;
+	var month;
+	var day;
+	var hour;
+	var minute;
+	var isPM;
+	var timeStr;
+	var minStr;
+
+	if(showInUTC)
+	{
+		year = dateTime.getUTCFullYear();
+		month = dateTime.getUTCMonth() + 1;
+		day = dateTime.getUTCDate();
+
+		hour = dateTime.getUTCHours();
+		minute = dateTime.getUTCMinutes();
+	}
+	else
+	{
+		year = dateTime.getFullYear();
+		month = dateTime.getMonth() + 1;
+		day = dateTime.getDate();
+
+		hour = dateTime.getHours();
+		minute = dateTime.getMinutes();
+	}
+
+	isPM = (hour >= 12);
+	if(hour == 0)
+		hour = 12;
+	else if(hour > 12)
+		hour -= 12;
+
+	if(minute < 10)
+		minStr = "0" + minute;
+	else
+		minStr = "" + minute;
+
+	switch(format)
+	{
+		case dtf_M_D_YYYY:
+			timeStr = month + DateSeparator + day + DateSeparator + year;
+			break;
+
+		case dtf_M_YY:
+			timeStr = month + DateSeparator + (((year % 100) < 10) ? "0" : "") + (year % 100);
+			break;
+
+		case dtf_M_D:
+			timeStr = month + DateSeparator + day;
+			break;
+
+		case dtf_M_D_H_MM_AM:
+			timeStr = month + DateSeparator + day + " " + hour + TimeSeparator + minStr + " " + getAMPM(isPM, true);
+			break;
+
+		case dtf_Ha:
+			timeStr = hour + getAMPM(isPM, false);
+			break;
+
+		case dtf_H_MMa:
+			timeStr = hour + TimeSeparator + minStr + getAMPM(isPM, false);
+			break;
+	}
+
+	return timeStr;
+}
+
+/******************************************************************************/
+
+/*string*/ function dayOfWeekToString(/*int*/ dayOfWeek, /*bool*/ longFormat)
+{
+	return (longFormat) ? DaysOfWeekLong[dayOfWeek] : DaysOfWeekShort[dayOfWeek];
+}
+
+/******************************************************************************/
+
+/*string*/ function getAMPM(/*bool*/ isPM, /*bool*/ longFormat)
+{
+	if(isPM)
+		return (longFormat) ? "pm" : "p";
+	return (longFormat) ? "am" : "a";
+}
+
+/******************************************************************************/
+
+/*Date*/ function ISO8601DateFromString(/*string*/ value)
+{
+	if(!testStrHasLen(value))
+		return null;
+
+	var parts = value.split("-");
+	if(parts.length == 3)
+	{
+		var year = parseInt(parts[0], 10);
+		var month = parseInt(parts[1], 10);
+		var day = parseInt(parts[2], 10);
+
+		return new Date(Date.UTC(year, month - 1, day));
+	}
+
+	throw "ISO8601DateFromString: cannot parse date(" + value + ")";
+}
+
+/******************************************************************************/
+
+/*Date*/ function ISO8601DateTimeFromString(/*string*/ value)
+{
+	if(!testStrHasLen(value))
+		return null;
+
+	var year = 0;
+	var month = 0;
+	var day = 0;
+
+	var parts = value.split("T");
+	if(parts.length == 1)
+	{
+		return ISO8601DateFromString(value);
+	}
+	else if(parts.length == 2)
+	{
+		var datePart = ISO8601DateFromString(parts[0]);
+		var timePart = ISO8601TimeFromString(parts[1]);
+
+		var dateValue = new Date(0);
+		dateValue.setTime(datePart.getTime() + timePart);
+		return dateValue;
+	}
+
+	throw "ISO8601DateTimeFromString: cannot parse date(" + value + ")";
+}
+
+/******************************************************************************/
+
+/*int ticks*/ function ISO8601TimeFromString(/*string*/ value)
+{
+	if(!testStrHasLen(value))
+		return 0;
+
+	if(value.length >= 8)
+	{
+		var timeZoneTicks = 0;
+
+		if(value.length > 8)
+			timeZoneTicks = ISO8601TimeZoneFromString(value.substr(8));
+
+		var timePart = value.substr(0,8);
+		var parts = value.substr(0,8).split(":");
+		if(parts.length == 3)
+		{
+			var hour = parseInt(parts[0], 10);
+			var minute = parseInt(parts[1], 10);
+			var second = parseInt(parts[2], 10);
+
+			return (hour * 3600000) + (minute * 60000) + (second * 1000) + timeZoneTicks;
+		}
+
+	}
+
+	throw "ISO8601TimeFromString: cannot parse time(" + value + ")";
+}
+
+/******************************************************************************/
+
+/*int ticks*/ function ISO8601TimeZoneFromString(/*string*/ value)
+{
+	if(!testStrHasLen(value))
+		return 0;
+
+	if(value.length == 1)
+	{
+		if(value == "Z")
+			return 0;
+	}
+	else if(value.length == 6)
+	{
+		var parts = value.substr(1,5).split(":");
+		if(parts.length == 2)
+		{
+			var hour = parseInt(parts[0], 10);
+			var minute = parseInt(parts[1], 10);
+
+			var tzValue = (hour * 3600000) + (minute * 60000);
+
+			if(value.substr(0,1) == "-")
+				return tzValue;
+			if(value.substr(0,1) == "+")
+				return tzValue * -1;
+		}
+	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Cookie.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function setCookie(name, value, sessionOnly, expires, path, domain, secure)
+{
+	var tenYearExpires = new Date((new Date()).getTime() + 315360000000);	//expires in 10 years
+
+	var curCookie = name + "=" + escape(value);
+
+	if(!sessionOnly)
+		curCookie += ("; expires=" + ((expires)
+			? expires.toGMTString() : tenYearExpires.toGMTString()));
+
+	curCookie += "; path=" + ((path) ? path : "/")
+		+ ((domain) ? "; domain=" + domain : "")
+		+ ((secure) ? "; secure" : "");
+
+	document.cookie = curCookie;
+}
+
+/******************************************************************************/
+
+function getCookie(name)
+{
+	var dc = document.cookie;
+	var prefix = name + "=";
+
+	var begin = dc.indexOf("; " + prefix);
+	if(begin == -1)
+	{
+		begin = dc.indexOf(prefix);
+		if (begin != 0)
+			return null;
+	}
+	else
+		begin += 2;
+
+	var end = document.cookie.indexOf(";", begin);
+	if(end == -1)
+		end = dc.length;
+
+	return unescape(dc.substring(begin + prefix.length, end));
+}
+
+/******************************************************************************/
+
+function deleteCookie(name, path, domain)
+{
+	if(getCookie(name))
+	{
+		var delCookie = name + "="
+			+ "; path=" + ((path) ? path : "/")
+			+ ((domain) ? "; domain=" + domain : "")
+			+ "; expires=" + (new Date(0)).toGMTString();
+
+		document.cookie = delCookie;
+	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* NameValuePair.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function NameValuePair(name, value)
+{
+	this.Name = null;
+	this.Value = null;
+
+	if(testStrHasLen(name))
+		this.Name = name;
+	if(testStrHasLen(value))
+		this.Value = value;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* NameValuePairCmpr.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function NameValuePairCmpr(/*string*/ name)
+{
+	this.Name = name;
+}
+
+/******************************************************************************/
+
+/*int*/ NameValuePairCmpr.prototype.compare = function(oNameValuePair)
+{
+	if(this.Name == oNameValuePair.Name)
+		return 0;
+	if(this.Name < oNameValuePair.Name)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Money.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+var CurrencyIDMaxLength = 3;
+
+var cur_USD = "USD";
+
+/******************************************************************************/
+
+function Money(reader)
+{
+	this.CurrencyID = null;
+	this.Amount = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ Money.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.CurrencyID = reader.readString("CurrencyID", CurrencyIDMaxLength);
+	this.Amount = reader.readDouble("Amount");
+}
+
+/******************************************************************************/
+
+/*void*/ Money.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("CurrencyID", this.CurrencyID, CurrencyIDMaxLength);
+	writer.writeDouble("Amount", this.Amount);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* MainApp.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+/* Event Keys */
+var ek_Backspace = 8;
+var ek_Tab = 9;
+var ek_Select = 256;
+var ek_Back = 257;
+var ek_NextValue = 258;
+var ek_PrevValue = 259;
+var ek_UpButton = 260;
+var ek_DownButton = 261;
+var ek_LeftButton = 262;
+var ek_RightButton = 263;
+var ek_PageUp = 264;
+var ek_PageDown = 265;
+
+/* Colors */
+var g_Color_White = "#F0F0F0";
+var g_Color_Black = "#101010";
+
+/******************************************************************************/
+
+var gMainApp = null;
+
+/******************************************************************************/
+/******************************************************************************/
+
+function IsMCEEnabled()
+{
+	return true
+}
+
+/******************************************************************************/
+
+function onRemoteEvent(keyCode)
+{
+	// for the numerics on the Remote, MCE returns both "keypress" and "onremote" events, causing double chars.
+	// so "eat" the numerics from the Remote, they'll be handled by "keypress" event.
+	if((keyCode >= 48) && (keyCode <= 57))
+		return true;
+
+	return MainAppOnRemoteEvent(keyCode);
+}
+
+/******************************************************************************/
+
+function onScaleEvent(vScale)
+{
+	try
+	{
+		if(!window.external.MediaCenter)
+			document.getElementById("ScaleText").innerHTML = vScale;
+		document.body.style.zoom = vScale;
+	}
+	catch(e)
+	{
+		// ignore error
+	}
+}
+
+/******************************************************************************/
+
+function DoScale()
+{
+	MainApp.getThe().onScale();
+}
+
+/******************************************************************************/
+
+function DoShowSVP(show)
+{
+	var oDiv = document.getElementById("SVP");
+	var oLink = document.getElementById("ShowSVPLink");
+	var oBlockTop = document.getElementById("MCEBlock_Top");
+	var oBlockBottom = document.getElementById("MCEBlock_Bottom");
+
+	if(show == undefined)
+		show = oDiv.style.display == "none";
+
+	if(show)
+	{
+		oDiv.style.display = "inline";
+		oLink.innerHTML = "Hide SVP";
+		oBlockTop.style.display = "inline";
+		oBlockBottom.style.display = "inline";
+	}
+	else
+	{
+		oDiv.style.display = "none";
+		oLink.innerHTML = "Show SVP";
+		oBlockTop.style.display = "none";
+		oBlockBottom.style.display = "none";
+	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+MainApp.getThe = function()
+{
+	if(gMainApp == null)
+		gMainApp = new MainApp();
+	return gMainApp;
+}
+
+/******************************************************************************/
+
+function MainApp()
+{
+	this.fInit = false;
+	this.fScreenList = new Array();
+	this.fSession = Session.newInstance();
+	this.fMainTable = null;
+	this.fScreenTitle = null;
+	this.fFirstMouseMove = false;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.reset = function()
+{
+	this.closeAllScreens();
+	this.fSession = Session.newInstance();
+	StartScreen.newInstance();
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.init = function()
+{
+	if(this.fInit)
+		return;
+	this.fInit = true;
+	//DebugOn(true);
+
+	if(window.external.MediaCenter)
+		window.external.MediaCenter.BGColor = g_Color_Black;
+	document.body.scroll = "no";
+	document.body.focus;
+
+	this.fMainTable = document.getElementById("MainTable");
+	this.fScreenTitle = document.getElementById("ScreenTitle");
+
+	if(!window.external.MediaCenter)
+	{
+		DoShowSVP(false);
+		document.getElementById("ShowSVPDiv").style.display = "inline";
+		DoScale();
+		document.getElementById("ScaleDiv").style.display = "inline";
+	}
+
+	enableErrors(!window.external.MediaCenter);
+	window.setTimeout("MainAppIdle()", 500);
+	StartScreen.newInstance();
+}
+
+/******************************************************************************/
+
+/*Screen*/ MainApp.prototype.openScreen = function(/*Screen*/ oScreen)
+{
+	var oCurScreen = null;
+
+	if(this.fScreenList.length > 0)
+		oCurScreen = this.fScreenList[this.fScreenList.length - 1];
+
+	this.fScreenList.push(oScreen);
+
+	this.fFirstMouseMove = true;
+	this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
+	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
+	oScreen.show(true);
+	oScreen.setFocus(true);
+
+	if(oCurScreen != null)
+	{
+		oCurScreen.show(false);
+		oCurScreen.setFocus(false);
+	}
+
+	return oScreen;
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.closeScreen = function(/*int*/ screenID)
+{
+	var oScreen;
+	var pos = -1;
+
+	// search for screenID, hiding all
+	for(var i = 0; i < this.fScreenList.length; i++)
+	{
+		oScreen = this.fScreenList[i];
+		oScreen.show(false);
+
+		if(oScreen.ScreenID == screenID)
+			pos = i;
+	}
+
+	if(pos >= 0)
+		this.fScreenList.splice(pos, 1);
+
+	if(this.fScreenList.length > 0)
+	{
+		oScreen = this.fScreenList[this.fScreenList.length - 1];
+		this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
+		oScreen.show(true);
+		oScreen.setFocus(true);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.closeAllScreens = function()
+{
+	for(var i = this.fScreenList.length - 1; i >= 0; i--)
+		this.fScreenList[i].close();
+}
+
+/******************************************************************************/
+
+/*Screen*/ MainApp.prototype.findScreen = function(/*string */ screenID)
+{
+	for(var i = 0; i < this.fScreenList.length; i++)
+		if(this.fScreenList[i].ScreenID == screenID)
+			return this.fScreenList[i];
+
+	return null;
+}
+
+/******************************************************************************/
+
+/*Screen*/ MainApp.prototype.getScreen = function(/*string */ screenID)
+{
+	var oScreen = this.findScreen(screenID);
+
+	if(oScreen != null)
+		return oScreen;
+
+	throw "MainApp.getScreen: can't find screen, ID(" + screenID + ")";
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.onResize = function()
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oCurScreen = this.fScreenList[this.fScreenList.length - 1];
+		oCurScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.onScale = function()
+{
+// scale to the current window size
+//		var newScale = (document.body.style.zoom.length > 0)
+//			? ((document.body.style.zoom * document.body.clientWidth) / 1024)
+//			: (document.body.clientWidth / 1024);
+//
+//		onScaleEvent(newScale);
+
+	// toggle on scaling on and off
+	var newScale = "";
+
+	if(document.body.style.zoom.length == 0)
+	{
+		var horzScale = document.body.getBoundingClientRect().right / 1024;
+		var vertScale = document.body.getBoundingClientRect().bottom / 768;
+
+		newScale = (horzScale > vertScale) ? vertScale : horzScale;
+	}
+
+	onScaleEvent(newScale);
+	this.onResize();
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.key = function(/*int*/ keyCode)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+		var handled = oScreen.key(keyCode);
+
+		// if going back and all screens have been closed, return control to browser
+		if((keyCode == ek_Back) && (this.fScreenList.length == 0))
+			return false;
+		if((keyCode == ek_Backspace) && (this.fScreenList.length == 0))
+			return false;
+
+		//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
+		if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
+			handled = true;
+		//IE don't let IE/MCE handle Tab key
+		if(keyCode == ek_Tab)
+			handled = true;
+
+		if(!handled)
+			;	//TODO: beep sound
+
+		return handled;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.idle = function()
+{
+	// If fFirstMouseMove has not yet been cleared, clear it.  IE and non full-screen MCE don't get the bogus
+	// mouse move events.
+	if(this.fFirstMouseMove)
+		this.fFirstMouseMove = false;
+
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.idle();
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.mouseClick = function(/*string*/ controlID)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.mouseClick(controlID);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.mouseMove = function(/*string*/ controlID)
+{
+	// One MCX and full-screen MCE at console, a bogus mouse move event if shifting focus to center of screen.
+	// Need to "eat" first event, subsequent events are valid.
+	if(this.fFirstMouseMove)
+	{
+		this.fFirstMouseMove = false;
+		return;
+	}
+
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.mouseMove(controlID);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.focusEvent = function(/*string*/ controlID)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.focusEvent(controlID);
+	}
+}
+
+
+/******************************************************************************/
+
+/*void*/ MainApp.prototype.blurEvent = function(/*string*/ controlID)
+{
+	if(this.fScreenList.length > 0)
+	{
+		var oScreen = this.fScreenList[this.fScreenList.length - 1];
+
+		oScreen.blurEvent(controlID);
+	}
+}
+
+/******************************************************************************/
+
+/*Session*/ MainApp.prototype.getSession = function()
+{
+	return this.fSession;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function MainAppOnKeyDown()
+{
+	if((event.keyCode == 8)
+			|| (event.keyCode == 9)
+			|| (event.keyCode == 13)
+			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
+			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
+		return MainAppOnRemoteEvent(event.keyCode);
+	return false;
+}
+
+/******************************************************************************/
+
+function MainAppOnKeyUp()
+{
+	return false;
+}
+
+/******************************************************************************/
+
+function MainAppOnKeyPress()
+{
+	if((event.keyCode != 8)
+			&& (event.keyCode != 9)
+			&& (event.keyCode != 13))
+		return MainAppOnRemoteEvent(event.keyCode);
+	return false;
+}
+
+/******************************************************************************/
+
+function MainAppOnRemoteEvent(keyCode)
+{
+	try
+	{
+		return MainApp.getThe().key(MainAppMapKey(keyCode));
+	}
+	catch(e)
+	{
+		showError("MainAppOnRemoteEvent", e);
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
+function MainAppMapKey(key)
+{
+	if(key == 13)
+		key = ek_Select;
+	else if(key == 166)
+		key = ek_Back;
+	else if(key == 33)
+		key = ek_PageUp;
+	else if(key == 34)
+		key = ek_PageDown;
+	else if(key == 37)
+		key = ek_LeftButton;
+	else if(key == 38)
+		key = ek_UpButton;
+	else if(key == 39)
+		key = ek_RightButton;
+	else if(key == 40)
+		key = ek_DownButton;
+
+	return key;
+}
+
+/******************************************************************************/
+
+function MainAppIdle()
+{
+	window.setTimeout("MainAppIdle()", 500);
+	try
+	{
+		MainApp.getThe().idle();
+	}
+	catch(e)
+	{
+		showError("MainAppIdle", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnMouseClick(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().mouseClick(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnMouseClick", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnMouseOver(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().mouseMove(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnMouseOver", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnFocus(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().focusEvent(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnFocus", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnBlur(obj)
+{
+	try
+	{
+		obj = findObjectWithID(obj);
+		if(obj != null)
+			MainApp.getThe().blurEvent(obj.id);
+	}
+	catch(e)
+	{
+		showError("MainAppOnBlur", e);
+	}
+}
+
+/******************************************************************************/
+
+function MainAppOnResize()
+{
+	try
+	{
+		MainApp.getThe().onResize();
+	}
+	catch(e)
+	{
+		showError("MainAppOnMouseOver", e);
+	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Screen */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function Screen()
+{
+	this.ScreenID = null;
+	this.ScreenTitle = "";
+	this.fContainerControl = null;
+}
+
+/******************************************************************************/
+
+/*booealn*/ Screen.prototype.isOpen = function()
+{
+	return (MainApp.getThe().findScreen(this.ScreenID) != null);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.close = function()
+{
+	MainApp.getThe().closeScreen(this.ScreenID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.newControl = function(oControl)
+{
+	this.fContainerControl.newControl(oControl);
+}
+
+/******************************************************************************/
+
+/*Control*/ Screen.prototype.findControl = function(/*string*/ controlID)
+{
+	if(this.fContainerControl != null)
+		return this.fContainerControl.findControl(controlID);
+	return null;
+}
+
+/******************************************************************************/
+
+/*Control*/ Screen.prototype.getControl = function(/*string*/ controlID)
+{
+	return this.fContainerControl.getControl(controlID);
+}
+
+/******************************************************************************/
+
+/*Control*/ Screen.prototype.deleteControl = function(/*string*/ controlID)
+{
+	return this.fContainerControl.deleteControl(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.moveTo = function(/*int*/ left, /*int*/ top)
+{
+	this.fContainerControl.moveTo(left, top);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.show = function(show)
+{
+	this.fContainerControl.show(show);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.setFocus = function(/*boolean*/ set)
+{
+	this.fContainerControl.setFocus(set);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.focusControl = function(/*string*/ controlID, /*boolean*/ set)
+{
+	this.fContainerControl.focusControl(controlID, set);
+}
+
+/******************************************************************************/
+
+/*boolean*/ Screen.prototype.key = function(/*int*/ keyCode)
+{
+	if(this.fContainerControl.key(keyCode))
+		return true;
+
+	if((keyCode == ek_Back) || (keyCode == ek_Backspace))
+	{
+		this.close();
+		return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.idle = function()
+{
+	this.fContainerControl.idle();
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.mouseClick = function(/*string*/ controlID)
+{
+	this.fContainerControl.mouseClick(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
+{
+	this.fContainerControl.mouseMove(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.focusEvent = function(/*string*/ controlID)
+{
+	this.fContainerControl.focusEvent(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.blurEvent = function(/*string*/ controlID)
+{
+	this.fContainerControl.blurEvent(controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.onButton = function(/*string*/ controlID)
+{
+	// default action is to proceed to the next field
+	this.key(ek_DownButton);
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.onFocus = function(/*string*/ controlID)
+{
+}
+
+/******************************************************************************/
+
+/*void*/ Screen.prototype.onListItem = function(/*string*/ controlID)
+{
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Control */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function Control()
+{
+	this.ControlID = null;
+	this.ScreenID = null;
+	this.fUIObj = null;
+	this.fEnabled = true;
+	this.fFocused = false;
+}
+
+/******************************************************************************/
+
+/*Screen*/ Control.prototype.getScreen = function()
+{
+	return MainApp.getThe().getScreen(this.ScreenID);
+}
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.show = function(show)
+{
+	this.fUIObj.style.display = show ? 'inline' : 'none';
+}
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.setEnabled = function(/*boolean*/ enable)
+{
+	this.fEnabled = enable;
+}
+
+/******************************************************************************/
+
+/*boolean*/ Control.prototype.canFocus = function() { return this.fEnabled; }
+
+/******************************************************************************/
+
+/*boolean*/ Control.prototype.hasFocus = function() { return this.fFocused; }
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.setFocus = function(/*boolean*/ set)
+{
+}
+
+/******************************************************************************/
+
+/*boolean*/ Control.prototype.hasControl = function(/*string*/ controlID)
+{
+	return this.ControlID == controlID;
+}
+
+/******************************************************************************/
+
+/*boolean*/ Control.prototype.key = function(/*int*/ key)
+{
+	return false;
+}
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.idle = function()
+{
+}
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.mouseClick = function(/*string*/ controlID)
+{
+}
+
+/******************************************************************************/
+
+/*void*/ Control.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
+{
+}
+
+/******************************************************************************/
+/******************************************************************************/
 /* ContainerControl.js */
 
 /******************************************************************************/
@@ -964,443 +2113,78 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 /******************************************************************************/
 /******************************************************************************/
-/* Control */
+/* ButtonControl */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function Control()
+ButtonControl.prototype = new Control();
+ButtonControl.prototype.constructor = ButtonControl;
+
+/******************************************************************************/
+
+function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 {
-	this.ControlID = null;
-	this.ScreenID = null;
-	this.fUIObj = null;
-	this.fEnabled = true;
+	this.ControlID = controlID;
+	this.ScreenID = screenID;
+	this.fUIObj = document.getElementById(controlID);
+	if(this.fUIObj == null)
+		throw "ButtonControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
 	this.fFocused = false;
+
+	this.setFocus(false);
 }
 
 /******************************************************************************/
 
-/*Screen*/ Control.prototype.getScreen = function()
+/*void*/ ButtonControl.prototype.setText = function(/*string*/ text)
 {
-	return MainApp.getThe().getScreen(this.ScreenID);
+	this.fUIObj.innerHTML = text;
 }
 
 /******************************************************************************/
 
-/*void*/ Control.prototype.show = function(show)
-{
-	this.fUIObj.style.display = show ? 'inline' : 'none';
-}
-
-/******************************************************************************/
-
-/*void*/ Control.prototype.setEnabled = function(/*boolean*/ enable)
+/*void*/ ButtonControl.prototype.setEnabled = function(/*boolean*/ enable)
 {
 	this.fEnabled = enable;
+	checkClassName(this.fUIObj, this.fEnabled ? (this.fFocused ? 'hilite' : 'normal') : 'disabled');
 }
 
 /******************************************************************************/
 
-/*boolean*/ Control.prototype.canFocus = function() { return this.fEnabled; }
-
-/******************************************************************************/
-
-/*boolean*/ Control.prototype.hasFocus = function() { return this.fFocused; }
-
-/******************************************************************************/
-
-/*void*/ Control.prototype.setFocus = function(/*boolean*/ set)
+/*void*/ ButtonControl.prototype.setFocus = function(/*boolean*/ set)
 {
-}
-
-/******************************************************************************/
-
-/*boolean*/ Control.prototype.hasControl = function(/*string*/ controlID)
-{
-	return this.ControlID == controlID;
-}
-
-/******************************************************************************/
-
-/*boolean*/ Control.prototype.key = function(/*int*/ key)
-{
-	return false;
-}
-
-/******************************************************************************/
-
-/*void*/ Control.prototype.idle = function()
-{
-}
-
-/******************************************************************************/
-
-/*void*/ Control.prototype.mouseClick = function(/*string*/ controlID)
-{
-}
-
-/******************************************************************************/
-
-/*void*/ Control.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
-{
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Cookie.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function setCookie(name, value, sessionOnly, expires, path, domain, secure)
-{
-	var tenYearExpires = new Date((new Date()).getTime() + 315360000000);	//expires in 10 years
-
-	var curCookie = name + "=" + escape(value);
-
-	if(!sessionOnly)
-		curCookie += ("; expires=" + ((expires)
-			? expires.toGMTString() : tenYearExpires.toGMTString()));
-
-	curCookie += "; path=" + ((path) ? path : "/")
-		+ ((domain) ? "; domain=" + domain : "")
-		+ ((secure) ? "; secure" : "");
-
-	document.cookie = curCookie;
-}
-
-/******************************************************************************/
-
-function getCookie(name)
-{
-	var dc = document.cookie;
-	var prefix = name + "=";
-
-	var begin = dc.indexOf("; " + prefix);
-	if(begin == -1)
+	var wasFocused = this.fFocused;
+	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
+	this.fFocused = set;
+	if(set)
 	{
-		begin = dc.indexOf(prefix);
-		if (begin != 0)
-			return null;
-	}
-	else
-		begin += 2;
-
-	var end = document.cookie.indexOf(";", begin);
-	if(end == -1)
-		end = dc.length;
-
-	return unescape(dc.substring(begin + prefix.length, end));
-}
-
-/******************************************************************************/
-
-function deleteCookie(name, path, domain)
-{
-	if(getCookie(name))
-	{
-		var delCookie = name + "="
-			+ "; path=" + ((path) ? path : "/")
-			+ ((domain) ? "; domain=" + domain : "")
-			+ "; expires=" + (new Date(0)).toGMTString();
-
-		document.cookie = delCookie;
-	}
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* DateTimeUtil.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-
-/* DateTimeFormat */
-//var dtf_ISO8601_Date = 0;
-//var dtf_ISO8601_DateTime = 1;
-//var dtf_M_D_YY = 2;				// 2/3/04
-var dtf_M_D_YYYY = 3;				// 2/3/2004
-var dtf_M_YY = 4;					// 2/04
-var dtf_M_D = 5;					// 2/3
-//var dtf_M_D_YYYY_H_MM_AM = x;		// 2/3/2004 1:05 PM
-//var dtf_M_D_YYYY_H_MM_SS_AM = x;	// 2/3/2004 1:05:07 PM
-var dtf_M_D_H_MM_AM = 7;			// 2/3 1:05 PM
-//var dtf_H_AM = 8;					// 1 PM
-var dtf_Ha = 9;						// 1p
-//var dtf_H_MM_AM = 10;				// 1:05 PM
-var dtf_H_MMa = 11;					// 1:05p
-
-var DateSeparator = "/";
-var TimeSeparator = ":";
-
-var DaysOfWeekShort = new Array("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat");
-var DaysOfWeekLong = new Array("Sunday", "Monday", "Tuesday", "Wedneday", "Thursday", "Friday", "Saturday");
-
-var MillsPerDay = (24 * 60 * 60 * 1000);
-
-/******************************************************************************/
-
-/*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format, /*boolean*/ showInUTC)
-{
-	if(!isDate(dateTime))
-		return "";
-
-	var year;
-	var month;
-	var day;
-	var hour;
-	var minute;
-	var isPM;
-	var timeStr;
-	var minStr;
-
-	if(showInUTC)
-	{
-		year = dateTime.getUTCFullYear();
-		month = dateTime.getUTCMonth() + 1;
-		day = dateTime.getUTCDate();
-
-		hour = dateTime.getUTCHours();
-		minute = dateTime.getUTCMinutes();
-	}
-	else
-	{
-		year = dateTime.getFullYear();
-		month = dateTime.getMonth() + 1;
-		day = dateTime.getDate();
-
-		hour = dateTime.getHours();
-		minute = dateTime.getMinutes();
-	}
-
-	isPM = (hour >= 12);
-	if(hour == 0)
-		hour = 12;
-	else if(hour > 12)
-		hour -= 12;
-
-	if(minute < 10)
-		minStr = "0" + minute;
-	else
-		minStr = "" + minute;
-
-	switch(format)
-	{
-		case dtf_M_D_YYYY:
-			timeStr = month + DateSeparator + day + DateSeparator + year;
-			break;
-
-		case dtf_M_YY:
-			timeStr = month + DateSeparator + (((year % 100) < 10) ? "0" : "") + (year % 100);
-			break;
-
-		case dtf_M_D:
-			timeStr = month + DateSeparator + day;
-			break;
-
-		case dtf_M_D_H_MM_AM:
-			timeStr = month + DateSeparator + day + " " + hour + TimeSeparator + minStr + " " + getAMPM(isPM, true);
-			break;
-
-		case dtf_Ha:
-			timeStr = hour + getAMPM(isPM, false);
-			break;
-
-		case dtf_H_MMa:
-			timeStr = hour + TimeSeparator + minStr + getAMPM(isPM, false);
-			break;
-	}
-
-	return timeStr;
-}
-
-/******************************************************************************/
-
-/*string*/ function dayOfWeekToString(/*int*/ dayOfWeek, /*bool*/ longFormat)
-{
-	return (longFormat) ? DaysOfWeekLong[dayOfWeek] : DaysOfWeekShort[dayOfWeek];
-}
-
-/******************************************************************************/
-
-/*string*/ function getAMPM(/*bool*/ isPM, /*bool*/ longFormat)
-{
-	if(isPM)
-		return (longFormat) ? "pm" : "p";
-	return (longFormat) ? "am" : "a";
-}
-
-/******************************************************************************/
-
-/*Date*/ function ISO8601DateFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return null;
-
-	var parts = value.split("-");
-	if(parts.length == 3)
-	{
-		var year = parseInt(parts[0], 10);
-		var month = parseInt(parts[1], 10);
-		var day = parseInt(parts[2], 10);
-
-		return new Date(Date.UTC(year, month - 1, day));
-	}
-
-	throw "ISO8601DateFromString: cannot parse date(" + value + ")";
-}
-
-/******************************************************************************/
-
-/*Date*/ function ISO8601DateTimeFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return null;
-
-	var year = 0;
-	var month = 0;
-	var day = 0;
-
-	var parts = value.split("T");
-	if(parts.length == 1)
-	{
-		return ISO8601DateFromString(value);
-	}
-	else if(parts.length == 2)
-	{
-		var datePart = ISO8601DateFromString(parts[0]);
-		var timePart = ISO8601TimeFromString(parts[1]);
-
-		var dateValue = new Date(0);
-		dateValue.setTime(datePart.getTime() + timePart);
-		return dateValue;
-	}
-
-	throw "ISO8601DateTimeFromString: cannot parse date(" + value + ")";
-}
-
-/******************************************************************************/
-
-/*int ticks*/ function ISO8601TimeFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return 0;
-
-	if(value.length >= 8)
-	{
-		var timeZoneTicks = 0;
-
-		if(value.length > 8)
-			timeZoneTicks = ISO8601TimeZoneFromString(value.substr(8));
-
-		var timePart = value.substr(0,8);
-		var parts = value.substr(0,8).split(":");
-		if(parts.length == 3)
-		{
-			var hour = parseInt(parts[0], 10);
-			var minute = parseInt(parts[1], 10);
-			var second = parseInt(parts[2], 10);
-
-			return (hour * 3600000) + (minute * 60000) + (second * 1000) + timeZoneTicks;
-		}
-
-	}
-
-	throw "ISO8601TimeFromString: cannot parse time(" + value + ")";
-}
-
-/******************************************************************************/
-
-/*int ticks*/ function ISO8601TimeZoneFromString(/*string*/ value)
-{
-	if(!testStrHasLen(value))
-		return 0;
-
-	if(value.length == 1)
-	{
-		if(value == "Z")
-			return 0;
-	}
-	else if(value.length == 6)
-	{
-		var parts = value.substr(1,5).split(":");
-		if(parts.length == 2)
-		{
-			var hour = parseInt(parts[0], 10);
-			var minute = parseInt(parts[1], 10);
-
-			var tzValue = (hour * 3600000) + (minute * 60000);
-
-			if(value.substr(0,1) == "-")
-				return tzValue;
-			if(value.substr(0,1) == "+")
-				return tzValue * -1;
-		}
-	}
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Debugger.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-var gDebuggerID = "Debugger";
-var gDebugOutID = "Debugger_Out";
-var gDebugOn = false;
-var gDebugLines = new Array();
-var gDebugCount = 0;
-
-/******************************************************************************/
-
-function DebugOn(on)
-{
-	gDebugOn = on ? true : false;
-
-	var obj = document.getElementById(gDebuggerID);
-	obj.style.display = gDebugOn ? 'inline' : 'none';
-}
-
-function DebugOut(msg)
-{
-	try
-	{
-		if(!gDebugOn)
-			return;
-
-		gDebugCount++;
-		gDebugLines.push("" + gDebugCount + ": " + msg);
-		if(gDebugLines.length > 35)
-			gDebugLines.splice(0, 1);
-
-		var txt = "";
-		for(var i = 0; i < gDebugLines.length; i++)
-			txt += gDebugLines[i] + "<br>";
-
-		document.getElementById(gDebugOutID).innerHTML = txt;
-	}
-	catch(e)
-	{
+		if(document.activeElement.id != this.fUIObj.id)
+			this.fUIObj.focus();
+
+		if(!wasFocused)
+			this.getScreen().onFocus(this.ControlID);
 	}
 }
 
 /******************************************************************************/
 
-function DebugShow()
+/*boolean*/ ButtonControl.prototype.key = function(/*int*/ key)
 {
-	var obj = document.getElementById(gDebugOutID);
-	obj.style.display = (obj.style.display == 'none') ? 'inline' : 'none';
+	if(key == ek_Select)
+	{
+		this.getScreen().onButton(this.ControlID);
+		return true;
+	}
+
+	return Control.prototype.key.call(this, key);
 }
 
 /******************************************************************************/
 
-function DebugClear()
+/*void*/ ButtonControl.prototype.mouseClick = function(/*string*/ controlID)
 {
-	gDebugLines = new Array();
-	gDebugCount = 0;
-	document.getElementById(gDebugOutID).innerHTML = "";
+	this.getScreen().onButton(this.ControlID);
 }
 
 /******************************************************************************/
@@ -2499,800 +3283,92 @@ function ListControlRowItem(/*string*/ name, /*int*/ width)
 
 /******************************************************************************/
 /******************************************************************************/
-/* MainApp.js */
+/* CheckControl */
 
 /******************************************************************************/
 /******************************************************************************/
 
-/* Event Keys */
-var ek_Backspace = 8;
-var ek_Tab = 9;
-var ek_Select = 256;
-var ek_Back = 257;
-var ek_NextValue = 258;
-var ek_PrevValue = 259;
-var ek_UpButton = 260;
-var ek_DownButton = 261;
-var ek_LeftButton = 262;
-var ek_RightButton = 263;
-var ek_PageUp = 264;
-var ek_PageDown = 265;
-
-/* Colors */
-var g_Color_White = "#F0F0F0";
-var g_Color_Black = "#101010";
+CheckControl.prototype = new Control();
+CheckControl.prototype.constructor = CheckControl;
 
 /******************************************************************************/
 
-var gMainApp = null;
-
-/******************************************************************************/
-/******************************************************************************/
-
-function IsMCEEnabled()
+function CheckControl(/*string*/ controlID, /*string*/ screenID)
 {
-	return true
+	this.ControlID = controlID;
+	this.ScreenID = screenID;
+	this.fUIObj = document.getElementById(controlID);
+	if(this.fUIObj == null)
+		throw "CheckControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fFocused = false;
+	this.fChecked = false;
+
+	this.setFocus(false);
 }
 
 /******************************************************************************/
 
-function onRemoteEvent(keyCode)
+/*boolean*/ CheckControl.prototype.getChecked = function()
 {
-	// for the numerics on the Remote, MCE returns both "keypress" and "onremote" events, causing double chars.
-	// so "eat" the numerics from the Remote, they'll be handled by "keypress" event.
-	if((keyCode >= 48) && (keyCode <= 57))
-		return true;
-
-	return MainAppOnRemoteEvent(keyCode);
+	return this.fChecked;
 }
 
 /******************************************************************************/
 
-function onScaleEvent(vScale)
+/*void*/ CheckControl.prototype.setChecked = function(/*boolean*/ checked)
 {
-	try
+	this.fChecked = (checked ? true : false);
+	this.drawCheck();
+}
+
+/******************************************************************************/
+
+/*void*/ CheckControl.prototype.drawCheck = function()
+{
+	checkClassName(this.fUIObj, (this.fChecked
+		? (this.fFocused ? 'hilitechk' : 'normalchk')
+		: (this.fFocused ? 'hilite' : 'normal')));
+}
+
+/******************************************************************************/
+
+/*void*/ CheckControl.prototype.setFocus = function(/*boolean*/ set)
+{
+	var wasFocused = this.fFocused;
+	this.fFocused = set;
+	this.drawCheck();
+
+	if(set)
 	{
-		if(!window.external.MediaCenter)
-			document.getElementById("ScaleText").innerHTML = vScale;
-		document.body.style.zoom = vScale;
-	}
-	catch(e)
-	{
-		// ignore error
-	}
-}
+		if(document.activeElement.id != this.fUIObj.id)
+			this.fUIObj.focus();
 
-/******************************************************************************/
-
-function DoScale()
-{
-	MainApp.getThe().onScale();
-}
-
-/******************************************************************************/
-
-function DoShowSVP(show)
-{
-	var oDiv = document.getElementById("SVP");
-	var oLink = document.getElementById("ShowSVPLink");
-	var oBlockTop = document.getElementById("MCEBlock_Top");
-	var oBlockBottom = document.getElementById("MCEBlock_Bottom");
-
-	if(show == undefined)
-		show = oDiv.style.display == "none";
-
-	if(show)
-	{
-		oDiv.style.display = "inline";
-		oLink.innerHTML = "Hide SVP";
-		oBlockTop.style.display = "inline";
-		oBlockBottom.style.display = "inline";
-	}
-	else
-	{
-		oDiv.style.display = "none";
-		oLink.innerHTML = "Show SVP";
-		oBlockTop.style.display = "none";
-		oBlockBottom.style.display = "none";
-	}
-}
-
-/******************************************************************************/
-/******************************************************************************/
-
-MainApp.getThe = function()
-{
-	if(gMainApp == null)
-		gMainApp = new MainApp();
-	return gMainApp;
-}
-
-/******************************************************************************/
-
-function MainApp()
-{
-	this.fInit = false;
-	this.fScreenList = new Array();
-	this.fSession = Session.newInstance();
-	this.fMainTable = null;
-	this.fScreenTitle = null;
-	this.fFirstMouseMove = false;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.reset = function()
-{
-	this.closeAllScreens();
-	this.fSession = Session.newInstance();
-	StartScreen.newInstance();
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.init = function()
-{
-	if(this.fInit)
-		return;
-	this.fInit = true;
-	//DebugOn(true);
-
-	if(window.external.MediaCenter)
-		window.external.MediaCenter.BGColor = g_Color_Black;
-	document.body.scroll = "no";
-	document.body.focus;
-
-	this.fMainTable = document.getElementById("MainTable");
-	this.fScreenTitle = document.getElementById("ScreenTitle");
-
-	if(!window.external.MediaCenter)
-	{
-		DoShowSVP(false);
-		document.getElementById("ShowSVPDiv").style.display = "inline";
-		DoScale();
-		document.getElementById("ScaleDiv").style.display = "inline";
-	}
-
-	enableErrors(!window.external.MediaCenter);
-	window.setTimeout("MainAppIdle()", 500);
-	StartScreen.newInstance();
-}
-
-/******************************************************************************/
-
-/*Screen*/ MainApp.prototype.openScreen = function(/*Screen*/ oScreen)
-{
-	var oCurScreen = null;
-
-	if(this.fScreenList.length > 0)
-		oCurScreen = this.fScreenList[this.fScreenList.length - 1];
-
-	this.fScreenList.push(oScreen);
-
-	this.fFirstMouseMove = true;
-	this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
-	oScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
-	oScreen.show(true);
-	oScreen.setFocus(true);
-
-	if(oCurScreen != null)
-	{
-		oCurScreen.show(false);
-		oCurScreen.setFocus(false);
-	}
-
-	return oScreen;
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.closeScreen = function(/*int*/ screenID)
-{
-	var oScreen;
-	var pos = -1;
-
-	// search for screenID, hiding all
-	for(var i = 0; i < this.fScreenList.length; i++)
-	{
-		oScreen = this.fScreenList[i];
-		oScreen.show(false);
-
-		if(oScreen.ScreenID == screenID)
-			pos = i;
-	}
-
-	if(pos >= 0)
-		this.fScreenList.splice(pos, 1);
-
-	if(this.fScreenList.length > 0)
-	{
-		oScreen = this.fScreenList[this.fScreenList.length - 1];
-		this.fScreenTitle.innerHTML = oScreen.ScreenTitle;
-		oScreen.show(true);
-		oScreen.setFocus(true);
+		if(!wasFocused)
+			this.getScreen().onFocus(this.ControlID);
 	}
 }
 
 /******************************************************************************/
 
-/*void*/ MainApp.prototype.closeAllScreens = function()
+/*boolean*/ CheckControl.prototype.key = function(/*int*/ key)
 {
-	for(var i = this.fScreenList.length - 1; i >= 0; i--)
-		this.fScreenList[i].close();
-}
-
-/******************************************************************************/
-
-/*Screen*/ MainApp.prototype.findScreen = function(/*string */ screenID)
-{
-	for(var i = 0; i < this.fScreenList.length; i++)
-		if(this.fScreenList[i].ScreenID == screenID)
-			return this.fScreenList[i];
-
-	return null;
-}
-
-/******************************************************************************/
-
-/*Screen*/ MainApp.prototype.getScreen = function(/*string */ screenID)
-{
-	var oScreen = this.findScreen(screenID);
-
-	if(oScreen != null)
-		return oScreen;
-
-	throw "MainApp.getScreen: can't find screen, ID(" + screenID + ")";
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.onResize = function()
-{
-	if(this.fScreenList.length > 0)
+	if(key == ek_Select)
 	{
-		var oCurScreen = this.fScreenList[this.fScreenList.length - 1];
-		oCurScreen.moveTo(this.fMainTable.offsetLeft, this.fMainTable.offsetTop);
-	}
-}
+		this.fChecked = !this.fChecked;
+		this.drawCheck();
 
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.onScale = function()
-{
-// scale to the current window size
-//		var newScale = (document.body.style.zoom.length > 0)
-//			? ((document.body.style.zoom * document.body.clientWidth) / 1024)
-//			: (document.body.clientWidth / 1024);
-//
-//		onScaleEvent(newScale);
-
-	// toggle on scaling on and off
-	var newScale = "";
-
-	if(document.body.style.zoom.length == 0)
-	{
-		var horzScale = document.body.getBoundingClientRect().right / 1024;
-		var vertScale = document.body.getBoundingClientRect().bottom / 768;
-
-		newScale = (horzScale > vertScale) ? vertScale : horzScale;
-	}
-
-	onScaleEvent(newScale);
-	this.onResize();
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.key = function(/*int*/ keyCode)
-{
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-		var handled = oScreen.key(keyCode);
-
-		// if going back and all screens have been closed, return control to browser
-		if((keyCode == ek_Back) && (this.fScreenList.length == 0))
-			return false;
-		if((keyCode == ek_Backspace) && (this.fScreenList.length == 0))
-			return false;
-
-		//IE converts a Backspace into the <Back> button, if we have an open screen, don't pass event to IE
-		if((keyCode == ek_Backspace) && (this.fScreenList.length > 0))
-			handled = true;
-		//IE don't let IE/MCE handle Tab key
-		if(keyCode == ek_Tab)
-			handled = true;
-
-		if(!handled)
-			;	//TODO: beep sound
-
-		return handled;
-	}
-
-	return false;
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.idle = function()
-{
-	// If fFirstMouseMove has not yet been cleared, clear it.  IE and non full-screen MCE don't get the bogus
-	// mouse move events.
-	if(this.fFirstMouseMove)
-		this.fFirstMouseMove = false;
-
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-
-		oScreen.idle();
-	}
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.mouseClick = function(/*string*/ controlID)
-{
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-
-		oScreen.mouseClick(controlID);
-	}
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.mouseMove = function(/*string*/ controlID)
-{
-	// One MCX and full-screen MCE at console, a bogus mouse move event if shifting focus to center of screen.
-	// Need to "eat" first event, subsequent events are valid.
-	if(this.fFirstMouseMove)
-	{
-		this.fFirstMouseMove = false;
-		return;
-	}
-
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-
-		oScreen.mouseMove(controlID);
-	}
-}
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.focusEvent = function(/*string*/ controlID)
-{
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-
-		oScreen.focusEvent(controlID);
-	}
-}
-
-
-/******************************************************************************/
-
-/*void*/ MainApp.prototype.blurEvent = function(/*string*/ controlID)
-{
-	if(this.fScreenList.length > 0)
-	{
-		var oScreen = this.fScreenList[this.fScreenList.length - 1];
-
-		oScreen.blurEvent(controlID);
-	}
-}
-
-/******************************************************************************/
-
-/*Session*/ MainApp.prototype.getSession = function()
-{
-	return this.fSession;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-
-function MainAppOnKeyDown()
-{
-	if((event.keyCode == 8)
-			|| (event.keyCode == 9)
-			|| (event.keyCode == 13)
-			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
-			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
-		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
-}
-
-/******************************************************************************/
-
-function MainAppOnKeyUp()
-{
-	return false;
-}
-
-/******************************************************************************/
-
-function MainAppOnKeyPress()
-{
-	if((event.keyCode != 8)
-			&& (event.keyCode != 9)
-			&& (event.keyCode != 13))
-		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
-}
-
-/******************************************************************************/
-
-function MainAppOnRemoteEvent(keyCode)
-{
-	try
-	{
-		return MainApp.getThe().key(MainAppMapKey(keyCode));
-	}
-	catch(e)
-	{
-		showError("MainAppOnRemoteEvent", e);
-	}
-
-	return false;
-}
-
-/******************************************************************************/
-
-function MainAppMapKey(key)
-{
-	if(key == 13)
-		key = ek_Select;
-	else if(key == 166)
-		key = ek_Back;
-	else if(key == 33)
-		key = ek_PageUp;
-	else if(key == 34)
-		key = ek_PageDown;
-	else if(key == 37)
-		key = ek_LeftButton;
-	else if(key == 38)
-		key = ek_UpButton;
-	else if(key == 39)
-		key = ek_RightButton;
-	else if(key == 40)
-		key = ek_DownButton;
-
-	return key;
-}
-
-/******************************************************************************/
-
-function MainAppIdle()
-{
-	window.setTimeout("MainAppIdle()", 500);
-	try
-	{
-		MainApp.getThe().idle();
-	}
-	catch(e)
-	{
-		showError("MainAppIdle", e);
-	}
-}
-
-/******************************************************************************/
-
-function MainAppOnMouseClick(obj)
-{
-	try
-	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().mouseClick(obj.id);
-	}
-	catch(e)
-	{
-		showError("MainAppOnMouseClick", e);
-	}
-}
-
-/******************************************************************************/
-
-function MainAppOnMouseOver(obj)
-{
-	try
-	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().mouseMove(obj.id);
-	}
-	catch(e)
-	{
-		showError("MainAppOnMouseOver", e);
-	}
-}
-
-/******************************************************************************/
-
-function MainAppOnFocus(obj)
-{
-	try
-	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().focusEvent(obj.id);
-	}
-	catch(e)
-	{
-		showError("MainAppOnFocus", e);
-	}
-}
-
-/******************************************************************************/
-
-function MainAppOnBlur(obj)
-{
-	try
-	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().blurEvent(obj.id);
-	}
-	catch(e)
-	{
-		showError("MainAppOnBlur", e);
-	}
-}
-
-/******************************************************************************/
-
-function MainAppOnResize()
-{
-	try
-	{
-		MainApp.getThe().onResize();
-	}
-	catch(e)
-	{
-		showError("MainAppOnMouseOver", e);
-	}
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Money.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-var CurrencyIDMaxLength = 3;
-
-var cur_USD = "USD";
-
-/******************************************************************************/
-
-function Money(reader)
-{
-	this.CurrencyID = null;
-	this.Amount = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ Money.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.CurrencyID = reader.readString("CurrencyID", CurrencyIDMaxLength);
-	this.Amount = reader.readDouble("Amount");
-}
-
-/******************************************************************************/
-
-/*void*/ Money.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("CurrencyID", this.CurrencyID, CurrencyIDMaxLength);
-	writer.writeDouble("Amount", this.Amount);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* NameValuePair.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function NameValuePair(name, value)
-{
-	this.Name = null;
-	this.Value = null;
-
-	if(testStrHasLen(name))
-		this.Name = name;
-	if(testStrHasLen(value))
-		this.Value = value;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* NameValuePairCmpr.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function NameValuePairCmpr(/*string*/ name)
-{
-	this.Name = name;
-}
-
-/******************************************************************************/
-
-/*int*/ NameValuePairCmpr.prototype.compare = function(oNameValuePair)
-{
-	if(this.Name == oNameValuePair.Name)
-		return 0;
-	if(this.Name < oNameValuePair.Name)
-		return -1;
-	return 1;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Screen */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function Screen()
-{
-	this.ScreenID = null;
-	this.ScreenTitle = "";
-	this.fContainerControl = null;
-}
-
-/******************************************************************************/
-
-/*booealn*/ Screen.prototype.isOpen = function()
-{
-	return (MainApp.getThe().findScreen(this.ScreenID) != null);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.close = function()
-{
-	MainApp.getThe().closeScreen(this.ScreenID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.newControl = function(oControl)
-{
-	this.fContainerControl.newControl(oControl);
-}
-
-/******************************************************************************/
-
-/*Control*/ Screen.prototype.findControl = function(/*string*/ controlID)
-{
-	if(this.fContainerControl != null)
-		return this.fContainerControl.findControl(controlID);
-	return null;
-}
-
-/******************************************************************************/
-
-/*Control*/ Screen.prototype.getControl = function(/*string*/ controlID)
-{
-	return this.fContainerControl.getControl(controlID);
-}
-
-/******************************************************************************/
-
-/*Control*/ Screen.prototype.deleteControl = function(/*string*/ controlID)
-{
-	return this.fContainerControl.deleteControl(controlID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.moveTo = function(/*int*/ left, /*int*/ top)
-{
-	this.fContainerControl.moveTo(left, top);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.show = function(show)
-{
-	this.fContainerControl.show(show);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.setFocus = function(/*boolean*/ set)
-{
-	this.fContainerControl.setFocus(set);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.focusControl = function(/*string*/ controlID, /*boolean*/ set)
-{
-	this.fContainerControl.focusControl(controlID, set);
-}
-
-/******************************************************************************/
-
-/*boolean*/ Screen.prototype.key = function(/*int*/ keyCode)
-{
-	if(this.fContainerControl.key(keyCode))
-		return true;
-
-	if((keyCode == ek_Back) || (keyCode == ek_Backspace))
-	{
-		this.close();
 		return true;
 	}
 
-	return false;
+	return Control.prototype.key.call(this, key);
 }
 
 /******************************************************************************/
 
-/*void*/ Screen.prototype.idle = function()
+/*void*/ CheckControl.prototype.mouseClick = function(/*string*/ controlID)
 {
-	this.fContainerControl.idle();
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.mouseClick = function(/*string*/ controlID)
-{
-	this.fContainerControl.mouseClick(controlID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
-{
-	this.fContainerControl.mouseMove(controlID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.focusEvent = function(/*string*/ controlID)
-{
-	this.fContainerControl.focusEvent(controlID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.blurEvent = function(/*string*/ controlID)
-{
-	this.fContainerControl.blurEvent(controlID);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.onButton = function(/*string*/ controlID)
-{
-	// default action is to proceed to the next field
-	this.key(ek_DownButton);
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.onFocus = function(/*string*/ controlID)
-{
-}
-
-/******************************************************************************/
-
-/*void*/ Screen.prototype.onListItem = function(/*string*/ controlID)
-{
+	this.fChecked = !this.fChecked;
+	this.drawCheck();
 }
 
 /******************************************************************************/
@@ -3412,45 +3488,6 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 	}
 
 	showMsg("An error occurred trying to play video.");
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* WaitScreen.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-WaitScreen.ScreenID = "Wait001";
-
-/******************************************************************************/
-
-WaitScreen.newInstance = function()
-{
-	return new WaitScreen();
-}
-
-/******************************************************************************/
-
-function WaitScreen()
-{
-	this.ScreenID = WaitScreen.ScreenID;
-
-	this.fContainerControl = new ContainerControl(this.ScreenID, 0, 0);
-
-	// adjust position
-	var mainTable = document.getElementById("MainTable");
-	this.fContainerControl.moveTo(mainTable.offsetLeft, mainTable.offsetTop);
-
-	this.fContainerControl.show(true);
-	forceRedraw();
-}
-
-/******************************************************************************/
-
-/*void*/ WaitScreen.prototype.close = function()
-{
-	this.fContainerControl.show(false);
 }
 
 /******************************************************************************/
@@ -3857,195 +3894,97 @@ function XmlDataWriter()
 
 /******************************************************************************/
 /******************************************************************************/
-/* RentedShowListControl.js */
+/* WaitScreen.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-RentedShowListControl.prototype = new ListControl();
-RentedShowListControl.prototype.constructor = ListControl;
+WaitScreen.ScreenID = "Wait001";
 
 /******************************************************************************/
 
-function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
-	/*ListControlRowItemList*/ oRowItemList, /*Array*/ rentedShowSearchList)
+WaitScreen.newInstance = function()
 {
-	this.RentedShowSearchList = rentedShowSearchList;
+	return new WaitScreen();
+}
+
+/******************************************************************************/
+
+function WaitScreen()
+{
+	this.ScreenID = WaitScreen.ScreenID;
+
+	this.fContainerControl = new ContainerControl(this.ScreenID, 0, 0);
+
+	// adjust position
+	var mainTable = document.getElementById("MainTable");
+	this.fContainerControl.moveTo(mainTable.offsetLeft, mainTable.offsetTop);
+
+	this.fContainerControl.show(true);
+	forceRedraw();
+}
+
+/******************************************************************************/
+
+/*void*/ WaitScreen.prototype.close = function()
+{
+	this.fContainerControl.show(false);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* TextListControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+TextListControl.prototype = new ListControl();
+TextListControl.prototype.constructor = ListControl;
+
+/******************************************************************************/
+
+function TextListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
+	/*ListControlRowItemList*/ oRowItemList, /*Array*/ nameValuePairList)
+{
+	this.NameValuePairList = nameValuePairList;
 
 	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
 }
 
 /******************************************************************************/
 
-/*void*/ RentedShowListControl.prototype.setRentedShowSearchList = function(
-	/*Array*/ rentedShowSearchList, /*boolean*/ reset)
+/*void*/ TextListControl.prototype.setFocusedItemByName = function(/*string*/ name)
 {
-	this.RentedShowSearchList = rentedShowSearchList;
-	this.recalcAfterDataChange(reset);
+	var pos = arrayIndexOfByCmpr(this.NameValuePairList, new NameValuePairCmpr(name));
+	this.setFocusedItemByPos(pos);
 }
 
 /******************************************************************************/
 
-/*RentedShowSearch*/ RentedShowListControl.prototype.getFocusedItemValue = function()
+/*NameValuePair*/ TextListControl.prototype.getFocusedItemValue = function()
 {
 	var focusedItem = this.getFocusedItemPos();
-	if((focusedItem >= 0) && (focusedItem < this.RentedShowSearchList.length))
-		return this.RentedShowSearchList[focusedItem];
+	if((focusedItem >= 0) && (focusedItem < this.NameValuePairList.length))
+		return this.NameValuePairList[focusedItem];
 
 	return null;
 }
 
 /******************************************************************************/
 
-/*int*/ RentedShowListControl.prototype.getItemCount = function()
+/*int*/ TextListControl.prototype.getItemCount = function()
 {
-	return this.RentedShowSearchList.length;
+	return this.NameValuePairList.length;
 }
 
 /******************************************************************************/
 
-/*void*/ RentedShowListControl.prototype.drawItem = function(/*int*/ item,
+/*void*/ TextListControl.prototype.drawItem = function(/*int*/ item,
 	/*ListControlRow*/ oRow)
 {
-	var rentedShowSearch = this.RentedShowSearchList[item];
-	var expires = "n/a";
-	var tempStr;
-	var totalDays;
-	var now;
+	var nameValuePair = this.NameValuePairList[item];
 
-	if(rentedShowSearch.AvailableUntil != null)
-	{
-		now = new Date();
-		totalDays = (rentedShowSearch.AvailableUntil.getTime() - now.getTime())
-			/ MillsPerDay;
-
-		if(totalDays < 0)
-			expires = "Expired";
-		else if(totalDays <= 1)
-			expires = dateTimeToString(rentedShowSearch.AvailableUntil, dtf_H_MMa);
-		else if(totalDays <= 7)
-		{
-			expires = dayOfWeekToString(rentedShowSearch.AvailableUntil.getDay(), false)
-				+ " " + dateTimeToString(rentedShowSearch.AvailableUntil, dtf_Ha);
-		}
-		else
-			expires = dateTimeToString(rentedShowSearch.AvailableUntil, dtf_M_D);
-	}
-
-	tempStr = rentedShowSearch.Name;
-	if(testStrHasLen(rentedShowSearch.EpisodeName))
-		tempStr += ' - "' + rentedShowSearch.EpisodeName + '"';
-
-	oRow.drawRowItem(0, tempStr);
-	oRow.drawRowItem(1, expires);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ShowProviderItem.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ShowProviderItem.newInstance = function(/*ProviderID*/ providerID, /*ShowCost*/ showCost)
-{
-	return new ShowProviderItem(providerID, showCost);
-}
-
-/******************************************************************************/
-
-function ShowProviderItem(/*ProviderID*/ providerID, /*ShowCost*/ showCost)
-{
-	var oSession = MainApp.getThe().getSession();
-
-	this.Provider = oSession.getProvider(providerID);
-	this.ShowCost = showCost;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ShowProviderListControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ShowProviderListControl.prototype = new ListControl();
-ShowProviderListControl.prototype.constructor = ListControl;
-
-/******************************************************************************/
-
-function ShowProviderListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
-	/*ListControlRowItemList*/ oRowItemList, /*Array*/ showProviderList)
-{
-	this.initShowProviderItemList(showProviderList);
-
-	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
-}
-
-/******************************************************************************/
-
-/*void*/ ShowProviderListControl.prototype.initShowProviderItemList = function(/*Array*/ showProviderList)
-{
-	var showProvider;
-	var showCost;
-	var list = new Array();
-
-	if(showProviderList)
-	{
-		for(var i = 0; i < showProviderList.length; i++)
-		{
-			showProvider = showProviderList[i];
-
-			for(var j = 0; j < showProvider.ShowCostList.length; j++)
-			{
-				showCost = showProvider.ShowCostList[j];
-
-				list.push(ShowProviderItem.newInstance(showProvider.ProviderID, showCost));
-			}
-		}
-	}
-
-	this.ShowProviderItemList = list;
-}
-
-/******************************************************************************/
-
-/*void*/ ShowProviderListControl.prototype.setShowProviderList = function(
-	/*Array*/ showProviderList, /*boolean*/ reset)
-{
-	this.initShowProviderItemList(showProviderList);
-	this.recalcAfterDataChange(reset);
-}
-
-/******************************************************************************/
-
-/*ShowProviderItem*/ ShowProviderListControl.prototype.getFocusedItemValue = function()
-{
-	var focusedItem = this.getFocusedItemPos();
-	if((focusedItem >= 0) && (focusedItem < this.ShowProviderItemList.length))
-		return this.ShowProviderItemList[focusedItem];
-
-	return null;
-}
-
-/******************************************************************************/
-
-/*int*/ ShowProviderListControl.prototype.getItemCount = function()
-{
-	return this.ShowProviderItemList.length;
-}
-
-/******************************************************************************/
-
-/*void*/ ShowProviderListControl.prototype.drawItem = function(/*int*/ item,
-	/*ListControlRow*/ oRow)
-{
-	var showProviderItem = this.ShowProviderItemList[item];
-	var showCost = showProviderItem.ShowCost;
-
-	oRow.drawRowItem(0, showProviderItem.Provider.Name);
-	oRow.drawRowItem(1, showCost.formatRental());
-	oRow.drawRowItem(2, showCost.CostDisplay);
+	oRow.drawRowItem(0, nameValuePair.Value);
 }
 
 /******************************************************************************/
@@ -4139,493 +4078,195 @@ function ShowSearchListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 
 /******************************************************************************/
 /******************************************************************************/
-/* TextListControl.js */
+/* ShowProviderListControl.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-TextListControl.prototype = new ListControl();
-TextListControl.prototype.constructor = ListControl;
+ShowProviderListControl.prototype = new ListControl();
+ShowProviderListControl.prototype.constructor = ListControl;
 
 /******************************************************************************/
 
-function TextListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
-	/*ListControlRowItemList*/ oRowItemList, /*Array*/ nameValuePairList)
+function ShowProviderListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
+	/*ListControlRowItemList*/ oRowItemList, /*Array*/ showProviderList)
 {
-	this.NameValuePairList = nameValuePairList;
+	this.initShowProviderItemList(showProviderList);
 
 	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
 }
 
 /******************************************************************************/
 
-/*void*/ TextListControl.prototype.setFocusedItemByName = function(/*string*/ name)
+/*void*/ ShowProviderListControl.prototype.initShowProviderItemList = function(/*Array*/ showProviderList)
 {
-	var pos = arrayIndexOfByCmpr(this.NameValuePairList, new NameValuePairCmpr(name));
-	this.setFocusedItemByPos(pos);
+	var showProvider;
+	var showCost;
+	var list = new Array();
+
+	if(showProviderList)
+	{
+		for(var i = 0; i < showProviderList.length; i++)
+		{
+			showProvider = showProviderList[i];
+
+			for(var j = 0; j < showProvider.ShowCostList.length; j++)
+			{
+				showCost = showProvider.ShowCostList[j];
+
+				list.push(ShowProviderItem.newInstance(showProvider.ProviderID, showCost));
+			}
+		}
+	}
+
+	this.ShowProviderItemList = list;
 }
 
 /******************************************************************************/
 
-/*NameValuePair*/ TextListControl.prototype.getFocusedItemValue = function()
+/*void*/ ShowProviderListControl.prototype.setShowProviderList = function(
+	/*Array*/ showProviderList, /*boolean*/ reset)
+{
+	this.initShowProviderItemList(showProviderList);
+	this.recalcAfterDataChange(reset);
+}
+
+/******************************************************************************/
+
+/*ShowProviderItem*/ ShowProviderListControl.prototype.getFocusedItemValue = function()
 {
 	var focusedItem = this.getFocusedItemPos();
-	if((focusedItem >= 0) && (focusedItem < this.NameValuePairList.length))
-		return this.NameValuePairList[focusedItem];
+	if((focusedItem >= 0) && (focusedItem < this.ShowProviderItemList.length))
+		return this.ShowProviderItemList[focusedItem];
 
 	return null;
 }
 
 /******************************************************************************/
 
-/*int*/ TextListControl.prototype.getItemCount = function()
+/*int*/ ShowProviderListControl.prototype.getItemCount = function()
 {
-	return this.NameValuePairList.length;
+	return this.ShowProviderItemList.length;
 }
 
 /******************************************************************************/
 
-/*void*/ TextListControl.prototype.drawItem = function(/*int*/ item,
+/*void*/ ShowProviderListControl.prototype.drawItem = function(/*int*/ item,
 	/*ListControlRow*/ oRow)
 {
-	var nameValuePair = this.NameValuePairList[item];
+	var showProviderItem = this.ShowProviderItemList[item];
+	var showCost = showProviderItem.ShowCost;
 
-	oRow.drawRowItem(0, nameValuePair.Value);
+	oRow.drawRowItem(0, showProviderItem.Provider.Name);
+	oRow.drawRowItem(1, showCost.formatRental());
+	oRow.drawRowItem(2, showCost.CostDisplay);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* Category.js */
+/* ShowProviderItem.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-Category.AllCategoriesID = "all";
-Category.AllCategoriesName = "All Categories";
-Category.FeaturedCategoryID = "featured";
-
-/******************************************************************************/
-
-function Category(reader)
+ShowProviderItem.newInstance = function(/*ProviderID*/ providerID, /*ShowCost*/ showCost)
 {
-	this.CategoryID = null;
-	this.Name = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
+	return new ShowProviderItem(providerID, showCost);
 }
 
 /******************************************************************************/
 
-/*void*/ Category.prototype.readFrom = function(/*DataReader*/ reader)
+function ShowProviderItem(/*ProviderID*/ providerID, /*ShowCost*/ showCost)
 {
-	this.CategoryID = reader.readString("CategoryID", CategoryIDMaxLength);
-	this.Name = reader.readString("Name", 64);
+	var oSession = MainApp.getThe().getSession();
+
+	this.Provider = oSession.getProvider(providerID);
+	this.ShowCost = showCost;
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* DataID.js */
+/* RentedShowListControl.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-var ManufacturerIDMaxLength = 32;
-var ProviderIDMaxLength = 32;
-var ShowIDMaxLength = 64;
-var RentedShowIDMaxLength = 64;
-var CategoryIDMaxLength = 32;
-var RatingIDMaxLength = 32;
-
-/******************************************************************************/
-/******************************************************************************/
-/* IncludeAdult.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-var IncludeAdultMaxLength = 32;
-
-var ina_Never = "Never";
-var ina_PromptPassword = "PromptPassword";
-var ina_Always = "Always";
-
-/******************************************************************************/
-/******************************************************************************/
-/* License.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-License.ShowURLMaxLength = 4096;
-License.LicenseURLMaxLength = 4096;
+RentedShowListControl.prototype = new ListControl();
+RentedShowListControl.prototype.constructor = ListControl;
 
 /******************************************************************************/
 
-function License(reader)
+function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
+	/*ListControlRowItemList*/ oRowItemList, /*Array*/ rentedShowSearchList)
 {
-	this.LicenseMethod = null;
-	this.ShowURL = null;
-	this.LicenseURL = null;
+	this.RentedShowSearchList = rentedShowSearchList;
 
-	if(reader != undefined)
-		this.readFrom(reader);
+	ListControl.prototype.init.call(this, controlID, screenID, numRows, oRowItemList);
 }
 
 /******************************************************************************/
 
-/*void*/ License.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ RentedShowListControl.prototype.setRentedShowSearchList = function(
+	/*Array*/ rentedShowSearchList, /*boolean*/ reset)
 {
-	this.LicenseMethod = reader.readString("LicenseMethod", LicenseMethodMaxLength);
-	this.ShowURL = reader.readString("ShowURL", License.ShowURLMaxLength);
-	this.LicenseURL = reader.readString("LicenseURL", License.LicenseURLMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* LicenseMethod.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-var LicenseMethodMaxLength = 32;
-
-var lm_URLOnly = "URLOnly";
-var lm_LicenseServer = "LicenseServer";
-
-/******************************************************************************/
-/******************************************************************************/
-/* MemberPrefs.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function MemberPrefs(reader)
-{
-	this.IncludeAdult = ina_Never;
-
-	if(reader != undefined)
-		this.readFrom(reader);
+	this.RentedShowSearchList = rentedShowSearchList;
+	this.recalcAfterDataChange(reset);
 }
 
 /******************************************************************************/
 
-/*void*/ MemberPrefs.prototype.readFrom = function(/*DataReader*/ reader)
+/*RentedShowSearch*/ RentedShowListControl.prototype.getFocusedItemValue = function()
 {
-	this.IncludeAdult = reader.readString("IncludeAdult", IncludeAdultMaxLength);
-}
+	var focusedItem = this.getFocusedItemPos();
+	if((focusedItem >= 0) && (focusedItem < this.RentedShowSearchList.length))
+		return this.RentedShowSearchList[focusedItem];
 
-/******************************************************************************/
-/******************************************************************************/
-/* MemberProvider.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-MemberProvider.newInstance = function(/*string*/ providerID)
-{
-	var oMemberProvider = new MemberProvider();
-
-	oMemberProvider.ProviderID = providerID;
-
-	return oMemberProvider;
+	return null;
 }
 
 /******************************************************************************/
 
-function MemberProvider(reader)
+/*int*/ RentedShowListControl.prototype.getItemCount = function()
 {
-	this.ProviderID = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
+	return this.RentedShowSearchList.length;
 }
 
 /******************************************************************************/
 
-/*void*/ MemberProvider.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ RentedShowListControl.prototype.drawItem = function(/*int*/ item,
+	/*ListControlRow*/ oRow)
 {
-	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* MemberState.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function MemberState(reader)
-{
-	this.MemberPrefs = null;
-	this.MemberProviderList = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ MemberState.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.MemberPrefs = reader.readObject("MemberPrefs", MemberPrefs);
-	this.MemberProviderList = reader.readList("MemberProvider", MemberProvider);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Player.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-Player.ModelNoMaxLength = 32;
-Player.SerialNoMaxLength = 64;
-Player.VersionMaxLength = 16;
-
-/******************************************************************************/
-
-Player.newInstance = function()
-{
-	return new Player();
-}
-
-/******************************************************************************/
-
-function Player()
-{
-	this.ManufacturerID;
-	this.ModelNo;
-	this.SerialNo;
-	this.Version;
-}
-
-/******************************************************************************/
-
-/*void*/ Player.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("ManufacturerID", this.ManufacturerID, ManufacturerIDMaxLength);
-	writer.writeString("ModelNo", this.ModelNo, Player.ModelNoMaxLength);
-	writer.writeString("SerialNo", this.SerialNo, Player.SerialNoMaxLength);
-	writer.writeString("Version", this.Version, Player.VersionMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Provider.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-Provider.AllProvidersID = "all";
-Provider.AllProvidersName = "All Providers";
-
-/******************************************************************************/
-
-function Provider(reader)
-{
-	this.ProviderID = null;
-	this.Name = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ Provider.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
-	this.Name = reader.readString("Name", 64);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ProviderIDCmpr.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function ProviderIDCmpr(providerID)
-{
-	this.ProviderID = providerID;
-}
-
-/******************************************************************************/
-
-/*int*/ ProviderIDCmpr.prototype.compare = function(oCompare)
-{
-	if(this.ProviderID == oCompare.ProviderID)
-		return 0;
-	if(this.ProviderID < oCompare.ProviderID)
-		return -1;
-	return 1;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* Rating.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-Rating.AllRatingsID = "all";
-Rating.AllRatingsName = "All Ratings";
-
-/******************************************************************************/
-
-function Rating(reader)
-{
-	this.RatingID = null;
-	this.Name = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ Rating.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
-	this.Name = reader.readString("Name", 64);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShow.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShow(reader)
-{
-	this.RentedShowID = null;
-
-	this.ShowID = null;
-	this.ProviderID = null;
-	this.Name = null;
-	this.EpisodeName = null;
-	this.EpisodeNumber= null;
-
-	this.ReleasedOn = null;
-	this.ReleasedYear = null;
-	this.Description = null;
-	this.RunningMins = null;
-	this.PictureURL = null;
-
-	this.CategoryIDList = null;
-	this.RatingID = null;
-	this.IsAdult = false;
-
-	this.ShowCost = null;
-	this.RentedOn = null;
-	this.AvailableUntil = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShow.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
-
-	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
-	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
-	this.Name = reader.readString("Name", 64);
-	this.EpisodeName = reader.readString("EpisodeName", 64);
-	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
-
-	this.ReleasedOn = reader.readDate("ReleasedOn");
-	this.ReleasedYear = reader.readShort("ReleasedYear");
-	this.Description = reader.readString("Description", 4096);	//TODO:
-	this.RunningMins = reader.readShort("RunningMins");
-	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
-
-	this.CategoryIDList = reader.readStringList("CategoryID", String);
-	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
-	this.IsAdult = reader.readBoolean("IsAdult");
-
-	this.ShowCost = reader.readObject("ShowCost", ShowCost);
-	this.RentedOn = reader.readDateTime("RentedOn");
-	this.AvailableUntil = reader.readDateTime("AvailableUntil");
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowSearch.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShowSearch(reader)
-{
-	this.RentedShowID = null;
-	this.ShowID = null;
-	this.ProviderID = null;
-	this.Name = null;
-	this.EpisodeName = null;
-	this.AvailableUntil = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShowSearch.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
-	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
-	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
-	this.Name = reader.readString("Name", 64);
-	this.EpisodeName = reader.readString("EpisodeName", 64);
-	this.AvailableUntil = reader.readDateTime("AvailableUntil");
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowSearchCmprs.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShowSearchToIDCmpr(rentedShowID)
-{
-	this.RentedShowID = rentedShowID;
-}
-
-/******************************************************************************/
-
-/*int*/ RentedShowSearchToIDCmpr.prototype.compare = function(oRentedShowSearch)
-{
-	if(this.RentedShowID == oRentedShowSearch.RentedShowID)
-		return 0;
-	if(this.RentedShowID < oRentedShowSearch.RentedShowID)
-		return -1;
-	return 1;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShowSearchByNameCmpr(lhs, rhs)
-{
-	var rc = compareStringsIgnoreCase(lhs.Name, rhs.Name);
-
-	if(rc != 0)
-		return rc;
-
-	return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
-}
-
-/******************************************************************************/
-
-function RentedShowSearchByAvailableUntilCmpr(lhs, rhs)
-{
-	return compareDates(lhs.AvailableUntil, rhs.AvailableUntil);
+	var rentedShowSearch = this.RentedShowSearchList[item];
+	var expires = "n/a";
+	var tempStr;
+	var totalDays;
+	var now;
+
+	if(rentedShowSearch.AvailableUntil != null)
+	{
+		now = new Date();
+		totalDays = (rentedShowSearch.AvailableUntil.getTime() - now.getTime())
+			/ MillsPerDay;
+
+		if(totalDays < 0)
+			expires = "Expired";
+		else if(totalDays <= 1)
+			expires = dateTimeToString(rentedShowSearch.AvailableUntil, dtf_H_MMa);
+		else if(totalDays <= 7)
+		{
+			expires = dayOfWeekToString(rentedShowSearch.AvailableUntil.getDay(), false)
+				+ " " + dateTimeToString(rentedShowSearch.AvailableUntil, dtf_Ha);
+		}
+		else
+			expires = dateTimeToString(rentedShowSearch.AvailableUntil, dtf_M_D);
+	}
+
+	tempStr = rentedShowSearch.Name;
+	if(testStrHasLen(rentedShowSearch.EpisodeName))
+		tempStr += ' - "' + rentedShowSearch.EpisodeName + '"';
+
+	oRow.drawRowItem(0, tempStr);
+	oRow.drawRowItem(1, expires);
 }
 
 /******************************************************************************/
@@ -5449,22 +5090,67 @@ function Session()
 
 /******************************************************************************/
 /******************************************************************************/
-/* ShowCost.js */
+/* DataID.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-ShowCost.CostDisplayMaxLength = 32;
+var ManufacturerIDMaxLength = 32;
+var ProviderIDMaxLength = 32;
+var ShowIDMaxLength = 64;
+var RentedShowIDMaxLength = 64;
+var CategoryIDMaxLength = 32;
+var RatingIDMaxLength = 32;
+
+/******************************************************************************/
+/******************************************************************************/
+/* Player.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+Player.ModelNoMaxLength = 32;
+Player.SerialNoMaxLength = 64;
+Player.VersionMaxLength = 16;
 
 /******************************************************************************/
 
-function ShowCost(reader)
+Player.newInstance = function()
 {
-	this.ShowCostType = null;
-	this.Cost = null;
-	this.CostDisplay = null;
-	this.RentalWindowDays = null;
-	this.RentalPeriodHours = null;
+	return new Player();
+}
+
+/******************************************************************************/
+
+function Player()
+{
+	this.ManufacturerID;
+	this.ModelNo;
+	this.SerialNo;
+	this.Version;
+}
+
+/******************************************************************************/
+
+/*void*/ Player.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ManufacturerID", this.ManufacturerID, ManufacturerIDMaxLength);
+	writer.writeString("ModelNo", this.ModelNo, Player.ModelNoMaxLength);
+	writer.writeString("SerialNo", this.SerialNo, Player.SerialNoMaxLength);
+	writer.writeString("Version", this.Version, Player.VersionMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* MemberState.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function MemberState(reader)
+{
+	this.MemberPrefs = null;
+	this.MemberProviderList = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -5472,99 +5158,22 @@ function ShowCost(reader)
 
 /******************************************************************************/
 
-/*string*/ ShowCost.prototype.formatRental = function()
+/*void*/ MemberState.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	var tempStr = "";
-
-	if(this.RentalPeriodHours)
-	{
-		if(this.RentalPeriodHours > 48)
-			tempStr = (this.RentalPeriodHours / 24) + " days";
-		else
-			tempStr = this.RentalPeriodHours + " hrs.";
-	}
-	if(this.RentalWindowDays)
-	{
-		if(tempStr.length > 0)
-			tempStr += " / ";
-		tempStr += this.RentalWindowDays + " days";
-	}
-
-	if(tempStr.length == 0)
-		return "n/a";
-	return tempStr;
-}
-
-/******************************************************************************/
-
-/*void*/ ShowCost.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.ShowCostType = reader.readString("ShowCostType", ShowCostTypeMaxLength);
-	this.Cost = reader.readObject("Cost", Money);
-	this.CostDisplay = reader.readString("CostDisplay", ShowCost.CostDisplayMaxLength);
-	this.RentalWindowDays = reader.readShort("RentalWindowDays");
-	this.RentalPeriodHours = reader.readShort("RentalPeriodHours");
-}
-
-/******************************************************************************/
-
-/*void*/ ShowCost.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("ShowCostType", this.ShowCostType, ShowCostTypeMaxLength);
-	writer.writeObject("Cost", this.Cost);
-	writer.writeString("CostDisplay", this.CostDisplay, ShowCost.CostDisplayMaxLength);
-	writer.writeShort("RentalWindowDays", this.RentalWindowDays);
-	writer.writeShort("RentalPeriodHours", this.RentalPeriodHours);
+	this.MemberPrefs = reader.readObject("MemberPrefs", MemberPrefs);
+	this.MemberProviderList = reader.readList("MemberProvider", MemberProvider);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* ShowCostType.js */
+/* MemberPrefs.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-var ShowCostTypeMaxLength = 32;
-
-var sct_Free = "Free";
-var sct_Subscription = "Subscription";
-var sct_PayPerView = "PayPerView";
-
-var ShowCostTypeSortOrder = new Array(sct_Free, sct_Subscription, sct_PayPerView);
-
-/******************************************************************************/
-
-function ShowCostTypeCmpr(lhs, rhs)
+function MemberPrefs(reader)
 {
-	return compareNumbers(arrayIndexOf(ShowCostTypeSortOrder, lhs),
-		arrayIndexOf(ShowCostTypeSortOrder, rhs));
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ShowDetail.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function ShowDetail(reader)
-{
-	this.ShowID = null;
-	this.Name = null;
-	this.EpisodeName = null;
-	this.EpisodeNumber= null;
-
-	this.ReleasedOn = null;
-	this.ReleasedYear = null;
-	this.Description = null;
-	this.RunningMins = null;
-	this.PictureURL = null;
-
-	this.CategoryIDList = null;
-	this.RatingID = null;
-	this.IsAdult = false;
-
-	this.ShowProviderList = null;
+	this.IncludeAdult = ina_Never;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -5572,37 +5181,40 @@ function ShowDetail(reader)
 
 /******************************************************************************/
 
-/*void*/ ShowDetail.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ MemberPrefs.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
-	this.Name = reader.readString("Name", 64);
-	this.EpisodeName = reader.readString("EpisodeName", 64);
-	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
-
-	this.ReleasedOn = reader.readDate("ReleasedOn");
-	this.ReleasedYear = reader.readShort("ReleasedYear");
-	this.Description = reader.readString("Description", 4096);	//TODO:
-	this.RunningMins = reader.readShort("RunningMins");
-	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
-
-	this.CategoryIDList = reader.readStringList("CategoryID", String);
-	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
-	this.IsAdult = reader.readBoolean("IsAdult");
-
-	this.ShowProviderList = reader.readList("ShowProvider", ShowProvider);
+	this.IncludeAdult = reader.readString("IncludeAdult", IncludeAdultMaxLength);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* ShowProvider.js */
+/* IncludeAdult.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function ShowProvider(reader)
+var IncludeAdultMaxLength = 32;
+
+var ina_Never = "Never";
+var ina_PromptPassword = "PromptPassword";
+var ina_Always = "Always";
+
+/******************************************************************************/
+/******************************************************************************/
+/* Provider.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+Provider.AllProvidersID = "all";
+Provider.AllProvidersName = "All Providers";
+
+/******************************************************************************/
+
+function Provider(reader)
 {
 	this.ProviderID = null;
-	this.ShowCostList = null;
+	this.Name = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -5610,10 +5222,125 @@ function ShowProvider(reader)
 
 /******************************************************************************/
 
-/*void*/ ShowProvider.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ Provider.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
-	this.ShowCostList = reader.readList("ShowCost", ShowCost);
+	this.Name = reader.readString("Name", 64);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ProviderIDCmpr.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function ProviderIDCmpr(providerID)
+{
+	this.ProviderID = providerID;
+}
+
+/******************************************************************************/
+
+/*int*/ ProviderIDCmpr.prototype.compare = function(oCompare)
+{
+	if(this.ProviderID == oCompare.ProviderID)
+		return 0;
+	if(this.ProviderID < oCompare.ProviderID)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Category.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+Category.AllCategoriesID = "all";
+Category.AllCategoriesName = "All Categories";
+Category.FeaturedCategoryID = "featured";
+
+/******************************************************************************/
+
+function Category(reader)
+{
+	this.CategoryID = null;
+	this.Name = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ Category.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.CategoryID = reader.readString("CategoryID", CategoryIDMaxLength);
+	this.Name = reader.readString("Name", 64);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* Rating.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+Rating.AllRatingsID = "all";
+Rating.AllRatingsName = "All Ratings";
+
+/******************************************************************************/
+
+function Rating(reader)
+{
+	this.RatingID = null;
+	this.Name = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ Rating.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
+	this.Name = reader.readString("Name", 64);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* MemberProvider.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+MemberProvider.newInstance = function(/*string*/ providerID)
+{
+	var oMemberProvider = new MemberProvider();
+
+	oMemberProvider.ProviderID = providerID;
+
+	return oMemberProvider;
+}
+
+/******************************************************************************/
+
+function MemberProvider(reader)
+{
+	this.ProviderID = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ MemberProvider.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
 }
 
 /******************************************************************************/
@@ -5714,14 +5441,29 @@ function ShowSearchByCostCmpr(lhs, rhs)
 
 /******************************************************************************/
 /******************************************************************************/
-/* CheckShowAvailResp */
+/* ShowDetail.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function CheckShowAvailResp(reader)
+function ShowDetail(reader)
 {
-	this.ShowCost = null;
+	this.ShowID = null;
+	this.Name = null;
+	this.EpisodeName = null;
+	this.EpisodeNumber= null;
+
+	this.ReleasedOn = null;
+	this.ReleasedYear = null;
+	this.Description = null;
+	this.RunningMins = null;
+	this.PictureURL = null;
+
+	this.CategoryIDList = null;
+	this.RatingID = null;
+	this.IsAdult = false;
+
+	this.ShowProviderList = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -5729,46 +5471,368 @@ function CheckShowAvailResp(reader)
 
 /******************************************************************************/
 
-/*void*/ CheckShowAvailResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ ShowDetail.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ShowCost = reader.readObject("ShowCost", ShowCost);
+	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
+	this.Name = reader.readString("Name", 64);
+	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
+
+	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedYear = reader.readShort("ReleasedYear");
+	this.Description = reader.readString("Description", 4096);	//TODO:
+	this.RunningMins = reader.readShort("RunningMins");
+	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
+
+	this.CategoryIDList = reader.readStringList("CategoryID", String);
+	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
+	this.IsAdult = reader.readBoolean("IsAdult");
+
+	this.ShowProviderList = reader.readList("ShowProvider", ShowProvider);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* CheckShowAvailRqst */
+/* ShowProvider.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-CheckShowAvailRqst.newInstance = function()
+function ShowProvider(reader)
 {
-	return new CheckShowAvailRqst();
+	this.ProviderID = null;
+	this.ShowCostList = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-function CheckShowAvailRqst()
+/*void*/ ShowProvider.prototype.readFrom = function(/*DataReader*/ reader)
 {
+	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
+	this.ShowCostList = reader.readList("ShowCost", ShowCost);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ShowCostType.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+var ShowCostTypeMaxLength = 32;
+
+var sct_Free = "Free";
+var sct_Subscription = "Subscription";
+var sct_PayPerView = "PayPerView";
+
+var ShowCostTypeSortOrder = new Array(sct_Free, sct_Subscription, sct_PayPerView);
+
+/******************************************************************************/
+
+function ShowCostTypeCmpr(lhs, rhs)
+{
+	return compareNumbers(arrayIndexOf(ShowCostTypeSortOrder, lhs),
+		arrayIndexOf(ShowCostTypeSortOrder, rhs));
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ShowCost.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+ShowCost.CostDisplayMaxLength = 32;
+
+/******************************************************************************/
+
+function ShowCost(reader)
+{
+	this.ShowCostType = null;
+	this.Cost = null;
+	this.CostDisplay = null;
+	this.RentalWindowDays = null;
+	this.RentalPeriodHours = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*string*/ ShowCost.prototype.formatRental = function()
+{
+	var tempStr = "";
+
+	if(this.RentalPeriodHours)
+	{
+		if(this.RentalPeriodHours > 48)
+			tempStr = (this.RentalPeriodHours / 24) + " days";
+		else
+			tempStr = this.RentalPeriodHours + " hrs.";
+	}
+	if(this.RentalWindowDays)
+	{
+		if(tempStr.length > 0)
+			tempStr += " / ";
+		tempStr += this.RentalWindowDays + " days";
+	}
+
+	if(tempStr.length == 0)
+		return "n/a";
+	return tempStr;
+}
+
+/******************************************************************************/
+
+/*void*/ ShowCost.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.ShowCostType = reader.readString("ShowCostType", ShowCostTypeMaxLength);
+	this.Cost = reader.readObject("Cost", Money);
+	this.CostDisplay = reader.readString("CostDisplay", ShowCost.CostDisplayMaxLength);
+	this.RentalWindowDays = reader.readShort("RentalWindowDays");
+	this.RentalPeriodHours = reader.readShort("RentalPeriodHours");
+}
+
+/******************************************************************************/
+
+/*void*/ ShowCost.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ShowCostType", this.ShowCostType, ShowCostTypeMaxLength);
+	writer.writeObject("Cost", this.Cost);
+	writer.writeString("CostDisplay", this.CostDisplay, ShowCost.CostDisplayMaxLength);
+	writer.writeShort("RentalWindowDays", this.RentalWindowDays);
+	writer.writeShort("RentalPeriodHours", this.RentalPeriodHours);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowSearch.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShowSearch(reader)
+{
+	this.RentedShowID = null;
 	this.ShowID = null;
 	this.ProviderID = null;
+	this.Name = null;
+	this.EpisodeName = null;
+	this.AvailableUntil = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowSearch.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
+	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
+	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
+	this.Name = reader.readString("Name", 64);
+	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.AvailableUntil = reader.readDateTime("AvailableUntil");
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowSearchCmprs.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShowSearchToIDCmpr(rentedShowID)
+{
+	this.RentedShowID = rentedShowID;
+}
+
+/******************************************************************************/
+
+/*int*/ RentedShowSearchToIDCmpr.prototype.compare = function(oRentedShowSearch)
+{
+	if(this.RentedShowID == oRentedShowSearch.RentedShowID)
+		return 0;
+	if(this.RentedShowID < oRentedShowSearch.RentedShowID)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShowSearchByNameCmpr(lhs, rhs)
+{
+	var rc = compareStringsIgnoreCase(lhs.Name, rhs.Name);
+
+	if(rc != 0)
+		return rc;
+
+	return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByAvailableUntilCmpr(lhs, rhs)
+{
+	return compareDates(lhs.AvailableUntil, rhs.AvailableUntil);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShow.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShow(reader)
+{
+	this.RentedShowID = null;
+
+	this.ShowID = null;
+	this.ProviderID = null;
+	this.Name = null;
+	this.EpisodeName = null;
+	this.EpisodeNumber= null;
+
+	this.ReleasedOn = null;
+	this.ReleasedYear = null;
+	this.Description = null;
+	this.RunningMins = null;
+	this.PictureURL = null;
+
+	this.CategoryIDList = null;
+	this.RatingID = null;
+	this.IsAdult = false;
+
 	this.ShowCost = null;
+	this.RentedOn = null;
+	this.AvailableUntil = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-/*string*/ CheckShowAvailRqst.prototype.className = function()
+/*void*/ RentedShow.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	return "CheckShowAvailRqst";
+	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
+
+	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
+	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
+	this.Name = reader.readString("Name", 64);
+	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
+
+	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedYear = reader.readShort("ReleasedYear");
+	this.Description = reader.readString("Description", 4096);	//TODO:
+	this.RunningMins = reader.readShort("RunningMins");
+	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
+
+	this.CategoryIDList = reader.readStringList("CategoryID", String);
+	this.RatingID = reader.readString("RatingID", RatingIDMaxLength);
+	this.IsAdult = reader.readBoolean("IsAdult");
+
+	this.ShowCost = reader.readObject("ShowCost", ShowCost);
+	this.RentedOn = reader.readDateTime("RentedOn");
+	this.AvailableUntil = reader.readDateTime("AvailableUntil");
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* License.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+License.ShowURLMaxLength = 4096;
+License.LicenseURLMaxLength = 4096;
+
+/******************************************************************************/
+
+function License(reader)
+{
+	this.LicenseMethod = null;
+	this.ShowURL = null;
+	this.LicenseURL = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-/*void*/ CheckShowAvailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ License.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
-	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
-	writer.writeObject("ShowCost", this.ShowCost);
+	this.LicenseMethod = reader.readString("LicenseMethod", LicenseMethodMaxLength);
+	this.ShowURL = reader.readString("ShowURL", License.ShowURLMaxLength);
+	this.LicenseURL = reader.readString("LicenseURL", License.LicenseURLMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* LicenseMethod.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+var LicenseMethodMaxLength = 32;
+
+var lm_URLOnly = "URLOnly";
+var lm_LicenseServer = "LicenseServer";
+
+/******************************************************************************/
+/******************************************************************************/
+/* StatusCode.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+var sc_Success = 0;
+
+var sc_InvalidUserIDPassword = 1000;
+var sc_InvalidSession = 1001;
+var sc_InvalidProviderUserIDPassword = 1003;
+
+var sc_GeneralError = 9999;
+
+/******************************************************************************/
+/******************************************************************************/
+/* HTTPRequestor.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+HTTPRequestor.newInstance = function()
+{
+	return new HTTPRequestor();
+}
+
+/******************************************************************************/
+
+function HTTPRequestor(/*string*/ sessionData)
+{
+    this.fXmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+/******************************************************************************/
+
+/*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
+{
+	var session = MainApp.getThe().getSession();
+
+	this.fXmlHttp.open("POST", session.getNetworkURL(), false);
+	this.fXmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
+	this.fXmlHttp.send(request);
+
+	return this.fXmlHttp.responseText;
 }
 
 /******************************************************************************/
@@ -5987,126 +6051,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 /******************************************************************************/
-/* EnableAdultAccessResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function EnableAdultAccessResp(reader)
-{
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ EnableAdultAccessResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* EnableAdultAccessRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-EnableAdultAccessRqst.PasswordMaxLength = 32;
-
-/******************************************************************************/
-
-EnableAdultAccessRqst.newInstance = function()
-{
-	return new EnableAdultAccessRqst();
-}
-
-/******************************************************************************/
-
-function EnableAdultAccessRqst()
-{
-	this.Password = null;
-}
-
-/******************************************************************************/
-
-/*string*/ EnableAdultAccessRqst.prototype.className = function()
-{
-	return "EnableAdultAccessRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ EnableAdultAccessRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("Password", this.Password, EnableAdultAccessRqst.PasswordMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* HTTPRequestor.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-HTTPRequestor.newInstance = function()
-{
-	return new HTTPRequestor();
-}
-
-/******************************************************************************/
-
-function HTTPRequestor(/*string*/ sessionData)
-{
-    this.fXmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-}
-
-/******************************************************************************/
-
-/*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
-{
-	var session = MainApp.getThe().getSession();
-
-	this.fXmlHttp.open("POST", session.getNetworkURL(), false);
-	this.fXmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
-	this.fXmlHttp.send(request);
-
-	return this.fXmlHttp.responseText;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* INetVODPlayerResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function INetVODPlayerResp(reader)
-{
-	this.RequestIDMaxLength = 64;
-	this.StatusMessageMaxLength = 1024;
-
-	this.RequestID = null;
-	this.StatusCode = 0;
-	this.StatusMessage = null;
-	this.ResponseData = null;
-	
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ INetVODPlayerResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RequestID = reader.readString("RequestID", this.RequestIDMaxLength);
-	this.StatusCode = reader.readInt("StatusCode");
-	this.StatusMessage = reader.readString("StatusMessage", this.StatusMessageMaxLength);
-	this.ResponseData = reader.readObject("ResponseData", ResponseData);
-}
-
-/******************************************************************************/
-/******************************************************************************/
 /* INetVODPlayerRqst.js */
 
 /******************************************************************************/
@@ -6172,330 +6116,33 @@ function INetVODPlayerRqst()
 
 /******************************************************************************/
 /******************************************************************************/
-/* PingResp */
+/* INetVODPlayerResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function PingResp(reader)
+function INetVODPlayerResp(reader)
 {
+	this.RequestIDMaxLength = 64;
+	this.StatusMessageMaxLength = 1024;
+
+	this.RequestID = null;
+	this.StatusCode = 0;
+	this.StatusMessage = null;
+	this.ResponseData = null;
+	
 	if(reader != undefined)
 		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-/*void*/ PingResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ INetVODPlayerResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* PingRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-PingRqst.newInstance = function()
-{
-	return new PingRqst();
-}
-
-/******************************************************************************/
-
-function PingRqst()
-{
-}
-
-/******************************************************************************/
-
-/*string*/ PingRqst.prototype.className = function()
-{
-	return "PingRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ PingRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ProviderEnrollResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function ProviderEnrollResp(reader)
-{
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ ProviderEnrollResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ProviderEnrollRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ProviderEnrollRqst.newInstance = function()
-{
-	return new ProviderEnrollRqst();
-}
-
-/******************************************************************************/
-
-function ProviderEnrollRqst()
-{
-	this.ProviderID = null;
-}
-
-/******************************************************************************/
-
-/*string*/ ProviderEnrollRqst.prototype.className = function()
-{
-	return "ProviderEnrollRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ ProviderEnrollRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ReleaseShowResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function ReleaseShowResp(reader)
-{
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ ReleaseShowResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ReleaseShowRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ReleaseShowRqst.newInstance = function()
-{
-	return new ReleaseShowRqst();
-}
-
-/******************************************************************************/
-
-function ReleaseShowRqst()
-{
-	this.RentedShowID = null;
-}
-
-/******************************************************************************/
-
-/*string*/ ReleaseShowRqst.prototype.className = function()
-{
-	return "ReleaseShowRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ ReleaseShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("RentedShowID", this.RentedShowID, RentedShowIDMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentShowResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentShowResp(reader)
-{
-	this.RentShowID = null;
-	this.License = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ RentShowResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
-	this.License = reader.readObject("License", License);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentShowRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-RentShowRqst.newInstance = function()
-{
-	return new RentShowRqst();
-}
-
-/******************************************************************************/
-
-function RentShowRqst()
-{
-	this.ShowID = null;
-	this.ProviderID = null;
-	this.ApprovedCost = null;
-}
-
-/******************************************************************************/
-
-/*string*/ RentShowRqst.prototype.className = function()
-{
-	return "RentShowRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ RentShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
-	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
-	writer.writeObject("ApprovedCost", this.ApprovedCost);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowListResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShowListResp(reader)
-{
-	this.RentedShowSearchList = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShowListResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RentedShowSearchList = reader.readList("RentedShowSearch", RentedShowSearch);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowListRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-RentedShowListRqst.newInstance = function()
-{
-	return new RentedShowListRqst();
-}
-
-/******************************************************************************/
-
-function RentedShowListRqst()
-{
-}
-
-/******************************************************************************/
-
-/*string*/ RentedShowListRqst.prototype.className = function()
-{
-	return "RentedShowListRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShowListRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	/* no fields */
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function RentedShowResp(reader)
-{
-	this.RentedShow = null;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShowResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.RentedShow = reader.readObject("RentedShow", RentedShow);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* RentedShowRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-RentedShowRqst.newInstance = function()
-{
-	return new RentedShowRqst();
-}
-
-/******************************************************************************/
-
-function RentedShowRqst()
-{
-	this.RentedShowID = null;
-}
-
-/******************************************************************************/
-
-/*string*/ RentedShowRqst.prototype.className = function()
-{
-	return "RentedShowRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ RentedShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("RentedShowID", this.RentedShowID, RentedShowIDMaxLength);
+	this.RequestID = reader.readString("RequestID", this.RequestIDMaxLength);
+	this.StatusCode = reader.readInt("StatusCode");
+	this.StatusMessage = reader.readString("StatusMessage", this.StatusMessageMaxLength);
+	this.ResponseData = reader.readObject("ResponseData", ResponseData);
 }
 
 /******************************************************************************/
@@ -6564,143 +6211,237 @@ function ResponseData(reader)
 
 /******************************************************************************/
 /******************************************************************************/
-/* SetProviderResp */
+/* PingRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function SetProviderResp(reader)
+PingRqst.newInstance = function()
 {
-	if(reader != undefined)
-		this.readFrom(reader);
+	return new PingRqst();
 }
 
 /******************************************************************************/
 
-/*void*/ SetProviderResp.prototype.readFrom = function(/*DataReader*/ reader)
+function PingRqst()
+{
+}
+
+/******************************************************************************/
+
+/*string*/ PingRqst.prototype.className = function()
+{
+	return "PingRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ PingRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
 	/* no fields */
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* SetProviderRqst */
+/* PingResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-SetProviderRqst.UserIDMaxLength = 128;
-SetProviderRqst.PasswordMaxLength = 32;
-
-/******************************************************************************/
-
-SetProviderRqst.newInstance = function()
+function PingResp(reader)
 {
-	return new SetProviderRqst();
+	if(reader != undefined)
+		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-function SetProviderRqst()
+/*void*/ PingResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ProviderID = null;
+	/* no fields */
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SignonRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+SignonRqst.UserIDMaxLength = 128;
+SignonRqst.PasswordMaxLength = 32;
+
+/******************************************************************************/
+
+SignonRqst.newInstance = function()
+{
+	return new SignonRqst();
+}
+
+/******************************************************************************/
+
+function SignonRqst()
+{
 	this.UserID = null;
+	this.Password = null;
+	this.Player = null;
+}
+
+/******************************************************************************/
+
+/*string*/ SignonRqst.prototype.className = function()
+{
+	return "SignonRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ SignonRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("UserID", this.UserID, SignonRqst.UserIDMaxLength);
+	writer.writeString("Password", this.Password, SignonRqst.PasswordMaxLength);
+	writer.writeObject("Player", this.Player);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SignonResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function SignonResp(reader)
+{
+	this.SessionData = null;
+	this.SessionExpires = null;
+	this.MemberState = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ SignonResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.SessionData = reader.readString("SessionData");
+	this.SessionExpires = reader.readDateTime("SessionExpires");
+	this.MemberState = reader.readObject("MemberState", MemberState);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SystemDataRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+SystemDataRqst.newInstance = function()
+{
+	return new SystemDataRqst();
+}
+
+/******************************************************************************/
+
+function SystemDataRqst()
+{
+}
+
+/******************************************************************************/
+
+/*string*/ SystemDataRqst.prototype.className = function()
+{
+	return "SystemDataRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ SystemDataRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	/* no fields */
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SystemDataResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function SystemDataResp(reader)
+{
+	this.ProviderList = null;
+	this.CategoryList = null;
+	this.RatingList = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ SystemDataResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.ProviderList = reader.readList("Provider", Provider);
+	this.CategoryList = reader.readList("Category", Category);
+	this.RatingList = reader.readList("Rating", Rating);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* EnableAdultAccessRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+EnableAdultAccessRqst.PasswordMaxLength = 32;
+
+/******************************************************************************/
+
+EnableAdultAccessRqst.newInstance = function()
+{
+	return new EnableAdultAccessRqst();
+}
+
+/******************************************************************************/
+
+function EnableAdultAccessRqst()
+{
 	this.Password = null;
 }
 
 /******************************************************************************/
 
-/*string*/ SetProviderRqst.prototype.className = function()
+/*string*/ EnableAdultAccessRqst.prototype.className = function()
 {
-	return "SetProviderRqst";
+	return "EnableAdultAccessRqst";
 }
 
 /******************************************************************************/
 
-/*void*/ SetProviderRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ EnableAdultAccessRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
-	writer.writeString("UserID", this.UserID, SetProviderRqst.UserIDMaxLength);
-	writer.writeString("Password", this.Password, SetProviderRqst.PasswordMaxLength);
+	writer.writeString("Password", this.Password, EnableAdultAccessRqst.PasswordMaxLength);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* ShowDetailResp */
+/* EnableAdultAccessResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function ShowDetailResp(reader)
+function EnableAdultAccessResp(reader)
 {
-	this.ShowDetail = null;
-
 	if(reader != undefined)
 		this.readFrom(reader);
 }
 
 /******************************************************************************/
 
-/*void*/ ShowDetailResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ EnableAdultAccessResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ShowDetail = reader.readObject("ShowDetail", ShowDetail);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ShowDetailRqst */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ShowDetailRqst.newInstance = function()
-{
-	return new ShowDetailRqst();
-}
-
-/******************************************************************************/
-
-function ShowDetailRqst()
-{
-	this.ShowID = null;
-}
-
-/******************************************************************************/
-
-/*string*/ ShowDetailRqst.prototype.className = function()
-{
-	return "ShowDetailRqst";
-}
-
-/******************************************************************************/
-
-/*void*/ ShowDetailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
-{
-	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ShowSearchResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function ShowSearchResp(reader)
-{
-	this.ShowSearchList = null;
-	this.ReachedMax = false;
-
-	if(reader != undefined)
-		this.readFrom(reader);
-}
-
-/******************************************************************************/
-
-/*void*/ ShowSearchResp.prototype.readFrom = function(/*DataReader*/ reader)
-{
-	this.ShowSearchList = reader.readList("ShowSearch", ShowSearch);
-	this.ReachedMax = reader.readBoolean("ReachedMax");
+	/* no fields */
 }
 
 /******************************************************************************/
@@ -6750,16 +6491,15 @@ function ShowSearchRqst()
 
 /******************************************************************************/
 /******************************************************************************/
-/* SignonResp */
+/* ShowSearchResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function SignonResp(reader)
+function ShowSearchResp(reader)
 {
-	this.SessionData = null;
-	this.SessionExpires = null;
-	this.MemberState = null;
+	this.ShowSearchList = null;
+	this.ReachedMax = false;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -6767,82 +6507,55 @@ function SignonResp(reader)
 
 /******************************************************************************/
 
-/*void*/ SignonResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ ShowSearchResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.SessionData = reader.readString("SessionData");
-	this.SessionExpires = reader.readDateTime("SessionExpires");
-	this.MemberState = reader.readObject("MemberState", MemberState);
+	this.ShowSearchList = reader.readList("ShowSearch", ShowSearch);
+	this.ReachedMax = reader.readBoolean("ReachedMax");
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* SignonRqst */
+/* ShowDetailRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-SignonRqst.UserIDMaxLength = 128;
-SignonRqst.PasswordMaxLength = 32;
-
-/******************************************************************************/
-
-SignonRqst.newInstance = function()
+ShowDetailRqst.newInstance = function()
 {
-	return new SignonRqst();
+	return new ShowDetailRqst();
 }
 
 /******************************************************************************/
 
-function SignonRqst()
+function ShowDetailRqst()
 {
-	this.UserID = null;
-	this.Password = null;
-	this.Player = null;
+	this.ShowID = null;
 }
 
 /******************************************************************************/
 
-/*string*/ SignonRqst.prototype.className = function()
+/*string*/ ShowDetailRqst.prototype.className = function()
 {
-	return "SignonRqst";
+	return "ShowDetailRqst";
 }
 
 /******************************************************************************/
 
-/*void*/ SignonRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ ShowDetailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
-	writer.writeString("UserID", this.UserID, SignonRqst.UserIDMaxLength);
-	writer.writeString("Password", this.Password, SignonRqst.PasswordMaxLength);
-	writer.writeObject("Player", this.Player);
+	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* StatusCode.js */
+/* ShowDetailResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-var sc_Success = 0;
-
-var sc_InvalidUserIDPassword = 1000;
-var sc_InvalidSession = 1001;
-var sc_InvalidProviderUserIDPassword = 1003;
-
-var sc_GeneralError = 9999;
-
-/******************************************************************************/
-/******************************************************************************/
-/* SystemDataResp */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function SystemDataResp(reader)
+function ShowDetailResp(reader)
 {
-	this.ProviderList = null;
-	this.CategoryList = null;
-	this.RatingList = null;
+	this.ShowDetail = null;
 
 	if(reader != undefined)
 		this.readFrom(reader);
@@ -6850,54 +6563,232 @@ function SystemDataResp(reader)
 
 /******************************************************************************/
 
-/*void*/ SystemDataResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ ShowDetailResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.ProviderList = reader.readList("Provider", Provider);
-	this.CategoryList = reader.readList("Category", Category);
-	this.RatingList = reader.readList("Rating", Rating);
+	this.ShowDetail = reader.readObject("ShowDetail", ShowDetail);
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* SystemDataRqst */
+/* ProviderEnrollRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-SystemDataRqst.newInstance = function()
+ProviderEnrollRqst.newInstance = function()
 {
-	return new SystemDataRqst();
+	return new ProviderEnrollRqst();
 }
 
 /******************************************************************************/
 
-function SystemDataRqst()
+function ProviderEnrollRqst()
 {
+	this.ProviderID = null;
 }
 
 /******************************************************************************/
 
-/*string*/ SystemDataRqst.prototype.className = function()
+/*string*/ ProviderEnrollRqst.prototype.className = function()
 {
-	return "SystemDataRqst";
+	return "ProviderEnrollRqst";
 }
 
 /******************************************************************************/
 
-/*void*/ SystemDataRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ ProviderEnrollRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ProviderEnrollResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function ProviderEnrollResp(reader)
+{
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ ProviderEnrollResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	/* no fields */
 }
 
 /******************************************************************************/
 /******************************************************************************/
-/* WatchShowResp */
+/* SetProviderRqst */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function WatchShowResp(reader)
+SetProviderRqst.UserIDMaxLength = 128;
+SetProviderRqst.PasswordMaxLength = 32;
+
+/******************************************************************************/
+
+SetProviderRqst.newInstance = function()
 {
+	return new SetProviderRqst();
+}
+
+/******************************************************************************/
+
+function SetProviderRqst()
+{
+	this.ProviderID = null;
+	this.UserID = null;
+	this.Password = null;
+}
+
+/******************************************************************************/
+
+/*string*/ SetProviderRqst.prototype.className = function()
+{
+	return "SetProviderRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ SetProviderRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+	writer.writeString("UserID", this.UserID, SetProviderRqst.UserIDMaxLength);
+	writer.writeString("Password", this.Password, SetProviderRqst.PasswordMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SetProviderResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function SetProviderResp(reader)
+{
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ SetProviderResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	/* no fields */
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* CheckShowAvailRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+CheckShowAvailRqst.newInstance = function()
+{
+	return new CheckShowAvailRqst();
+}
+
+/******************************************************************************/
+
+function CheckShowAvailRqst()
+{
+	this.ShowID = null;
+	this.ProviderID = null;
+	this.ShowCost = null;
+}
+
+/******************************************************************************/
+
+/*string*/ CheckShowAvailRqst.prototype.className = function()
+{
+	return "CheckShowAvailRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ CheckShowAvailRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+	writer.writeObject("ShowCost", this.ShowCost);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* CheckShowAvailResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function CheckShowAvailResp(reader)
+{
+	this.ShowCost = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ CheckShowAvailResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.ShowCost = reader.readObject("ShowCost", ShowCost);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentShowRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+RentShowRqst.newInstance = function()
+{
+	return new RentShowRqst();
+}
+
+/******************************************************************************/
+
+function RentShowRqst()
+{
+	this.ShowID = null;
+	this.ProviderID = null;
+	this.ApprovedCost = null;
+}
+
+/******************************************************************************/
+
+/*string*/ RentShowRqst.prototype.className = function()
+{
+	return "RentShowRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ RentShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ShowID", this.ShowID, ShowIDMaxLength);
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+	writer.writeObject("ApprovedCost", this.ApprovedCost);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentShowResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentShowResp(reader)
+{
+	this.RentShowID = null;
 	this.License = null;
 
 	if(reader != undefined)
@@ -6906,9 +6797,119 @@ function WatchShowResp(reader)
 
 /******************************************************************************/
 
-/*void*/ WatchShowResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ RentShowResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
+	this.RentedShowID = reader.readString("RentedShowID", RentedShowIDMaxLength);
 	this.License = reader.readObject("License", License);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowListRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+RentedShowListRqst.newInstance = function()
+{
+	return new RentedShowListRqst();
+}
+
+/******************************************************************************/
+
+function RentedShowListRqst()
+{
+}
+
+/******************************************************************************/
+
+/*string*/ RentedShowListRqst.prototype.className = function()
+{
+	return "RentedShowListRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowListRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	/* no fields */
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowListResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShowListResp(reader)
+{
+	this.RentedShowSearchList = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowListResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.RentedShowSearchList = reader.readList("RentedShowSearch", RentedShowSearch);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+RentedShowRqst.newInstance = function()
+{
+	return new RentedShowRqst();
+}
+
+/******************************************************************************/
+
+function RentedShowRqst()
+{
+	this.RentedShowID = null;
+}
+
+/******************************************************************************/
+
+/*string*/ RentedShowRqst.prototype.className = function()
+{
+	return "RentedShowRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("RentedShowID", this.RentedShowID, RentedShowIDMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* RentedShowResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function RentedShowResp(reader)
+{
+	this.RentedShow = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.RentedShow = reader.readObject("RentedShow", RentedShow);
 }
 
 /******************************************************************************/
@@ -6942,6 +6943,81 @@ function WatchShowRqst()
 /*void*/ WatchShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
 	writer.writeString("RentedShowID", this.RentedShowID, RentedShowIDMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* WatchShowResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function WatchShowResp(reader)
+{
+	this.License = null;
+
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ WatchShowResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	this.License = reader.readObject("License", License);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ReleaseShowRqst */
+
+/******************************************************************************/
+/******************************************************************************/
+
+ReleaseShowRqst.newInstance = function()
+{
+	return new ReleaseShowRqst();
+}
+
+/******************************************************************************/
+
+function ReleaseShowRqst()
+{
+	this.RentedShowID = null;
+}
+
+/******************************************************************************/
+
+/*string*/ ReleaseShowRqst.prototype.className = function()
+{
+	return "ReleaseShowRqst";
+}
+
+/******************************************************************************/
+
+/*void*/ ReleaseShowRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("RentedShowID", this.RentedShowID, RentedShowIDMaxLength);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ReleaseShowResp */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function ReleaseShowResp(reader)
+{
+	if(reader != undefined)
+		this.readFrom(reader);
+}
+
+/******************************************************************************/
+
+/*void*/ ReleaseShowResp.prototype.readFrom = function(/*DataReader*/ reader)
+{
+	/* no fields */
 }
 
 /******************************************************************************/
@@ -7111,6 +7187,109 @@ function WelcomeScreen()
 
 /******************************************************************************/
 /******************************************************************************/
+/* StartupFlows.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function StartupInitialCheck()
+{
+	var oSession = MainApp.getThe().getSession();
+
+	/* connect to the server */
+	if(!oSession.CanPingServer)
+		if(!oSession.pingServer())
+			return false;
+
+	if(!oSession.loadDataSettings())
+	{
+		SetupScreen.newInstance();
+		return true;
+	}
+
+	if(!oSession.haveUserPassword())
+	{
+		AskPINScreen.newInstance();
+		return true;
+	}
+
+	var statusCode = oSession.signon();
+	if(statusCode == sc_Success)
+	{
+		if(oSession.loadSystemData())
+		{
+			WelcomeScreen.newInstance();
+			return true;
+		}
+		else
+			oSession.clearLogonInfo();
+	}
+	else if(statusCode == sc_InvalidUserIDPassword)
+	{
+		AskPINScreen.newInstance();
+		return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
+function StartupDoSignonPassword(/*string*/ userPassword)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	var statusCode = oSession.signon(null, userPassword);
+	if(statusCode == sc_Success)
+	{
+		oSession.saveDataSettings();	// for possible temp store of userPassword
+
+		if(oSession.loadSystemData())
+		{
+			WelcomeScreen.newInstance();
+			return true;
+		}
+
+		oSession.clearLogonInfo();
+		StartScreen.newInstance();
+		return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+
+function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
+	/*boolean*/ rememberPassword)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	var statusCode = oSession.signon(userID, userPassword, rememberPassword);
+	if(statusCode == sc_Success)
+	{
+		if(!oSession.saveDataSettings())
+		{
+			showMsg("An error occured while saving your settings.");
+			return false;
+		}
+
+		if(oSession.loadSystemData())
+		{
+			WelcomeScreen.newInstance();
+			return true;
+		}
+
+		oSession.clearLogonInfo();
+		StartScreen.newInstance();
+		return true;
+	}
+
+	return false;
+}
+
+/******************************************************************************/
+/******************************************************************************/
 /* AskPINScreen.js */
 
 /******************************************************************************/
@@ -7201,234 +7380,6 @@ function AskPINScreen()
 			return ViewPortControl.ControlID;
 
 	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* AskSignedUpControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-AskSignedUpControl.ControlID = "Setup001_AskSignedUpControl";
-
-AskSignedUpControl.AlreadyRegisteredID = "Setup001_AskSignedUpControl_AlreadyRegistered";
-AskSignedUpControl.NotRegisteredID = "Setup001_AskSignedUpControl_NotRegistered";
-
-/******************************************************************************/
-
-AskSignedUpControl.newInstance = function()
-{
-	var containerControl = new AskSignedUpControl(AskSignedUpControl.ControlID, 0, 0);
-	containerControl.onNavigate = AskSignedUpControl.onNavigate;
-
-	containerControl.newControl(new ButtonControl(AskSignedUpControl.AlreadyRegisteredID, SetupScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(AskSignedUpControl.NotRegisteredID, SetupScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-AskSignedUpControl.prototype = new ContainerControl();
-AskSignedUpControl.prototype.constructor = AskSignedUpControl;
-
-/******************************************************************************/
-
-function AskSignedUpControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*string*/ AskSignedUpControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return AskSignedUpControl.NotRegisteredID;
-
-	if((AskSignedUpControl.AlreadyRegisteredID) || (fromControl == AskSignedUpControl.NotRegisteredID))
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* HaveLogonIDControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-HaveLogonIDControl.ControlID = "Setup001_HaveLogonIDControl";
-
-HaveLogonIDControl.LogonID = "Setup001_HaveLogonIDControl_Logon";
-HaveLogonIDControl.PINID = "Setup001_HaveLogonIDControl_PIN";
-HaveLogonIDControl.RememberPINID = "Setup001_HaveLogonIDControl_RememberPIN";
-HaveLogonIDControl.ContinueID = "Setup001_HaveLogonIDControl_Continue";
-
-/******************************************************************************/
-
-HaveLogonIDControl.newInstance = function()
-{
-	var containerControl = new HaveLogonIDControl(HaveLogonIDControl.ControlID, 0, 0);
-	containerControl.onNavigate = HaveLogonIDControl.onNavigate;
-
-	var oControl;
-
-	oControl = new EditControl(HaveLogonIDControl.LogonID, SetupScreen.ScreenID, 9)
-	containerControl.newControl(oControl);
-	oControl.MaxLength = 9;
-	oControl = new EditControl(HaveLogonIDControl.PINID, SetupScreen.ScreenID, 6);
-	oControl.MaxLength = 6;
-	containerControl.newControl(oControl);
-
-	oControl = new CheckControl(HaveLogonIDControl.RememberPINID, SetupScreen.ScreenID);
-	oControl.setChecked(true);
-	containerControl.newControl(oControl);
-
-	containerControl.newControl(new ButtonControl(HaveLogonIDControl.ContinueID, SetupScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-HaveLogonIDControl.prototype = new ContainerControl();
-HaveLogonIDControl.prototype.constructor = AskSignedUpControl;
-
-/******************************************************************************/
-
-function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ HaveLogonIDControl.prototype.loadData = function(/*object*/ oData)
-{
-	return true;
-}
-
-/******************************************************************************/
-
-/*boolean*/ HaveLogonIDControl.prototype.unloadData = function(/*object*/ oData)
-{
-	var data;
-	var oSetupData = oData;
-
-	data = this.getControl(HaveLogonIDControl.LogonID).getText();
-	if(!testStrHasLen(data))
-	{
-		showMsg("Logon ID must be entered.");
-		return false;
-	}
-	oSetupData.UserID = data;
-
-	data = this.getControl(HaveLogonIDControl.PINID).getText();
-	if(!testStrHasLen(data))
-	{
-		showMsg("PIN must be entered.");
-		return false;
-	}
-	oSetupData.UserPassword = data;
-
-	oSetupData.RememberPassword = this.getControl(HaveLogonIDControl.RememberPINID).getChecked();
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ HaveLogonIDControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return HaveLogonIDControl.ContinueID;
-
-	if(key == ek_LeftButton)
-	{
-		if((fromControl == HaveLogonIDControl.LogonID)
-				|| (fromControl == HaveLogonIDControl.PINID)
-				|| (fromControl == HaveLogonIDControl.RememberPINID)
-				|| (fromControl == HaveLogonIDControl.ContinueID))
-			return ViewPortControl.ControlID;
-	}
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* NeedLogonIDControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-NeedLogonIDControl.ControlID = "Setup001_NeedLogonIDControl";
-
-NeedLogonIDControl.HaveLogonID = "Setup001_NeedLogonIDControl_HaveLogon";
-
-/******************************************************************************/
-
-NeedLogonIDControl.newInstance = function()
-{
-	var containerControl = new NeedLogonIDControl(NeedLogonIDControl.ControlID, 0, 0);
-	containerControl.onNavigate = NeedLogonIDControl.onNavigate;
-
-	containerControl.newControl(new ButtonControl(NeedLogonIDControl.HaveLogonID, SetupScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
-
-	return containerControl;
-}
-
-/******************************************************************************/
-
-NeedLogonIDControl.prototype = new ContainerControl();
-NeedLogonIDControl.prototype.constructor = NeedLogonIDControl;
-
-/******************************************************************************/
-
-function NeedLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*string*/ NeedLogonIDControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return NeedLogonIDControl.HaveLogonID;
-
-	if(fromControl == NeedLogonIDControl.HaveLogonID)
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* SetupData.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function SetupData()
-{
-	this.UserID = null;
-	this.UserPassword = null;
-	this.RememberPassword = false;
 }
 
 /******************************************************************************/
@@ -7638,105 +7589,230 @@ function SetupScreen()
 
 /******************************************************************************/
 /******************************************************************************/
-/* StartupFlows.js */
+/* SetupData.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function StartupInitialCheck()
+function SetupData()
 {
-	var oSession = MainApp.getThe().getSession();
+	this.UserID = null;
+	this.UserPassword = null;
+	this.RememberPassword = false;
+}
 
-	/* connect to the server */
-	if(!oSession.CanPingServer)
-		if(!oSession.pingServer())
-			return false;
+/******************************************************************************/
+/******************************************************************************/
+/* AskSignedUpControl.js */
 
-	if(!oSession.loadDataSettings())
-	{
-		SetupScreen.newInstance();
-		return true;
-	}
+/******************************************************************************/
+/******************************************************************************/
 
-	if(!oSession.haveUserPassword())
-	{
-		AskPINScreen.newInstance();
-		return true;
-	}
+AskSignedUpControl.ControlID = "Setup001_AskSignedUpControl";
 
-	var statusCode = oSession.signon();
-	if(statusCode == sc_Success)
-	{
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-		else
-			oSession.clearLogonInfo();
-	}
-	else if(statusCode == sc_InvalidUserIDPassword)
-	{
-		AskPINScreen.newInstance();
-		return true;
-	}
+AskSignedUpControl.AlreadyRegisteredID = "Setup001_AskSignedUpControl_AlreadyRegistered";
+AskSignedUpControl.NotRegisteredID = "Setup001_AskSignedUpControl_NotRegistered";
 
-	return false;
+/******************************************************************************/
+
+AskSignedUpControl.newInstance = function()
+{
+	var containerControl = new AskSignedUpControl(AskSignedUpControl.ControlID, 0, 0);
+	containerControl.onNavigate = AskSignedUpControl.onNavigate;
+
+	containerControl.newControl(new ButtonControl(AskSignedUpControl.AlreadyRegisteredID, SetupScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(AskSignedUpControl.NotRegisteredID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
+
+	return containerControl
 }
 
 /******************************************************************************/
 
-function StartupDoSignonPassword(/*string*/ userPassword)
+AskSignedUpControl.prototype = new ContainerControl();
+AskSignedUpControl.prototype.constructor = AskSignedUpControl;
+
+/******************************************************************************/
+
+function AskSignedUpControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
-	var oSession = MainApp.getThe().getSession();
-
-	var statusCode = oSession.signon(null, userPassword);
-	if(statusCode == sc_Success)
-	{
-		oSession.saveDataSettings();	// for possible temp store of userPassword
-
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-
-		oSession.clearLogonInfo();
-		StartScreen.newInstance();
-		return true;
-	}
-
-	return false;
+	ContainerControl.prototype.init.call(this, controlID, left, top);
 }
 
 /******************************************************************************/
 
-function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
-	/*boolean*/ rememberPassword)
+/*string*/ AskSignedUpControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
 {
-	var oSession = MainApp.getThe().getSession();
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return AskSignedUpControl.NotRegisteredID;
 
-	var statusCode = oSession.signon(userID, userPassword, rememberPassword);
-	if(statusCode == sc_Success)
+	if((AskSignedUpControl.AlreadyRegisteredID) || (fromControl == AskSignedUpControl.NotRegisteredID))
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* NeedLogonIDControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+NeedLogonIDControl.ControlID = "Setup001_NeedLogonIDControl";
+
+NeedLogonIDControl.HaveLogonID = "Setup001_NeedLogonIDControl_HaveLogon";
+
+/******************************************************************************/
+
+NeedLogonIDControl.newInstance = function()
+{
+	var containerControl = new NeedLogonIDControl(NeedLogonIDControl.ControlID, 0, 0);
+	containerControl.onNavigate = NeedLogonIDControl.onNavigate;
+
+	containerControl.newControl(new ButtonControl(NeedLogonIDControl.HaveLogonID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
+
+	return containerControl;
+}
+
+/******************************************************************************/
+
+NeedLogonIDControl.prototype = new ContainerControl();
+NeedLogonIDControl.prototype.constructor = NeedLogonIDControl;
+
+/******************************************************************************/
+
+function NeedLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*string*/ NeedLogonIDControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return NeedLogonIDControl.HaveLogonID;
+
+	if(fromControl == NeedLogonIDControl.HaveLogonID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* HaveLogonIDControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+HaveLogonIDControl.ControlID = "Setup001_HaveLogonIDControl";
+
+HaveLogonIDControl.LogonID = "Setup001_HaveLogonIDControl_Logon";
+HaveLogonIDControl.PINID = "Setup001_HaveLogonIDControl_PIN";
+HaveLogonIDControl.RememberPINID = "Setup001_HaveLogonIDControl_RememberPIN";
+HaveLogonIDControl.ContinueID = "Setup001_HaveLogonIDControl_Continue";
+
+/******************************************************************************/
+
+HaveLogonIDControl.newInstance = function()
+{
+	var containerControl = new HaveLogonIDControl(HaveLogonIDControl.ControlID, 0, 0);
+	containerControl.onNavigate = HaveLogonIDControl.onNavigate;
+
+	var oControl;
+
+	oControl = new EditControl(HaveLogonIDControl.LogonID, SetupScreen.ScreenID, 9)
+	containerControl.newControl(oControl);
+	oControl.MaxLength = 9;
+	oControl = new EditControl(HaveLogonIDControl.PINID, SetupScreen.ScreenID, 6);
+	oControl.MaxLength = 6;
+	containerControl.newControl(oControl);
+
+	oControl = new CheckControl(HaveLogonIDControl.RememberPINID, SetupScreen.ScreenID);
+	oControl.setChecked(true);
+	containerControl.newControl(oControl);
+
+	containerControl.newControl(new ButtonControl(HaveLogonIDControl.ContinueID, SetupScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, SetupScreen.ScreenID));
+
+	return containerControl
+}
+
+/******************************************************************************/
+
+HaveLogonIDControl.prototype = new ContainerControl();
+HaveLogonIDControl.prototype.constructor = AskSignedUpControl;
+
+/******************************************************************************/
+
+function HaveLogonIDControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ HaveLogonIDControl.prototype.loadData = function(/*object*/ oData)
+{
+	return true;
+}
+
+/******************************************************************************/
+
+/*boolean*/ HaveLogonIDControl.prototype.unloadData = function(/*object*/ oData)
+{
+	var data;
+	var oSetupData = oData;
+
+	data = this.getControl(HaveLogonIDControl.LogonID).getText();
+	if(!testStrHasLen(data))
 	{
-		if(!oSession.saveDataSettings())
-		{
-			showMsg("An error occured while saving your settings.");
-			return false;
-		}
+		showMsg("Logon ID must be entered.");
+		return false;
+	}
+	oSetupData.UserID = data;
 
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
+	data = this.getControl(HaveLogonIDControl.PINID).getText();
+	if(!testStrHasLen(data))
+	{
+		showMsg("PIN must be entered.");
+		return false;
+	}
+	oSetupData.UserPassword = data;
 
-		oSession.clearLogonInfo();
-		StartScreen.newInstance();
-		return true;
+	oSetupData.RememberPassword = this.getControl(HaveLogonIDControl.RememberPINID).getChecked();
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ HaveLogonIDControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return HaveLogonIDControl.ContinueID;
+
+	if(key == ek_LeftButton)
+	{
+		if((fromControl == HaveLogonIDControl.LogonID)
+				|| (fromControl == HaveLogonIDControl.PINID)
+				|| (fromControl == HaveLogonIDControl.RememberPINID)
+				|| (fromControl == HaveLogonIDControl.ContinueID))
+			return ViewPortControl.ControlID;
 	}
 
-	return false;
+	return null;
 }
 
 /******************************************************************************/
@@ -7810,6 +7886,241 @@ function CategorySearchScreen()
 {
 	if(key == ek_LeftButton)
 		if(fromControl == CategorySearchScreen.CategoriesID)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SearchScreen.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+SearchScreen.ScreenID = "Search006";
+SearchScreen.ShowNameID = "Search006_ShowName";
+SearchScreen.SearchID = "Search006_Search";
+SearchScreen.ProviderID = "Search006_Provider";
+SearchScreen.CategoryID = "Search006_Category";
+SearchScreen.RatingID = "Search006_Rating";
+
+/******************************************************************************/
+
+SearchScreen.newInstance = function()
+{
+	return MainApp.getThe().openScreen(new SearchScreen());
+}
+
+/******************************************************************************/
+
+SearchScreen.prototype = new Screen();
+SearchScreen.prototype.constructor = SearchScreen;
+
+/******************************************************************************/
+
+function SearchScreen()
+{
+	var oControl;
+
+	this.ScreenID = SearchScreen.ScreenID;
+	this.ScreenTitle = "search";
+
+	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
+	this.fContainerControl.onNavigate = SearchScreen.onNavigate;
+
+	oControl = new EditControl(SearchScreen.ShowNameID, this.ScreenID, 16);
+	this.newControl(oControl);
+	oControl.Type = ect_UpperAlphaNumeric;
+	this.newControl(new ButtonControl(SearchScreen.SearchID, this.ScreenID));
+
+	this.newControl(new ButtonControl(SearchScreen.ProviderID, this.ScreenID));
+	this.newControl(new ButtonControl(SearchScreen.CategoryID, this.ScreenID));
+	this.newControl(new ButtonControl(SearchScreen.RatingID, this.ScreenID));
+
+	this.fSearchData = new SearchData();
+
+	if(ViewPortControl.isOpen())
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+}
+
+/******************************************************************************/
+
+/*void*/ SearchScreen.prototype.onButton = function(/*string*/ controlID)
+{
+	var oSession = MainApp.getThe().getSession();
+	var oControl;
+
+	if((controlID == SearchScreen.SearchID) || (controlID == SearchScreen.ShowNameID))
+	{
+		var showSearchListRef = new Object();
+
+		oControl = this.getControl(SearchScreen.ShowNameID);
+		this.fSearchData.Search = oControl.getText();
+
+		if(oSession.showSearch(this.fSearchData, showSearchListRef))
+			SearchResultsScreen.newInstance(showSearchListRef.value);
+		return;
+	}
+
+	if(controlID == SearchScreen.ProviderID)
+	{
+		ProviderSelectScreen.newInstance(this.fSearchData);
+		return;
+	}
+
+	if(controlID == SearchScreen.CategoryID)
+	{
+		CategorySelectScreen.newInstance(this.fSearchData);
+		return;
+	}
+
+	if(controlID == SearchScreen.RatingID)
+	{
+		RatingSelectScreen.newInstance(this.fSearchData);
+		return;
+	}
+
+	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*string*/ SearchScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+	{
+		if(fromControl == SearchScreen.SearchID)
+			return SearchScreen.ShowNameID;
+		if((fromControl == SearchScreen.ShowNameID)
+				|| (fromControl == SearchScreen.ProviderID)
+				|| (fromControl == SearchScreen.CategoryID)
+				|| (fromControl == SearchScreen.RatingID))
+			return ViewPortControl.ControlID;
+	}
+
+	if(key == ek_RightButton)
+	{
+		if((fromControl == SearchScreen.ShowNameID)
+				|| (fromControl == SearchScreen.ProviderID)
+				|| (fromControl == SearchScreen.CategoryID)
+				|| (fromControl == SearchScreen.RatingID))
+			return SearchScreen.SearchID;
+	}
+
+	if(key == ek_DownButton)
+	{
+		if(fromControl == SearchScreen.ShowNameID)
+			return SearchScreen.ProviderID;
+	}
+
+	if(key == ek_UpButton)
+	{
+		if(fromControl == SearchScreen.ProviderID)
+			return SearchScreen.ShowNameID;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* SearchData.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function SearchData()
+{
+	this.Search = null;
+
+	this.ProviderID = Provider.AllProvidersID;
+	this.CategoryID = Category.AllCategoriesID;
+	this.RatingID = Rating.AllRatingsID;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ProviderSelectScreen.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+ProviderSelectScreen.ScreenID = "Search001";
+ProviderSelectScreen.ProvidersID = "Search001_Providers";
+
+/******************************************************************************/
+
+ProviderSelectScreen.newInstance = function(/*SearchDataPtr*/ oSearchData)
+{
+	var oScreen = MainApp.getThe().openScreen(new ProviderSelectScreen(oSearchData));
+
+	if(testStrHasLen(oSearchData.ProviderID))
+	{
+		var oTextListControl = oScreen.getControl(ProviderSelectScreen.ProvidersID);
+		oTextListControl.setFocusedItemByName(oSearchData.ProviderID);
+	}
+
+	return oScreen;
+}
+
+/******************************************************************************/
+
+ProviderSelectScreen.prototype = new Screen();
+ProviderSelectScreen.prototype.constructor = ProviderSelectScreen;
+
+/******************************************************************************/
+
+function ProviderSelectScreen(/*SearchDataPtr*/ oSearchData)
+{
+	this.ScreenID = ProviderSelectScreen.ScreenID;
+	this.ScreenTitle = "search";
+
+	var oRowItemList = new Array();
+	oRowItemList.push(new ListControlRowItem("Provider", 438));
+
+	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
+	this.fContainerControl.onNavigate = ProviderSelectScreen.onNavigate;
+
+	this.fSearchData = oSearchData;
+
+	// load the Providers
+	var oSession = MainApp.getThe().getSession();
+	var providerList = oSession.getProviderList();
+	var itemList = new Array();
+
+	itemList.push(new NameValuePair(Provider.AllProvidersID, oSession.getProviderName(Provider.AllProvidersID)));
+	for(var i = 0; i < providerList.length; i++)
+		itemList.push(new NameValuePair(providerList[i].ProviderID, providerList[i].Name));
+
+	this.newControl(new TextListControl(ProviderSelectScreen.ProvidersID, this.ScreenID, 8,
+		oRowItemList, itemList));
+
+	if(ViewPortControl.isOpen())
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+}
+
+/******************************************************************************/
+
+/*void*/ ProviderSelectScreen.prototype.onButton = function(/*string*/ controlID)
+{
+	var oTextListControl = this.getControl(ProviderSelectScreen.ProvidersID);
+	this.fSearchData.ProviderID = oTextListControl.getFocusedItemValue().Name;
+
+	var oSession = MainApp.getThe().getSession();
+	var oScreen = MainApp.getThe().getScreen(SearchScreen.ScreenID);
+	var oButtonControl = oScreen.getControl(SearchScreen.ProviderID);
+	oButtonControl.setText(oSession.getProviderName(this.fSearchData.ProviderID));
+
+	this.close();
+}
+
+/******************************************************************************/
+
+/*string*/ ProviderSelectScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if(fromControl == ProviderSelectScreen.ProvidersID)
 			return ViewPortControl.ControlID;
 
 	return null;
@@ -7904,93 +8215,6 @@ function CategorySelectScreen(/*SearchDataPtr*/ oSearchData)
 
 /******************************************************************************/
 /******************************************************************************/
-/* ProviderSelectScreen.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ProviderSelectScreen.ScreenID = "Search001";
-ProviderSelectScreen.ProvidersID = "Search001_Providers";
-
-/******************************************************************************/
-
-ProviderSelectScreen.newInstance = function(/*SearchDataPtr*/ oSearchData)
-{
-	var oScreen = MainApp.getThe().openScreen(new ProviderSelectScreen(oSearchData));
-
-	if(testStrHasLen(oSearchData.ProviderID))
-	{
-		var oTextListControl = oScreen.getControl(ProviderSelectScreen.ProvidersID);
-		oTextListControl.setFocusedItemByName(oSearchData.ProviderID);
-	}
-
-	return oScreen;
-}
-
-/******************************************************************************/
-
-ProviderSelectScreen.prototype = new Screen();
-ProviderSelectScreen.prototype.constructor = ProviderSelectScreen;
-
-/******************************************************************************/
-
-function ProviderSelectScreen(/*SearchDataPtr*/ oSearchData)
-{
-	this.ScreenID = ProviderSelectScreen.ScreenID;
-	this.ScreenTitle = "search";
-
-	var oRowItemList = new Array();
-	oRowItemList.push(new ListControlRowItem("Provider", 438));
-
-	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
-	this.fContainerControl.onNavigate = ProviderSelectScreen.onNavigate;
-
-	this.fSearchData = oSearchData;
-
-	// load the Providers
-	var oSession = MainApp.getThe().getSession();
-	var providerList = oSession.getProviderList();
-	var itemList = new Array();
-
-	itemList.push(new NameValuePair(Provider.AllProvidersID, oSession.getProviderName(Provider.AllProvidersID)));
-	for(var i = 0; i < providerList.length; i++)
-		itemList.push(new NameValuePair(providerList[i].ProviderID, providerList[i].Name));
-
-	this.newControl(new TextListControl(ProviderSelectScreen.ProvidersID, this.ScreenID, 8,
-		oRowItemList, itemList));
-
-	if(ViewPortControl.isOpen())
-		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
-}
-
-/******************************************************************************/
-
-/*void*/ ProviderSelectScreen.prototype.onButton = function(/*string*/ controlID)
-{
-	var oTextListControl = this.getControl(ProviderSelectScreen.ProvidersID);
-	this.fSearchData.ProviderID = oTextListControl.getFocusedItemValue().Name;
-
-	var oSession = MainApp.getThe().getSession();
-	var oScreen = MainApp.getThe().getScreen(SearchScreen.ScreenID);
-	var oButtonControl = oScreen.getControl(SearchScreen.ProviderID);
-	oButtonControl.setText(oSession.getProviderName(this.fSearchData.ProviderID));
-
-	this.close();
-}
-
-/******************************************************************************/
-
-/*string*/ ProviderSelectScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(key == ek_LeftButton)
-		if(fromControl == ProviderSelectScreen.ProvidersID)
-			return ViewPortControl.ControlID;
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
 /* RatingSelectScreen.js */
 
 /******************************************************************************/
@@ -8074,165 +8298,6 @@ function RatingSelectScreen(/*SearchDataPtr*/ oSearchData)
 			return ViewPortControl.ControlID;
 
 	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* SearchData.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-function SearchData()
-{
-	this.Search = null;
-
-	this.ProviderID = Provider.AllProvidersID;
-	this.CategoryID = Category.AllCategoriesID;
-	this.RatingID = Rating.AllRatingsID;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* SearchDetailScreen.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-SearchDetailScreen.ScreenID = "Search004";
-SearchDetailScreen.NameID = "Search004_Name";
-SearchDetailScreen.EpisodeID = "Search004_Episode";
-SearchDetailScreen.ReleasedID = "Search004_Released";
-SearchDetailScreen.DescriptionID = "Search004_Description";
-SearchDetailScreen.RunningMinsID = "Search004_RunningMins";
-SearchDetailScreen.CategoryID = "Search004_Category";
-SearchDetailScreen.ProviderID = "Search004_Provider";
-SearchDetailScreen.RatingID = "Search004_Rating";
-SearchDetailScreen.CostID = "Search004_Cost";
-SearchDetailScreen.RentalPeriodHoursID = "Search004_RentalPeriodHours";
-SearchDetailScreen.MultiRentalsID = "Search004_MultiRentals";
-SearchDetailScreen.RentNowID = "Search004_RentNow";
-
-/******************************************************************************/
-
-SearchDetailScreen.newInstance = function(/*RentedShow*/ showDetail)
-{
-	return MainApp.getThe().openScreen(new SearchDetailScreen(showDetail));
-}
-
-/******************************************************************************/
-
-SearchDetailScreen.prototype = new Screen();
-SearchDetailScreen.prototype.constructor = SearchDetailScreen;
-
-/******************************************************************************/
-
-function SearchDetailScreen(/*RentedShow*/ showDetail)
-{
-	var oSession = MainApp.getThe().getSession();
-	var oControl;
-	var tempStr;
-
-	this.fShowDetail = showDetail;
-	this.ScreenID = SearchDetailScreen.ScreenID;
-	this.ScreenTitle = "search";
-
-	var showProvider = this.fShowDetail.ShowProviderList[0];
-	var showCost = showProvider.ShowCostList[0];
-
-	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
-
-	oControl = new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID);
-	oControl.setText((showCost.ShowCostType == sct_Free) ? "Get Now" : "Rent Now");
-	this.newControl(oControl);
-
-
-	oControl = new TextControl(SearchDetailScreen.NameID, this.ScreenID);
-	oControl.setText(this.fShowDetail.Name);
-	this.newControl(oControl);
-
-	tempStr = "";
-	if(testStrHasLen(this.fShowDetail.EpisodeName) || testStrHasLen(this.fShowDetail.EpisodeNumber))
-	{
-		if(testStrHasLen(this.fShowDetail.EpisodeName))
-		{
-			tempStr = '"' + this.fShowDetail.EpisodeName + '"';
-			if(testStrHasLen(this.fShowDetail.EpisodeNumber))
-				tempStr += " (" + this.fShowDetail.EpisodeNumber + ")";
-		}
-		else
-			tempStr = "Episode: " + this.fShowDetail.EpisodeNumber;
-
-	}
-	oControl = new TextControl(SearchDetailScreen.EpisodeID, this.ScreenID);
-	oControl.setText(tempStr);
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.DescriptionID, this.ScreenID);
-	oControl.setText(this.fShowDetail.Description);
-	this.newControl(oControl);
-
-	tempStr = "n/a";
-	if(this.fShowDetail.ReleasedOn)
-		tempStr = dateTimeToString(this.fShowDetail.ReleasedOn, dtf_M_D_YYYY, true);
-	else if(this.fShowDetail.ReleasedYear)
-		tempStr = this.fShowDetail.ReleasedYear.toString();
-	oControl = new TextControl(SearchDetailScreen.ReleasedID, this.ScreenID);
-	oControl.setText(tempStr);
-	this.newControl(oControl);
-
-	tempStr = "n/a";
-	if(this.fShowDetail.RunningMins)
-		tempStr = this.fShowDetail.RunningMins + " mins";
-	oControl = new TextControl(SearchDetailScreen.RunningMinsID, this.ScreenID);
-	oControl.setText(tempStr);
-	this.newControl(oControl);
-
-	//TODO: show Rating
-	oControl = new TextControl(SearchDetailScreen.RatingID, this.ScreenID);
-	oControl.setText("n/a");
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
-	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
-	oControl.setText(oSession.getProviderName(showProvider.ProviderID));
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
-	oControl.setText(showCost.CostDisplay);
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.RentalPeriodHoursID, this.ScreenID);
-	oControl.setText(showCost.formatRental());
-	this.newControl(oControl);
-
-	oControl = new TextControl(SearchDetailScreen.MultiRentalsID, this.ScreenID);
-	if((this.fShowDetail.ShowProviderList.length > 1) || (showProvider.ShowCostList.length > 1))
-		oControl.setText("* Additional rentals available.");
-	else
-		oControl.setText("");
-	this.newControl(oControl);
-
-	if(ViewPortControl.isOpen())
-		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
-}
-
-/******************************************************************************/
-
-/*void*/ SearchDetailScreen.prototype.onButton = function(/*string*/ controlID)
-{
-	var oSession = MainApp.getThe().getSession();
-
-	if(controlID == SearchDetailScreen.RentNowID)
-	{
-		RentScreen.newInstance(this.fShowDetail);
-		return;
-	}
-
-	Screen.prototype.onButton.call(this, controlID);
 }
 
 /******************************************************************************/
@@ -8424,52 +8489,127 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 /******************************************************************************/
 /******************************************************************************/
-/* SearchScreen.js */
+/* SearchDetailScreen.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-SearchScreen.ScreenID = "Search006";
-SearchScreen.ShowNameID = "Search006_ShowName";
-SearchScreen.SearchID = "Search006_Search";
-SearchScreen.ProviderID = "Search006_Provider";
-SearchScreen.CategoryID = "Search006_Category";
-SearchScreen.RatingID = "Search006_Rating";
+SearchDetailScreen.ScreenID = "Search004";
+SearchDetailScreen.NameID = "Search004_Name";
+SearchDetailScreen.EpisodeID = "Search004_Episode";
+SearchDetailScreen.ReleasedID = "Search004_Released";
+SearchDetailScreen.DescriptionID = "Search004_Description";
+SearchDetailScreen.RunningMinsID = "Search004_RunningMins";
+SearchDetailScreen.CategoryID = "Search004_Category";
+SearchDetailScreen.ProviderID = "Search004_Provider";
+SearchDetailScreen.RatingID = "Search004_Rating";
+SearchDetailScreen.CostID = "Search004_Cost";
+SearchDetailScreen.RentalPeriodHoursID = "Search004_RentalPeriodHours";
+SearchDetailScreen.MultiRentalsID = "Search004_MultiRentals";
+SearchDetailScreen.RentNowID = "Search004_RentNow";
 
 /******************************************************************************/
 
-SearchScreen.newInstance = function()
+SearchDetailScreen.newInstance = function(/*RentedShow*/ showDetail)
 {
-	return MainApp.getThe().openScreen(new SearchScreen());
+	return MainApp.getThe().openScreen(new SearchDetailScreen(showDetail));
 }
 
 /******************************************************************************/
 
-SearchScreen.prototype = new Screen();
-SearchScreen.prototype.constructor = SearchScreen;
+SearchDetailScreen.prototype = new Screen();
+SearchDetailScreen.prototype.constructor = SearchDetailScreen;
 
 /******************************************************************************/
 
-function SearchScreen()
+function SearchDetailScreen(/*RentedShow*/ showDetail)
 {
+	var oSession = MainApp.getThe().getSession();
 	var oControl;
+	var tempStr;
 
-	this.ScreenID = SearchScreen.ScreenID;
+	this.fShowDetail = showDetail;
+	this.ScreenID = SearchDetailScreen.ScreenID;
 	this.ScreenTitle = "search";
 
-	this.fContainerControl = new ContainerControl(this.ScreenID, 100, 150);
-	this.fContainerControl.onNavigate = SearchScreen.onNavigate;
+	var showProvider = this.fShowDetail.ShowProviderList[0];
+	var showCost = showProvider.ShowCostList[0];
 
-	oControl = new EditControl(SearchScreen.ShowNameID, this.ScreenID, 16);
+	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
+
+	oControl = new ButtonControl(SearchDetailScreen.RentNowID, this.ScreenID);
+	oControl.setText((showCost.ShowCostType == sct_Free) ? "Get Now" : "Rent Now");
 	this.newControl(oControl);
-	oControl.Type = ect_UpperAlphaNumeric;
-	this.newControl(new ButtonControl(SearchScreen.SearchID, this.ScreenID));
 
-	this.newControl(new ButtonControl(SearchScreen.ProviderID, this.ScreenID));
-	this.newControl(new ButtonControl(SearchScreen.CategoryID, this.ScreenID));
-	this.newControl(new ButtonControl(SearchScreen.RatingID, this.ScreenID));
 
-	this.fSearchData = new SearchData();
+	oControl = new TextControl(SearchDetailScreen.NameID, this.ScreenID);
+	oControl.setText(this.fShowDetail.Name);
+	this.newControl(oControl);
+
+	tempStr = "";
+	if(testStrHasLen(this.fShowDetail.EpisodeName) || testStrHasLen(this.fShowDetail.EpisodeNumber))
+	{
+		if(testStrHasLen(this.fShowDetail.EpisodeName))
+		{
+			tempStr = '"' + this.fShowDetail.EpisodeName + '"';
+			if(testStrHasLen(this.fShowDetail.EpisodeNumber))
+				tempStr += " (" + this.fShowDetail.EpisodeNumber + ")";
+		}
+		else
+			tempStr = "Episode: " + this.fShowDetail.EpisodeNumber;
+
+	}
+	oControl = new TextControl(SearchDetailScreen.EpisodeID, this.ScreenID);
+	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.DescriptionID, this.ScreenID);
+	oControl.setText(this.fShowDetail.Description);
+	this.newControl(oControl);
+
+	tempStr = "n/a";
+	if(this.fShowDetail.ReleasedOn)
+		tempStr = dateTimeToString(this.fShowDetail.ReleasedOn, dtf_M_D_YYYY, true);
+	else if(this.fShowDetail.ReleasedYear)
+		tempStr = this.fShowDetail.ReleasedYear.toString();
+	oControl = new TextControl(SearchDetailScreen.ReleasedID, this.ScreenID);
+	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	tempStr = "n/a";
+	if(this.fShowDetail.RunningMins)
+		tempStr = this.fShowDetail.RunningMins + " mins";
+	oControl = new TextControl(SearchDetailScreen.RunningMinsID, this.ScreenID);
+	oControl.setText(tempStr);
+	this.newControl(oControl);
+
+	//TODO: show Rating
+	oControl = new TextControl(SearchDetailScreen.RatingID, this.ScreenID);
+	oControl.setText("n/a");
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
+	oControl.setText(oSession.getCategoryNames(this.fShowDetail.CategoryIDList));
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.ProviderID, this.ScreenID);
+	oControl.setText(oSession.getProviderName(showProvider.ProviderID));
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.CostID, this.ScreenID);
+	oControl.setText(showCost.CostDisplay);
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.RentalPeriodHoursID, this.ScreenID);
+	oControl.setText(showCost.formatRental());
+	this.newControl(oControl);
+
+	oControl = new TextControl(SearchDetailScreen.MultiRentalsID, this.ScreenID);
+	if((this.fShowDetail.ShowProviderList.length > 1) || (showProvider.ShowCostList.length > 1))
+		oControl.setText("* Additional rentals available.");
+	else
+		oControl.setText("");
+	this.newControl(oControl);
 
 	if(ViewPortControl.isOpen())
 		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
@@ -8477,527 +8617,17 @@ function SearchScreen()
 
 /******************************************************************************/
 
-/*void*/ SearchScreen.prototype.onButton = function(/*string*/ controlID)
+/*void*/ SearchDetailScreen.prototype.onButton = function(/*string*/ controlID)
 {
 	var oSession = MainApp.getThe().getSession();
-	var oControl;
 
-	if((controlID == SearchScreen.SearchID) || (controlID == SearchScreen.ShowNameID))
+	if(controlID == SearchDetailScreen.RentNowID)
 	{
-		var showSearchListRef = new Object();
-
-		oControl = this.getControl(SearchScreen.ShowNameID);
-		this.fSearchData.Search = oControl.getText();
-
-		if(oSession.showSearch(this.fSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.value);
-		return;
-	}
-
-	if(controlID == SearchScreen.ProviderID)
-	{
-		ProviderSelectScreen.newInstance(this.fSearchData);
-		return;
-	}
-
-	if(controlID == SearchScreen.CategoryID)
-	{
-		CategorySelectScreen.newInstance(this.fSearchData);
-		return;
-	}
-
-	if(controlID == SearchScreen.RatingID)
-	{
-		RatingSelectScreen.newInstance(this.fSearchData);
+		RentScreen.newInstance(this.fShowDetail);
 		return;
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
-}
-
-/******************************************************************************/
-
-/*string*/ SearchScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(key == ek_LeftButton)
-	{
-		if(fromControl == SearchScreen.SearchID)
-			return SearchScreen.ShowNameID;
-		if((fromControl == SearchScreen.ShowNameID)
-				|| (fromControl == SearchScreen.ProviderID)
-				|| (fromControl == SearchScreen.CategoryID)
-				|| (fromControl == SearchScreen.RatingID))
-			return ViewPortControl.ControlID;
-	}
-
-	if(key == ek_RightButton)
-	{
-		if((fromControl == SearchScreen.ShowNameID)
-				|| (fromControl == SearchScreen.ProviderID)
-				|| (fromControl == SearchScreen.CategoryID)
-				|| (fromControl == SearchScreen.RatingID))
-			return SearchScreen.SearchID;
-	}
-
-	if(key == ek_DownButton)
-	{
-		if(fromControl == SearchScreen.ShowNameID)
-			return SearchScreen.ProviderID;
-	}
-
-	if(key == ek_UpButton)
-	{
-		if(fromControl == SearchScreen.ProviderID)
-			return SearchScreen.ShowNameID;
-	}
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* AskHaveProviderControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-AskHaveProviderControl.ControlID = "Rent001_AskHaveProviderControl";
-
-AskHaveProviderControl.WelcomeTextID = "Rent001_AskHaveProviderControl_WelcomeText";
-AskHaveProviderControl.MembershipTextID = "Rent001_AskHaveProviderControl_MembershipText";
-AskHaveProviderControl.HaveMembershipID = "Rent001_AskHaveProviderControl_HaveMembership";
-AskHaveProviderControl.NeedMembershipID = "Rent001_AskHaveProviderControl_NeedMembership";
-
-/******************************************************************************/
-
-AskHaveProviderControl.newInstance = function()
-{
-	var containerControl = new AskHaveProviderControl(AskHaveProviderControl.ControlID, 0, 0);
-	containerControl.onNavigate = AskHaveProviderControl.onNavigate;
-
-	containerControl.newControl(new TextControl(AskHaveProviderControl.WelcomeTextID, RentScreen.ScreenID));
-	containerControl.newControl(new TextControl(AskHaveProviderControl.MembershipTextID, RentScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(AskHaveProviderControl.HaveMembershipID, RentScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(AskHaveProviderControl.NeedMembershipID, RentScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-AskHaveProviderControl.prototype = new ContainerControl();
-AskHaveProviderControl.prototype.constructor = AskHaveProviderControl;
-
-/******************************************************************************/
-
-function AskHaveProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ AskHaveProviderControl.prototype.loadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var oControl;
-	var tempStr;
-
-	oControl = this.getControl(AskHaveProviderControl.WelcomeTextID);
-	tempStr = "This show requires a membership with the provider, ";
-	tempStr += oRentData.getProviderName();
-	tempStr += ".";
-	oControl.setText(tempStr);
-
-	oControl = this.getControl(AskHaveProviderControl.MembershipTextID);
-	tempStr = "Do you already have a membership with ";
-	tempStr += oRentData.getProviderName();
-	tempStr += "?";
-	oControl.setText(tempStr);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ AskHaveProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return AskHaveProviderControl.NeedMembershipID;
-
-	if((fromControl == AskHaveProviderControl.HaveMembershipID)
-		|| (fromControl == AskHaveProviderControl.NeedMembershipID))
-	{
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-	}
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* ConfirmChargeControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ConfirmChargeControl.ControlID = "Rent001_ConfirmChargeControl";
-
-ConfirmChargeControl.ChargeTextID = "Rent001_ConfirmChargeControl_ChargeText";
-ConfirmChargeControl.ChargeAccountID = "Rent001_ConfirmChargeControl_ChargeAccount";
-ConfirmChargeControl.DontChargeAccountID = "Rent001_ConfirmChargeControl_DontChargeAccount";
-
-/******************************************************************************/
-
-ConfirmChargeControl.newInstance = function()
-{
-	var containerControl = new ConfirmChargeControl(ConfirmChargeControl.ControlID, 0, 0);
-	containerControl.onNavigate = ConfirmChargeControl.onNavigate;
-
-	containerControl.newControl(new TextControl(ConfirmChargeControl.ChargeTextID, RentScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(ConfirmChargeControl.ChargeAccountID, RentScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(ConfirmChargeControl.DontChargeAccountID, RentScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-ConfirmChargeControl.prototype = new ContainerControl();
-ConfirmChargeControl.prototype.constructor = ConfirmChargeControl;
-
-/******************************************************************************/
-
-function ConfirmChargeControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ ConfirmChargeControl.prototype.loadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var oShowCost = oRentData.ShowCost;
-	var oTextControl;
-	var tempStr;
-
-	oTextControl = this.getControl(ConfirmChargeControl.ChargeTextID);
-	tempStr = "This show has a cost of ";
-	tempStr += oShowCost.CostDisplay;
-	tempStr += ".  This cost will be charged to your account at ";
-	tempStr += oRentData.getProviderName();
-	tempStr += ".";
-	oTextControl.setText(tempStr);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ ConfirmChargeControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return ConfirmChargeControl.DontChargeAccountID;
-
-	if((fromControl == ConfirmChargeControl.ChargeAccountID)
-		|| (fromControl == ConfirmChargeControl.DontChargeAccountID))
-	{
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-	}
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* HaveProviderControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-HaveProviderControl.ControlID = "Rent001_HaveProviderControl";
-
-HaveProviderControl.DescriptionID = "Rent001_HaveProviderControl_Description";
-HaveProviderControl.UserID = "Rent001_HaveProviderControl_UserID";
-HaveProviderControl.PasswordID = "Rent001_HaveProviderControl_Password";
-HaveProviderControl.ContinueID = "Rent001_HaveProviderControl_Continue";
-
-/******************************************************************************/
-
-HaveProviderControl.newInstance = function()
-{
-	var containerControl = new HaveProviderControl(HaveProviderControl.ControlID, 0, 0);
-	containerControl.onNavigate = HaveProviderControl.onNavigate;
-
-	var oControl;
-
-	containerControl.newControl(new TextControl(HaveProviderControl.DescriptionID, RentScreen.ScreenID));
-
-	oControl = new EditControl(HaveProviderControl.UserID, RentScreen.ScreenID, 9)
-	containerControl.newControl(oControl);
-	oControl.Type = ect_AlphaNumeric;
-	oControl.MaxLength = 64;
-	oControl = new EditControl(HaveProviderControl.PasswordID, RentScreen.ScreenID, 6);
-	oControl.Type = ect_AlphaNumeric;
-	oControl.MaxLength = 16;
-	containerControl.newControl(oControl);
-
-	containerControl.newControl(new ButtonControl(HaveProviderControl.ContinueID, RentScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-HaveProviderControl.prototype = new ContainerControl();
-HaveProviderControl.prototype.constructor = HaveProviderControl;
-
-/******************************************************************************/
-
-function HaveProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ HaveProviderControl.prototype.loadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var oControl;
-	var tempStr;
-
-	oControl = this.getControl(HaveProviderControl.DescriptionID);
-	tempStr = "Please enter your logon information for ";
-	tempStr += oRentData.getProviderName();
-	tempStr += ":";
-	oControl.setText(tempStr);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*boolean*/ HaveProviderControl.prototype.unloadData = function(/*object*/ oData)
-{
-	var data;
-	var oRentData = oData;
-
-	data = this.getControl(HaveProviderControl.UserID).getText();
-	if(!testStrHasLen(data))
-	{
-		showMsg("User ID must be entered.");
-		return false;
-	}
-	oRentData.UserID = data;
-
-	data = this.getControl(HaveProviderControl.PasswordID).getText();
-	if(!testStrHasLen(data))
-	{
-		showMsg("Password must be entered.");
-		return false;
-	}
-	oRentData.Password = data;
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ HaveProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return HaveProviderControl.ContinueID;
-
-	if((fromControl == HaveProviderControl.UserID)
-		|| (fromControl == HaveProviderControl.PasswordID)
-		|| (fromControl == HaveProviderControl.ContinueID))
-	{
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-	}
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* NeedProviderControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-NeedProviderControl.ControlID = "Rent001_NeedProviderControl";
-
-NeedProviderControl.MemberTextID = "Rent001_NeedProviderControl_MemberText";
-NeedProviderControl.PlanTextID = "Rent001_NeedProviderControl_PlanText";
-NeedProviderControl.CreateMembershipID = "Rent001_NeedProviderControl_CreateMembership";
-
-/******************************************************************************/
-
-NeedProviderControl.newInstance = function()
-{
-	var containerControl = new NeedProviderControl(NeedProviderControl.ControlID, 0, 0);
-	containerControl.onNavigate = NeedProviderControl.onNavigate;
-
-	containerControl.newControl(new TextControl(NeedProviderControl.MemberTextID, RentScreen.ScreenID));
-	containerControl.newControl(new TextControl(NeedProviderControl.PlanTextID, RentScreen.ScreenID));
-	containerControl.newControl(new ButtonControl(NeedProviderControl.CreateMembershipID, RentScreen.ScreenID));
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
-
-	return containerControl
-}
-
-/******************************************************************************/
-
-NeedProviderControl.prototype = new ContainerControl();
-NeedProviderControl.prototype.constructor = NeedProviderControl;
-
-/******************************************************************************/
-
-function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ NeedProviderControl.prototype.loadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var oControl;
-	var tempStr;
-
-	oControl = this.getControl(NeedProviderControl.MemberTextID);
-	tempStr = "Your iNetVOD membership information will be used to create a new FREE membership at ";
-	tempStr += oRentData.getProviderName();
-	tempStr += ".  Your credit card information, if on file, will not be sent to ";
-	tempStr += oRentData.getProviderName();
-	tempStr += ".";
-	oControl.setText(tempStr);
-
-	oControl = this.getControl(NeedProviderControl.PlanTextID);
-	tempStr = oRentData.getProviderName();
-	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the iNetVOD web site at www.inetvod.com for more information.";
-	oControl.setText(tempStr);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ NeedProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == ViewPortControl.ControlID)
-		if(key == ek_RightButton)
-			return NeedProviderControl.CreateMembershipID;
-
-	if(fromControl == NeedProviderControl.CreateMembershipID)
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
-/* PickRentalControl.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-PickRentalControl.ControlID = "Rent001_PickRentalControl";
-
-PickRentalControl.AvailTextID = "Rent001_PickRentalControl_AvailText";
-PickRentalControl.ProviderListID = "Rent001_PickRentalControl_ProviderList";
-
-/******************************************************************************/
-
-PickRentalControl.newInstance = function()
-{
-	var containerControl = new PickRentalControl(PickRentalControl.ControlID, 0, 0);
-	containerControl.onNavigate = PickRentalControl.onNavigate;
-
-	var oRowItemList = new Array();
-	oRowItemList.push(new ListControlRowItem("Provider", 350));
-	oRowItemList.push(new ListControlRowItem("Rental", 230));
-	oRowItemList.push(new ListControlRowItem("Price", 100));
-
-	containerControl.newControl(new TextControl(PickRentalControl.AvailTextID, RentScreen.ScreenID));
-	containerControl.newControl(new ShowProviderListControl(PickRentalControl.ProviderListID,
-		RentScreen.ScreenID, 3, oRowItemList, null));
-
-	if(ViewPortControl.isOpen())
-		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
-
-	return containerControl;
-}
-
-/******************************************************************************/
-
-PickRentalControl.prototype = new ContainerControl();
-PickRentalControl.prototype.constructor = PickRentalControl;
-
-/******************************************************************************/
-
-function PickRentalControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
-{
-	ContainerControl.prototype.init.call(this, controlID, left, top);
-}
-
-/******************************************************************************/
-
-/*boolean*/ PickRentalControl.prototype.loadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var oControl;
-	var tempStr;
-
-	oControl = this.getControl(PickRentalControl.AvailTextID);
-	tempStr = "'" + oRentData.ShowDetail.Name + "' is available through multiple rentals.";
-	oControl.setText(tempStr);
-
-	oControl = this.getControl(PickRentalControl.ProviderListID);
-	oControl.setShowProviderList(oRentData.ShowDetail.ShowProviderList, true);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*boolean*/ PickRentalControl.prototype.unloadData = function(/*object*/ oData)
-{
-	var oRentData = oData;
-	var showProviderItem;
-
-	showProviderItem = this.getControl(PickRentalControl.ProviderListID).getFocusedItemValue();
-	oRentData.setRental(showProviderItem.Provider, showProviderItem.ShowCost);
-
-	return true;
-}
-
-/******************************************************************************/
-
-/*string*/ PickRentalControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(key == ek_LeftButton)
-		if(fromControl == PickRentalControl.ProviderListID)
-			return ViewPortControl.ControlID;
-
-	return null;
 }
 
 /******************************************************************************/
@@ -9458,6 +9088,452 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /******************************************************************************/
 /******************************************************************************/
+/* PickRentalControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+PickRentalControl.ControlID = "Rent001_PickRentalControl";
+
+PickRentalControl.AvailTextID = "Rent001_PickRentalControl_AvailText";
+PickRentalControl.ProviderListID = "Rent001_PickRentalControl_ProviderList";
+
+/******************************************************************************/
+
+PickRentalControl.newInstance = function()
+{
+	var containerControl = new PickRentalControl(PickRentalControl.ControlID, 0, 0);
+	containerControl.onNavigate = PickRentalControl.onNavigate;
+
+	var oRowItemList = new Array();
+	oRowItemList.push(new ListControlRowItem("Provider", 350));
+	oRowItemList.push(new ListControlRowItem("Rental", 230));
+	oRowItemList.push(new ListControlRowItem("Price", 100));
+
+	containerControl.newControl(new TextControl(PickRentalControl.AvailTextID, RentScreen.ScreenID));
+	containerControl.newControl(new ShowProviderListControl(PickRentalControl.ProviderListID,
+		RentScreen.ScreenID, 3, oRowItemList, null));
+
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
+
+	return containerControl;
+}
+
+/******************************************************************************/
+
+PickRentalControl.prototype = new ContainerControl();
+PickRentalControl.prototype.constructor = PickRentalControl;
+
+/******************************************************************************/
+
+function PickRentalControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ PickRentalControl.prototype.loadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var oControl;
+	var tempStr;
+
+	oControl = this.getControl(PickRentalControl.AvailTextID);
+	tempStr = "'" + oRentData.ShowDetail.Name + "' is available through multiple rentals.";
+	oControl.setText(tempStr);
+
+	oControl = this.getControl(PickRentalControl.ProviderListID);
+	oControl.setShowProviderList(oRentData.ShowDetail.ShowProviderList, true);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*boolean*/ PickRentalControl.prototype.unloadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var showProviderItem;
+
+	showProviderItem = this.getControl(PickRentalControl.ProviderListID).getFocusedItemValue();
+	oRentData.setRental(showProviderItem.Provider, showProviderItem.ShowCost);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ PickRentalControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(key == ek_LeftButton)
+		if(fromControl == PickRentalControl.ProviderListID)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* AskHaveProviderControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+AskHaveProviderControl.ControlID = "Rent001_AskHaveProviderControl";
+
+AskHaveProviderControl.WelcomeTextID = "Rent001_AskHaveProviderControl_WelcomeText";
+AskHaveProviderControl.MembershipTextID = "Rent001_AskHaveProviderControl_MembershipText";
+AskHaveProviderControl.HaveMembershipID = "Rent001_AskHaveProviderControl_HaveMembership";
+AskHaveProviderControl.NeedMembershipID = "Rent001_AskHaveProviderControl_NeedMembership";
+
+/******************************************************************************/
+
+AskHaveProviderControl.newInstance = function()
+{
+	var containerControl = new AskHaveProviderControl(AskHaveProviderControl.ControlID, 0, 0);
+	containerControl.onNavigate = AskHaveProviderControl.onNavigate;
+
+	containerControl.newControl(new TextControl(AskHaveProviderControl.WelcomeTextID, RentScreen.ScreenID));
+	containerControl.newControl(new TextControl(AskHaveProviderControl.MembershipTextID, RentScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(AskHaveProviderControl.HaveMembershipID, RentScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(AskHaveProviderControl.NeedMembershipID, RentScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
+
+	return containerControl
+}
+
+/******************************************************************************/
+
+AskHaveProviderControl.prototype = new ContainerControl();
+AskHaveProviderControl.prototype.constructor = AskHaveProviderControl;
+
+/******************************************************************************/
+
+function AskHaveProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ AskHaveProviderControl.prototype.loadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var oControl;
+	var tempStr;
+
+	oControl = this.getControl(AskHaveProviderControl.WelcomeTextID);
+	tempStr = "This show requires a membership with the provider, ";
+	tempStr += oRentData.getProviderName();
+	tempStr += ".";
+	oControl.setText(tempStr);
+
+	oControl = this.getControl(AskHaveProviderControl.MembershipTextID);
+	tempStr = "Do you already have a membership with ";
+	tempStr += oRentData.getProviderName();
+	tempStr += "?";
+	oControl.setText(tempStr);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ AskHaveProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return AskHaveProviderControl.NeedMembershipID;
+
+	if((fromControl == AskHaveProviderControl.HaveMembershipID)
+		|| (fromControl == AskHaveProviderControl.NeedMembershipID))
+	{
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* NeedProviderControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+NeedProviderControl.ControlID = "Rent001_NeedProviderControl";
+
+NeedProviderControl.MemberTextID = "Rent001_NeedProviderControl_MemberText";
+NeedProviderControl.PlanTextID = "Rent001_NeedProviderControl_PlanText";
+NeedProviderControl.CreateMembershipID = "Rent001_NeedProviderControl_CreateMembership";
+
+/******************************************************************************/
+
+NeedProviderControl.newInstance = function()
+{
+	var containerControl = new NeedProviderControl(NeedProviderControl.ControlID, 0, 0);
+	containerControl.onNavigate = NeedProviderControl.onNavigate;
+
+	containerControl.newControl(new TextControl(NeedProviderControl.MemberTextID, RentScreen.ScreenID));
+	containerControl.newControl(new TextControl(NeedProviderControl.PlanTextID, RentScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(NeedProviderControl.CreateMembershipID, RentScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
+
+	return containerControl
+}
+
+/******************************************************************************/
+
+NeedProviderControl.prototype = new ContainerControl();
+NeedProviderControl.prototype.constructor = NeedProviderControl;
+
+/******************************************************************************/
+
+function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ NeedProviderControl.prototype.loadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var oControl;
+	var tempStr;
+
+	oControl = this.getControl(NeedProviderControl.MemberTextID);
+	tempStr = "Your iNetVOD membership information will be used to create a new FREE membership at ";
+	tempStr += oRentData.getProviderName();
+	tempStr += ".  Your credit card information, if on file, will not be sent to ";
+	tempStr += oRentData.getProviderName();
+	tempStr += ".";
+	oControl.setText(tempStr);
+
+	oControl = this.getControl(NeedProviderControl.PlanTextID);
+	tempStr = oRentData.getProviderName();
+	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the iNetVOD web site at www.inetvod.com for more information.";
+	oControl.setText(tempStr);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ NeedProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return NeedProviderControl.CreateMembershipID;
+
+	if(fromControl == NeedProviderControl.CreateMembershipID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* HaveProviderControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+HaveProviderControl.ControlID = "Rent001_HaveProviderControl";
+
+HaveProviderControl.DescriptionID = "Rent001_HaveProviderControl_Description";
+HaveProviderControl.UserID = "Rent001_HaveProviderControl_UserID";
+HaveProviderControl.PasswordID = "Rent001_HaveProviderControl_Password";
+HaveProviderControl.ContinueID = "Rent001_HaveProviderControl_Continue";
+
+/******************************************************************************/
+
+HaveProviderControl.newInstance = function()
+{
+	var containerControl = new HaveProviderControl(HaveProviderControl.ControlID, 0, 0);
+	containerControl.onNavigate = HaveProviderControl.onNavigate;
+
+	var oControl;
+
+	containerControl.newControl(new TextControl(HaveProviderControl.DescriptionID, RentScreen.ScreenID));
+
+	oControl = new EditControl(HaveProviderControl.UserID, RentScreen.ScreenID, 9)
+	containerControl.newControl(oControl);
+	oControl.Type = ect_AlphaNumeric;
+	oControl.MaxLength = 64;
+	oControl = new EditControl(HaveProviderControl.PasswordID, RentScreen.ScreenID, 6);
+	oControl.Type = ect_AlphaNumeric;
+	oControl.MaxLength = 16;
+	containerControl.newControl(oControl);
+
+	containerControl.newControl(new ButtonControl(HaveProviderControl.ContinueID, RentScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
+
+	return containerControl
+}
+
+/******************************************************************************/
+
+HaveProviderControl.prototype = new ContainerControl();
+HaveProviderControl.prototype.constructor = HaveProviderControl;
+
+/******************************************************************************/
+
+function HaveProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ HaveProviderControl.prototype.loadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var oControl;
+	var tempStr;
+
+	oControl = this.getControl(HaveProviderControl.DescriptionID);
+	tempStr = "Please enter your logon information for ";
+	tempStr += oRentData.getProviderName();
+	tempStr += ":";
+	oControl.setText(tempStr);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*boolean*/ HaveProviderControl.prototype.unloadData = function(/*object*/ oData)
+{
+	var data;
+	var oRentData = oData;
+
+	data = this.getControl(HaveProviderControl.UserID).getText();
+	if(!testStrHasLen(data))
+	{
+		showMsg("User ID must be entered.");
+		return false;
+	}
+	oRentData.UserID = data;
+
+	data = this.getControl(HaveProviderControl.PasswordID).getText();
+	if(!testStrHasLen(data))
+	{
+		showMsg("Password must be entered.");
+		return false;
+	}
+	oRentData.Password = data;
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ HaveProviderControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return HaveProviderControl.ContinueID;
+
+	if((fromControl == HaveProviderControl.UserID)
+		|| (fromControl == HaveProviderControl.PasswordID)
+		|| (fromControl == HaveProviderControl.ContinueID))
+	{
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* ConfirmChargeControl.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+ConfirmChargeControl.ControlID = "Rent001_ConfirmChargeControl";
+
+ConfirmChargeControl.ChargeTextID = "Rent001_ConfirmChargeControl_ChargeText";
+ConfirmChargeControl.ChargeAccountID = "Rent001_ConfirmChargeControl_ChargeAccount";
+ConfirmChargeControl.DontChargeAccountID = "Rent001_ConfirmChargeControl_DontChargeAccount";
+
+/******************************************************************************/
+
+ConfirmChargeControl.newInstance = function()
+{
+	var containerControl = new ConfirmChargeControl(ConfirmChargeControl.ControlID, 0, 0);
+	containerControl.onNavigate = ConfirmChargeControl.onNavigate;
+
+	containerControl.newControl(new TextControl(ConfirmChargeControl.ChargeTextID, RentScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(ConfirmChargeControl.ChargeAccountID, RentScreen.ScreenID));
+	containerControl.newControl(new ButtonControl(ConfirmChargeControl.DontChargeAccountID, RentScreen.ScreenID));
+	if(ViewPortControl.isOpen())
+		containerControl.newControl(new ViewPortControl(ViewPortControl.ControlID, RentScreen.ScreenID));
+
+	return containerControl
+}
+
+/******************************************************************************/
+
+ConfirmChargeControl.prototype = new ContainerControl();
+ConfirmChargeControl.prototype.constructor = ConfirmChargeControl;
+
+/******************************************************************************/
+
+function ConfirmChargeControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
+{
+	ContainerControl.prototype.init.call(this, controlID, left, top);
+}
+
+/******************************************************************************/
+
+/*boolean*/ ConfirmChargeControl.prototype.loadData = function(/*object*/ oData)
+{
+	var oRentData = oData;
+	var oShowCost = oRentData.ShowCost;
+	var oTextControl;
+	var tempStr;
+
+	oTextControl = this.getControl(ConfirmChargeControl.ChargeTextID);
+	tempStr = "This show has a cost of ";
+	tempStr += oShowCost.CostDisplay;
+	tempStr += ".  This cost will be charged to your account at ";
+	tempStr += oRentData.getProviderName();
+	tempStr += ".";
+	oTextControl.setText(tempStr);
+
+	return true;
+}
+
+/******************************************************************************/
+
+/*string*/ ConfirmChargeControl.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == ViewPortControl.ControlID)
+		if(key == ek_RightButton)
+			return ConfirmChargeControl.DontChargeAccountID;
+
+	if((fromControl == ConfirmChargeControl.ChargeAccountID)
+		|| (fromControl == ConfirmChargeControl.DontChargeAccountID))
+	{
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
 /* NowPlayingScreen.js */
 
 /******************************************************************************/
@@ -9875,80 +9951,6 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 
 /******************************************************************************/
 /******************************************************************************/
-/* AskAdultPINScreen.js */
-
-/******************************************************************************/
-/******************************************************************************/
-
-AskAdultPINScreen.ScreenID = "Prefs002";
-
-AskAdultPINScreen.PINID = "Prefs002_PIN";
-
-/******************************************************************************/
-
-AskAdultPINScreen.newInstance = function()
-{
-	return MainApp.getThe().openScreen(new AskAdultPINScreen());
-}
-
-/******************************************************************************/
-
-AskAdultPINScreen.prototype = new Screen();
-AskAdultPINScreen.prototype.constructor = AskAdultPINScreen;
-
-/******************************************************************************/
-
-function AskAdultPINScreen()
-{
-	var oControl;
-
-	this.ScreenID = AskAdultPINScreen.ScreenID;
-	this.ScreenTitle = "enter pin";
-
-	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
-	this.fContainerControl.onNavigate = AskAdultPINScreen.onNavigate;
-
-	oControl = new EditControl(AskAdultPINScreen.PINID, this.ScreenID, 6);
-	this.newControl(oControl);
-	oControl.Type = ect_Numeric;
-	oControl.MaxLength = 6;
-	oControl.AutoButton = true;
-
-	if(ViewPortControl.isOpen())
-		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
-}
-
-/******************************************************************************/
-
-/*void*/ AskAdultPINScreen.prototype.onButton = function(/*string*/ controlID)
-{
-	var data;
-
-	data = this.getControl(AskAdultPINScreen.PINID).getText();
-	if(!testStrHasLen(data))
-	{
-		showMsg("PIN must be entered.");
-		return;
-	}
-
-	var oScreen = MainApp.getThe().getScreen(PreferencesScreen.ScreenID);
-	if(oScreen.doPIN(data))
-		this.close();
-}
-
-/******************************************************************************/
-
-/*string*/ AskAdultPINScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
-{
-	if(fromControl == AskAdultPINScreen.PINID)
-		if(key == ek_LeftButton)
-			return ViewPortControl.ControlID;
-
-	return null;
-}
-
-/******************************************************************************/
-/******************************************************************************/
 /* PreferencesScreen.js */
 
 /******************************************************************************/
@@ -10045,6 +10047,80 @@ function PreferencesScreen()
 /*string*/ PreferencesScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
 {
 	if(fromControl == PreferencesScreen.AccessAdultButtonID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* AskAdultPINScreen.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+AskAdultPINScreen.ScreenID = "Prefs002";
+
+AskAdultPINScreen.PINID = "Prefs002_PIN";
+
+/******************************************************************************/
+
+AskAdultPINScreen.newInstance = function()
+{
+	return MainApp.getThe().openScreen(new AskAdultPINScreen());
+}
+
+/******************************************************************************/
+
+AskAdultPINScreen.prototype = new Screen();
+AskAdultPINScreen.prototype.constructor = AskAdultPINScreen;
+
+/******************************************************************************/
+
+function AskAdultPINScreen()
+{
+	var oControl;
+
+	this.ScreenID = AskAdultPINScreen.ScreenID;
+	this.ScreenTitle = "enter pin";
+
+	this.fContainerControl = new ContainerControl(this.ScreenID, 200, 200);
+	this.fContainerControl.onNavigate = AskAdultPINScreen.onNavigate;
+
+	oControl = new EditControl(AskAdultPINScreen.PINID, this.ScreenID, 6);
+	this.newControl(oControl);
+	oControl.Type = ect_Numeric;
+	oControl.MaxLength = 6;
+	oControl.AutoButton = true;
+
+	if(ViewPortControl.isOpen())
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+}
+
+/******************************************************************************/
+
+/*void*/ AskAdultPINScreen.prototype.onButton = function(/*string*/ controlID)
+{
+	var data;
+
+	data = this.getControl(AskAdultPINScreen.PINID).getText();
+	if(!testStrHasLen(data))
+	{
+		showMsg("PIN must be entered.");
+		return;
+	}
+
+	var oScreen = MainApp.getThe().getScreen(PreferencesScreen.ScreenID);
+	if(oScreen.doPIN(data))
+		this.close();
+}
+
+/******************************************************************************/
+
+/*string*/ AskAdultPINScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == AskAdultPINScreen.PINID)
 		if(key == ek_LeftButton)
 			return ViewPortControl.ControlID;
 

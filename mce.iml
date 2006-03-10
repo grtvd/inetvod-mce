@@ -7,6 +7,7 @@
     <exploded url="file://$MODULE_DIR$/exploded" />
     <exclude-exploded />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/resources/images/Hires.nosvn" />
       <excludeFolder url="file://$MODULE_DIR$/resources/images/Hold.nosvn" />
       <excludeFolder url="file://$MODULE_DIR$/resources/images/Look1.nosvn" />
       <excludeFolder url="file://$MODULE_DIR$/resources/images/Mathias1.nosvn" />
