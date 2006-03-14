@@ -1,7 +1,7 @@
 <application
 	title="iNetVOD Movies and TV (Dev)"
 	id="{10CB02E7-6E62-4C40-A2BF-238FF643FC50}"
-	url="http://localhost:8080/mce/index.htm"
+	url="http://localhost:81/mce/index.htm"
 	name="iNetVOD Movies and TV (Dev)"
 	bgColor="RGB(15,15,15)"
 	>
