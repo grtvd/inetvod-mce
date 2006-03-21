@@ -29,7 +29,7 @@ function RentedShowSearchByNameCmpr(lhs, rhs)
 	if(rc != 0)
 		return rc;
 
-	return compareStringsIgnoreCase(lhs.EpisodeName, rhs.EpisodeName);
+	return compareDates(rhs.ReleasedOn, lhs.ReleasedOn);	// reversed
 }
 
 /******************************************************************************/
