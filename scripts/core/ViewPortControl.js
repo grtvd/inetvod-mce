@@ -67,16 +67,35 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 
-/*void*/ ViewPortControl.prototype.playVideo = function(/*string*/ url)
+/*void*/ ViewPortControl.prototype.playMedia = function(/*string*/ url)
 {
 	if(window.external.MediaCenter)
 	{
-		window.external.MediaCenter.playMedia(2, url);
+		window.external.MediaCenter.playMedia(this.getMediaType(url), url);
 		window.external.MediaCenter.Experience.GoToFullScreen();
 		return;
 	}
 
-	showMsg("An error occurred trying to play video.");
+	showMsg("An error occurred trying to play Show.");
+}
+
+/******************************************************************************/
+
+/*int*/ ViewPortControl.prototype.getMediaType = function(/*string*/ url)
+{
+	var parts = "x".split('.');
+	parts = "".split('.');
+	parts = "..".split('.');
+	parts = url.split('.');
+
+	if(parts.length > 1)
+	{
+		var ext = parts[parts.length - 1].toLowerCase();
+		if(ext == 'mp3')
+			return 1;
+	}
+
+	return 2;
 }
 
 /******************************************************************************/
