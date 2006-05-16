@@ -13,7 +13,6 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 		throw "ListControlRow::ctor(controlID): Can't find UI object, ID(" + this.ControlID + ")";
 
 	var oRowItem;
-	var controlID;
 	var oUIObj;
 
 	this.fRowItemList = oRowItemList;
@@ -26,6 +25,7 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 			throw "ListControlRow::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
 
 		oUIObj.style.width = oRowItem.Width;
+		checkClassName(oUIObj, 'normal');
 	}
 }
 
@@ -34,6 +34,9 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 /*void*/ ListControlRow.prototype.setFocus = function(/*boolean*/ set)
 {
 	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
+
+	for(var i = 0; i < this.fRowItemList.length; i++)
+		this.focusRowItem(i, set);
 
 	if(set)
 		if(document.activeElement.id != this.fUIObj.id)
@@ -92,6 +95,15 @@ function ListControlRow(/*string*/ controlID, /*int*/ rowIndex,
 	var oUIObj = this.getRowItemObj(rowItemIndex);
 
 	oUIObj.innerHTML = value;
+}
+
+/******************************************************************************/
+
+/*void*/ ListControlRow.prototype.focusRowItem = function(/*int*/ rowItemIndex, /*string*/ set)
+{
+	var oUIObj = this.getRowItemObj(rowItemIndex);
+
+	checkClassName(oUIObj, set ? 'hilite' : 'normal');
 }
 
 /******************************************************************************/

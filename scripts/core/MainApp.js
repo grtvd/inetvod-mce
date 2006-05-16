@@ -138,7 +138,7 @@ function MainApp()
 	//DebugOn(true);
 
 	if(window.external.MediaCenter)
-		window.external.MediaCenter.BGColor = g_Color_Black;
+		window.external.MediaCenter.BGColor = "#002651";
 	document.body.scroll = "no";
 	document.body.focus;
 
