@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "common", "common\common.csproj", "{9C0BABD7-0D1F-462D-92C9-E6E4B87011E5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dls", "dls\dls.csproj", "{D88BEC12-997B-4942-9FD5-B4710B107C72}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gateway", "gateway\gateway.csproj", "{CCC0BBA3-E794-4A22-8A92-FAE9117D910E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{9C0BABD7-0D1F-462D-92C9-E6E4B87011E5}.Debug.ActiveCfg = Debug|.NET
+		{9C0BABD7-0D1F-462D-92C9-E6E4B87011E5}.Debug.Build.0 = Debug|.NET
+		{9C0BABD7-0D1F-462D-92C9-E6E4B87011E5}.Release.ActiveCfg = Release|.NET
+		{9C0BABD7-0D1F-462D-92C9-E6E4B87011E5}.Release.Build.0 = Release|.NET
+		{D88BEC12-997B-4942-9FD5-B4710B107C72}.Debug.ActiveCfg = Debug|.NET
+		{D88BEC12-997B-4942-9FD5-B4710B107C72}.Debug.Build.0 = Debug|.NET
+		{D88BEC12-997B-4942-9FD5-B4710B107C72}.Release.ActiveCfg = Release|.NET
+		{D88BEC12-997B-4942-9FD5-B4710B107C72}.Release.Build.0 = Release|.NET
+		{CCC0BBA3-E794-4A22-8A92-FAE9117D910E}.Debug.ActiveCfg = Debug|.NET
+		{CCC0BBA3-E794-4A22-8A92-FAE9117D910E}.Debug.Build.0 = Debug|.NET
+		{CCC0BBA3-E794-4A22-8A92-FAE9117D910E}.Release.ActiveCfg = Release|.NET
+		{CCC0BBA3-E794-4A22-8A92-FAE9117D910E}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
