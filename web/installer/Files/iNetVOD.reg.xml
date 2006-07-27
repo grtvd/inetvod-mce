@@ -1,0 +1,13 @@
+<application
+	title="iNetVOD Internet Video"
+	id="{68D9B2B0-8E13-4552-B845-90335BCB4232}"
+	companyName="iNetVOD"
+	>
+	<entrypoint
+		id="{7890E3CE-674B-4C75-82E0-061DAD30212A}"
+		url="http://api.inetvod.com/mce/index.htm"
+		title="iNetVOD Internet Video"
+		>
+		<category category="More Programs"/>
+	</entrypoint>
+</application>

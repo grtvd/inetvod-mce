@@ -1,0 +1,22 @@
+* mce installer
+
+- In VS.NET
+	- Open iNetVOD.MCE.sln
+	- Select "iNetVOD.MCE", in Properties pain
+		- Update version
+	- Right-click "iNetVOD.MCE" -> Properties
+		- Update "Output file name" with version
+		- Check "Authenticode signature"
+		- Set "Certificate file" to "inetvod.mce.install.cer"
+		- Set "Private key file" to "inetvod.mce.install.pvk"
+	- Run "Build -> Rebuild Solution"
+	- Right-click "iNetVOD.MCE" -> Properties
+		- Unheck "Authenticode signature"
+		- Clear "Certificate file"
+		- Clear "Private key file"
+	- Close VS.NET (don't save)
+
+- Commit all changed files, use label: "mce: Cut installer version CCYY-MM-DD."
+
+- Move to iNetVOD website
+	- Copy "Release\inetvod.mce-x.x.x.msi" to C:\projects\iNetVOD\website\trunk\resources\download

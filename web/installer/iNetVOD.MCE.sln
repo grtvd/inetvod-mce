@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "iNetVOD.MCE", "iNetVOD.MCE.vdproj", "{AF9593FF-E318-4452-876D-7BAC9F711856}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iNetVOD.MCE.install.ca", "install.ca\iNetVOD.MCE.install.ca.csproj", "{32D4A3FD-4B6F-4303-8BC5-B4E74EC67953}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{AF9593FF-E318-4452-876D-7BAC9F711856}.Release.ActiveCfg = Release
+		{AF9593FF-E318-4452-876D-7BAC9F711856}.Release.Build.0 = Release
+		{32D4A3FD-4B6F-4303-8BC5-B4E74EC67953}.Release.ActiveCfg = Release|.NET
+		{32D4A3FD-4B6F-4303-8BC5-B4E74EC67953}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

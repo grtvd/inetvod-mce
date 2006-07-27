@@ -1,0 +1,4 @@
+<PUBLIC:ATTACH EVENT="onmouseover" ONEVENT="MainAppOnMouseOver(event.srcElement)" />
+<PUBLIC:ATTACH EVENT="onclick" ONEVENT="MainAppOnMouseClick(event.srcElement)" />
+<PUBLIC:ATTACH EVENT="onfocus" ONEVENT="MainAppOnFocus(event.srcElement)" />
+<PUBLIC:ATTACH EVENT="onblur" ONEVENT="MainAppOnBlur(event.srcElement)" />
