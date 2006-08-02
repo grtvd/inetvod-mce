@@ -16,6 +16,8 @@ Session.newInstance = function()
 
 function Session()
 {
+	this.fDownloadServiceMgr = null;
+
 	this.fNetworkURL = "http://" + location.hostname + "/inetvod/playerapi/xml";
 	this.fCryptoAPIURL = "http://" + location.hostname + "/inetvod/cryptoapi";
 	this.CanPingServer = false;
@@ -183,14 +185,41 @@ function Session()
 
 /******************************************************************************/
 
+/*boolean*/ Session.prototype.checkInstall = function()
+{
+	if(this.fDownloadServiceMgr == null)
+	{
+		try
+		{
+			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.MCE.Gateway.DownloadServiceMgr");
+
+			this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
+		}
+		catch(e) {}
+	}
+
+	return this.fDownloadServiceMgr != null;
+}
+
+/******************************************************************************/
+
 /*boolean*/ Session.prototype.loadDataSettings = function()
 {
-	this.fUserID = getCookie("user");
-	this.fUserPassword = getCookie("password");
-	this.fRememberPassword = (getCookie("remember") == "true");
+	if(this.fDownloadServiceMgr != null)
+	{
+		this.fUserID = this.fDownloadServiceMgr.getUserLogonID();
+		this.fUserPassword = this.fDownloadServiceMgr.getUserPIN();
+		this.fRememberPassword = this.fDownloadServiceMgr.getRememberUserPIN();
+	}
+	else
+	{
+		this.fUserID = getCookie("user");
+		this.fUserPassword = getCookie("password");
+		this.fRememberPassword = (getCookie("remember") == "true");
 
-	if(!testStrHasLen(this.fUserPassword))
-		this.fRememberPassword = false;
+		if(!testStrHasLen(this.fUserPassword))
+			this.fRememberPassword = false;
+	}
 
 	return testStrHasLen(this.fUserID);
 }
@@ -199,13 +228,19 @@ function Session()
 
 /*boolean*/ Session.prototype.saveDataSettings = function()
 {
-	deleteCookie("user");
-	deleteCookie("password");
-	deleteCookie("remember");
+	if(this.fDownloadServiceMgr != null)
+		this.fDownloadServiceMgr.setUserCredentials(this.fUserID, this.fUserPassword,
+			this.fRememberPassword);
+	else
+	{
+		deleteCookie("user");
+		deleteCookie("password");
+		deleteCookie("remember");
 
-	setCookie("user", this.fUserID, false);
-	setCookie("password", this.fUserPassword, !this.fRememberPassword);
-	setCookie("remember", this.fRememberPassword ? "true" : "false", true);
+		setCookie("user", this.fUserID, false);
+		setCookie("password", this.fUserPassword, !this.fRememberPassword);
+		setCookie("remember", this.fRememberPassword ? "true" : "false", true);
+	}
 
 	return true;
 }
@@ -214,9 +249,14 @@ function Session()
 
 /*void*/ Session.prototype.resetDataSettings = function()
 {
-	deleteCookie("user");
-	deleteCookie("password");
-	deleteCookie("remember");
+	if(this.fDownloadServiceMgr != null)
+		this.fDownloadServiceMgr.setUserCredentials("", "", false);
+	else
+	{
+		deleteCookie("user");
+		deleteCookie("password");
+		deleteCookie("remember");
+	}
 }
 
 /******************************************************************************/

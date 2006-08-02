@@ -101,6 +101,7 @@
 			</filelist>
 			<filelist dir="scripts/setup">
 				<file name="StartupFlows.js" />
+				<file name="NotInstalledScreen.js" />
 				<file name="AskPINScreen.js" />
 				<file name="SetupScreen.js" />
 				<file name="SetupData.js" />

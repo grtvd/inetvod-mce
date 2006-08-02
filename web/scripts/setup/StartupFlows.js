@@ -7,6 +7,13 @@ function StartupInitialCheck()
 {
 	var oSession = MainApp.getThe().getSession();
 
+	/* has the app been installed locally? */
+	if(!oSession.checkInstall())
+	{
+		NotInstalledScreen.newInstance();
+		return false;
+	}
+
 	/* connect to the server */
 	if(!oSession.CanPingServer)
 		if(!oSession.pingServer())

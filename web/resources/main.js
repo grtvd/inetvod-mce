@@ -4341,6 +4341,8 @@ Session.newInstance = function()
 
 function Session()
 {
+	this.fDownloadServiceMgr = null;
+
 	this.fNetworkURL = "http://" + location.hostname + "/inetvod/playerapi/xml";
 	this.fCryptoAPIURL = "http://" + location.hostname + "/inetvod/cryptoapi";
 	this.CanPingServer = false;
@@ -4508,14 +4510,41 @@ function Session()
 
 /******************************************************************************/
 
+/*boolean*/ Session.prototype.checkInstall = function()
+{
+	if(this.fDownloadServiceMgr == null)
+	{
+		try
+		{
+			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.MCE.Gateway.DownloadServiceMgr");
+
+			this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
+		}
+		catch(e) {}
+	}
+
+	return this.fDownloadServiceMgr != null;
+}
+
+/******************************************************************************/
+
 /*boolean*/ Session.prototype.loadDataSettings = function()
 {
-	this.fUserID = getCookie("user");
-	this.fUserPassword = getCookie("password");
-	this.fRememberPassword = (getCookie("remember") == "true");
+	if(this.fDownloadServiceMgr != null)
+	{
+		this.fUserID = this.fDownloadServiceMgr.getUserLogonID();
+		this.fUserPassword = this.fDownloadServiceMgr.getUserPIN();
+		this.fRememberPassword = this.fDownloadServiceMgr.getRememberUserPIN();
+	}
+	else
+	{
+		this.fUserID = getCookie("user");
+		this.fUserPassword = getCookie("password");
+		this.fRememberPassword = (getCookie("remember") == "true");
 
-	if(!testStrHasLen(this.fUserPassword))
-		this.fRememberPassword = false;
+		if(!testStrHasLen(this.fUserPassword))
+			this.fRememberPassword = false;
+	}
 
 	return testStrHasLen(this.fUserID);
 }
@@ -4524,13 +4553,19 @@ function Session()
 
 /*boolean*/ Session.prototype.saveDataSettings = function()
 {
-	deleteCookie("user");
-	deleteCookie("password");
-	deleteCookie("remember");
+	if(this.fDownloadServiceMgr != null)
+		this.fDownloadServiceMgr.setUserCredentials(this.fUserID, this.fUserPassword,
+			this.fRememberPassword);
+	else
+	{
+		deleteCookie("user");
+		deleteCookie("password");
+		deleteCookie("remember");
 
-	setCookie("user", this.fUserID, false);
-	setCookie("password", this.fUserPassword, !this.fRememberPassword);
-	setCookie("remember", this.fRememberPassword ? "true" : "false", true);
+		setCookie("user", this.fUserID, false);
+		setCookie("password", this.fUserPassword, !this.fRememberPassword);
+		setCookie("remember", this.fRememberPassword ? "true" : "false", true);
+	}
 
 	return true;
 }
@@ -4539,9 +4574,14 @@ function Session()
 
 /*void*/ Session.prototype.resetDataSettings = function()
 {
-	deleteCookie("user");
-	deleteCookie("password");
-	deleteCookie("remember");
+	if(this.fDownloadServiceMgr != null)
+		this.fDownloadServiceMgr.setUserCredentials("", "", false);
+	else
+	{
+		deleteCookie("user");
+		deleteCookie("password");
+		deleteCookie("remember");
+	}
 }
 
 /******************************************************************************/
@@ -7294,6 +7334,13 @@ function StartupInitialCheck()
 {
 	var oSession = MainApp.getThe().getSession();
 
+	/* has the app been installed locally? */
+	if(!oSession.checkInstall())
+	{
+		NotInstalledScreen.newInstance();
+		return false;
+	}
+
 	/* connect to the server */
 	if(!oSession.CanPingServer)
 		if(!oSession.pingServer())
@@ -7384,6 +7431,68 @@ function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
 	}
 
 	return false;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+/* NotInstalledScreen.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+NotInstalledScreen.ScreenID = "StartUp002";
+NotInstalledScreen.ContinueID = "StartUp002_Continue";
+
+/******************************************************************************/
+
+NotInstalledScreen.newInstance = function()
+{
+	return MainApp.getThe().openScreen(new NotInstalledScreen());
+}
+
+/******************************************************************************/
+
+NotInstalledScreen.prototype = new Screen();
+NotInstalledScreen.prototype.constructor = NotInstalledScreen;
+
+/******************************************************************************/
+
+function NotInstalledScreen()
+{
+	this.ScreenID = NotInstalledScreen.ScreenID;
+	this.ScreenTitle = "setup";
+	this.ScreenTitleImage = "titleSetup.gif";
+
+	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 200);
+	this.fContainerControl.onNavigate = NotInstalledScreen.onNavigate;
+
+	this.newControl(new ButtonControl(NotInstalledScreen.ContinueID, this.ScreenID));
+	if(ViewPortControl.isOpen())
+		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+}
+
+/******************************************************************************/
+
+/*void*/ NotInstalledScreen.prototype.onButton = function(/*string*/ controlID)
+{
+	if(MainApp.getThe().getSession().checkInstall())
+	{
+		this.close();
+		StartupInitialCheck();
+	}
+	else
+		showMsg("iNetVOD has not yet been installed.");
+}
+
+/******************************************************************************/
+
+/*string*/ NotInstalledScreen.onNavigate = function(/*string*/ fromControl, /*int*/ key)
+{
+	if(fromControl == NotInstalledScreen.ContinueID)
+		if(key == ek_LeftButton)
+			return ViewPortControl.ControlID;
+
+	return null;
 }
 
 /******************************************************************************/
