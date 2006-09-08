@@ -20,7 +20,7 @@ namespace iNetVOD.MCE.DSL
 #endif
 	{
 		public static string Name = "iNetVOD MCE Download Service";
-		private static long SleepSecs = 10;
+		private static int SleepSecs = 2;
 
 		/// <summary> 
 		/// Required designer variable.
@@ -143,17 +143,14 @@ namespace iNetVOD.MCE.DSL
 #if DEBUG
 		private void MainLoop()
 		{
-			long sleepTicks = SleepSecs * TimeSpan.TicksPerSecond;
-			long sleepUntilTick;
+			int sleepMillis = SleepSecs * 1000;
 
 			while(true)
 			{
 				RunOnce();
 
 				// sleep for a bit
-				sleepUntilTick = DateTime.Now.Ticks + sleepTicks;
-				while(DateTime.Now.Ticks < sleepUntilTick)
-					Thread.Sleep(1000);
+				Thread.Sleep(sleepMillis);
 			}
 		}
 #endif
@@ -162,8 +159,6 @@ namespace iNetVOD.MCE.DSL
 		{
 			try
 			{
-				Logger.LogInfo(this, "RunOnce", "Enter");
-
 				// get the Session
 				Session session = Session.GetThe();
 
@@ -174,6 +169,8 @@ namespace iNetVOD.MCE.DSL
 				long nextProcessTimeTicks = userDataMgr.GetNextProcessTick();
 				if(DateTime.Now.Ticks >= nextProcessTimeTicks)
 				{
+					Logger.LogInfo(this, "RunOnce", "Processing");
+
 					if(session.HaveUserCredentials && (!session.IsUserLoggedOn || session.HasSessionExpired))
 					{
 						if(session.PingServer())
@@ -190,8 +187,6 @@ namespace iNetVOD.MCE.DSL
 					// increment next processing time in UserData
 					userDataMgr.IncNextProcessTick(nextProcessTimeTicks);
 				}
-
-				Logger.LogInfo(this, "RunOnce", "Exit");
 			}
 			catch(Exception e)
 			{
