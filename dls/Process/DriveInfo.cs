@@ -48,22 +48,22 @@ namespace iNetVOD.MCE.DSL.Process
 
 		public static String NewFileName(String filePath, String fileName, String fileExt )
 		{
-			bool flag = true;
+			bool exists = true;
 			int count = 1;
-			String originalFileName = CheckFileName(fileName);
-			String newFileName = "";
-			while(flag)
+			fileName = CheckFileName(fileName);
+			String originalFileName = fileName;
+			String newFileName;
+			while(exists)
 			{
 				newFileName = Path.Combine(filePath, fileName + fileExt);
 				if(File.Exists(newFileName))
-					fileName = originalFileName + " (" + count + ")";
+					fileName = String.Format("{0} ({1})", originalFileName, count);
 				else 
-					flag = false;
+					exists = false;
 
 				count++;
 			}
-			return fileName;
-
+			return fileName + fileExt;
 		}
 
 		public static String CheckFileName(String fileName)

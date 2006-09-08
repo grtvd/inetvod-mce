@@ -144,60 +144,68 @@ namespace iNetVOD.MCE.DSL.Process
 		private bool CompareUserListDownload()
 		{
 			ShowList showList = UserDataMgr.GetThe().ShowList;
+			String filePath = UserDataMgr.GetThe().LocalShowPath.ToString();
 
-			String newFileName, FileName, FileExt, FilePath = "";
-			FilePath = UserDataMgr.GetThe().LocalShowPath.ToString();
-
-			if(!Directory.Exists(FilePath))
-				Directory.CreateDirectory(FilePath);
+			if(!Directory.Exists(filePath))
+				Directory.CreateDirectory(filePath);
 
 			foreach(Show show in showList)
 			{
-				//Extention of File
-				FileExt = Path.GetExtension(show.ShowURL.ToString()); 
-				
-				FileName = DriveInfo.CheckFileName(show.DataFileName.ToString());
-
-				if(DownloadStatus.NotStarted.Equals(show.DownloadStatus))
+				if(DownloadStatus.NotStarted.Equals(show.DownloadStatus) ||
+					DownloadStatus.InProgress.Equals(show.DownloadStatus))
 				{
 					//Download File 
 					Logger.LogInfo(this, "CompareUserListDownload", "DownloadFile");
-					newFileName = DownloadFile(show, FileExt);
 
-					//If File name is not blank then process further
-					if (!newFileName.Equals("") )
+					// Mark show as started download
+					show.DownloadStatus = DownloadStatus.InProgress;
+					UserDataMgr.GetThe().SaveShowList(showList);
+
+					String fileName = DriveInfo.CheckFileName(show.RentedShowID.ToString());
+					String origFullFileName = Path.Combine(filePath, fileName);
+					if(DownloadFile(show.ShowURL.ToString(), origFullFileName))
 					{
 						/**********************************************************************************/
 						//Convert To Media File
 						System.Console.Out.WriteLine("-----------------ConvertToMediaFile-------------------");
 
 						/**********************************************************************************/
-						//Update File Status
-						show.DataFileName = new TString(newFileName + FileExt);
-						show.DownloadStatus = DownloadStatus.Completed;
 
-						UserDataMgr.GetThe().SaveShowList(showList);
-						return true; // only process one show at a time
+						// Determine new file name
+						String newFileName = DriveInfo.NewFileName(filePath,
+							DriveInfo.CheckFileName(show.DataFileName.ToString()),
+							Path.GetExtension(show.ShowURL.ToString()));
+						String newFullFileName = Path.Combine(filePath, newFileName);
+
+						// Rename file
+						File.Move(origFullFileName, newFullFileName);
+
+						//Update Show
+						show.DataFileName = new TString(newFileName);
+						show.DownloadStatus = DownloadStatus.Completed;
 					}
+					else
+						show.DownloadStatus = DownloadStatus.NotStarted;
+
+					UserDataMgr.GetThe().SaveShowList(showList);
+					return true; // only process one show at a time
 				}
 			}//End foreach(Show show in showList)
 
 			return false;
 		}
 
-		private String DownloadFile(Show show, String FileExt)
+		private bool DownloadFile(String sDownloadURL, String sFileName)
 		{
 			HttpWebRequest request = null;
 			HttpWebResponse resp = null;
 			Stream rcvStream = null;
 			FileStream fs = null;
-			String fileName = "";
 			long fileSize = 0;
 
 			try
 			{
-				String DownloadURL = show.ShowURL.ToString();
-				request = (HttpWebRequest)WebRequest.Create(DownloadURL);
+				request = (HttpWebRequest)WebRequest.Create(sDownloadURL);
 				resp = (HttpWebResponse)request.GetResponse();
 				fileSize = (resp.ContentLength / 1024) / 1024; 
 
@@ -211,19 +219,15 @@ namespace iNetVOD.MCE.DSL.Process
 					if (fileSize + DriveInfo.DirectorySize(localShowPath) <= maxSizeForShows)
 					{
 						rcvStream = resp.GetResponseStream();
-						// File Name check 
-						fileName = DriveInfo.NewFileName(localShowPath, Path.GetFileNameWithoutExtension(show.DataFileName.ToString()), FileExt);
-
-						String sFileName = Path.Combine(localShowPath, fileName + FileExt);
 						StreamUtil.StreamToFile(rcvStream, sFileName);
 					}
 				}
-				return fileName;
+				return true;
 			}
 			catch(Exception e)
 			{
 				Logger.LogError(this, "DownloadFile", e); 
-				return fileName;
+				return false;
 			}
 			finally
 			{
@@ -238,9 +242,8 @@ namespace iNetVOD.MCE.DSL.Process
 		private Show AddDownloadShowToList(DownloadShow downloadShow)
 		{
 			Show show = Show.NewInstance(downloadShow.RentedShowID);
-			show.ShowURL = downloadShow.ShowURL; 
-			String fileExt = Path.GetExtension(downloadShow.ShowURL.ToString() ); 
-			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.DataFileName.ToString() + fileExt)) ; 
+			show.ShowURL = downloadShow.ShowURL;
+			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.DataFileName.ToString())) ; 
 			show.DownloadStatus = DownloadStatus.NotStarted;
 			return show;
 		}
