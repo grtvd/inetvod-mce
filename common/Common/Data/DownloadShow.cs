@@ -14,16 +14,19 @@ namespace iNetVOD.Common.Data
 		#region Constants
 		public static readonly ConstructorInfo CtorDataReader = typeof(DownloadShow).GetConstructor(new Type[] { typeof (DataReader) });
 		private static readonly int ShowURLMaxLength = 4096;
+		private static readonly int DataFileNameMaxLength = 128;
 		#endregion
 
 		#region Fields
 		private RentedShowID fRentedShowID;
 		private TString fShowURL;
+		private TString fDataFileName;
 		#endregion
 
 		#region Properties
 		public RentedShowID RentedShowID { get { return fRentedShowID; } }
 		public TString ShowURL { get { return fShowURL; } }
+		public TString DataFileName { get { return fDataFileName; } }
 		#endregion
 
 		#region Constuction
@@ -39,6 +42,7 @@ namespace iNetVOD.Common.Data
 			fRentedShowID = (RentedShowID)reader.ReadDataID("RentedShowID", RentedShowID.MaxLength,
 				RentedShowID.CtorString);
 			fShowURL = reader.ReadString("ShowURL", ShowURLMaxLength);
+			fDataFileName = reader.ReadString("DataFileName", DataFileNameMaxLength);
 		}
 		#endregion
 	}

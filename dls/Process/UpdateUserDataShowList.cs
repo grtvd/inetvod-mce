@@ -240,8 +240,7 @@ namespace iNetVOD.MCE.DSL.Process
 			Show show = Show.NewInstance(downloadShow.RentedShowID);
 			show.ShowURL = downloadShow.ShowURL; 
 			String fileExt = Path.GetExtension(downloadShow.ShowURL.ToString() ); 
-			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.RentedShowID.ToString() + fileExt)) ; 
-			Console.Out.WriteLine("TODO : Change the Method for DataFileName in AddDownloadShowToList");
+			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.DataFileName.ToString() + fileExt)) ; 
 			show.DownloadStatus = new TString("NotStarted");
 			return show;
 		}
