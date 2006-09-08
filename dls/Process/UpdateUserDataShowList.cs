@@ -122,9 +122,7 @@ namespace iNetVOD.MCE.DSL.Process
 					{
 						//Delete File from the user list and download list 
 						Logger.LogInfo(this, "CompareUserListHDDDelete", "Delete File from the userlist and downloadlist");
-						Console.WriteLine("TODO : Uncomment the ReleaseShow in CompareUserListHDDDelete"); 
-						//TODO : Uncommnet the ReleaseShow 
-						//Session.GetThe().ReleaseShow(show.RentedShowID);
+						Session.GetThe().ReleaseShow(show.RentedShowID);
 						showDeleteFlag = true;
 					}
 					else
@@ -149,6 +147,9 @@ namespace iNetVOD.MCE.DSL.Process
 
 			String newFileName, FileName, FileExt, FilePath = "";
 			FilePath = UserDataMgr.GetThe().LocalShowPath.ToString();   
+
+			if(!Directory.Exists(FilePath))
+				Directory.CreateDirectory(FilePath);
 
 			foreach(Show show in showList)
 			{

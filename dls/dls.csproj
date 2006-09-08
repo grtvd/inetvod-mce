@@ -105,7 +105,7 @@
             <Include>
                 <File
                     RelPath = "AppService.cs"
-                    SubType = "Code"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
