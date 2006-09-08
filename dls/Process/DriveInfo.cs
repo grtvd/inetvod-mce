@@ -13,10 +13,11 @@ namespace iNetVOD.MCE.DSL.Process
 {
 	public class DriveInfo
 	{
-		public DriveInfo()
-		{}
+		private DriveInfo()
+		{
+		}
 
-		public void DeleteShowFromHDD(string fileName)
+		public static void DeleteShowFromHDD(string fileName)
 		{
 			FileInfo fInfo = ReturnFileInfo(fileName);
 			if (fInfo != null)
@@ -26,7 +27,7 @@ namespace iNetVOD.MCE.DSL.Process
 			}
 		}
 
-		public bool CheckFileExistOnHDD(string fileName)
+		public static bool CheckFileExistOnHDD(string fileName)
 		{
 			FileInfo fInfo = new FileInfo(Path.Combine(UserDataMgr.GetThe().LocalShowPath.ToString(), fileName)) ;
 			if (fInfo.Exists)
@@ -35,7 +36,7 @@ namespace iNetVOD.MCE.DSL.Process
 				return false;
 		}
 
-		public FileInfo ReturnFileInfo(string fileName)
+		public static FileInfo ReturnFileInfo(string fileName)
 		{
 			//Check File Exist On HDD Return FileInfo
 			FileInfo fInfo = new FileInfo(Path.Combine(UserDataMgr.GetThe().LocalShowPath.ToString(), fileName)) ;
@@ -45,7 +46,7 @@ namespace iNetVOD.MCE.DSL.Process
 				return null;
 		}
 
-		public String NewFileName(String filePath, String fileName, String fileExt )
+		public static String NewFileName(String filePath, String fileName, String fileExt )
 		{
 			bool flag = true;
 			int count = 1;
@@ -65,13 +66,13 @@ namespace iNetVOD.MCE.DSL.Process
 
 		}
 
-		public String CheckFileName(String fileName)
+		public static String CheckFileName(String fileName)
 		{
 			String find = "[/\\?*:|\"<>]"    ;
 			return Regex.Replace(fileName, find, "");
 		}
 
-		public long DirectorySize(String DrivePath)
+		public static long DirectorySize(String DrivePath)
 		{
 			DirectoryInfo  dInfo = new DirectoryInfo(DrivePath);
 			long dirSize = 0;
@@ -83,14 +84,14 @@ namespace iNetVOD.MCE.DSL.Process
 			return BytesToMB(dirSize)  ;
 		}
 
-		private long BytesToMB(long size)
+		private static long BytesToMB(long size)
 		{
 			Double sizeInGB; 
 			sizeInGB = (size / 1024) / 1024;
 			return (long)sizeInGB;
 		}
 
-		public long FreeSpceOnDisk(String DrivePath)
+		public static long FreeSpceOnDisk(String DrivePath)
 		{
 			long available, total, free, iAns;
 			iAns = GetDiskFreeSpaceEx(DrivePath, out available, out total, out free);

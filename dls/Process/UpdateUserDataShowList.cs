@@ -78,7 +78,7 @@ namespace iNetVOD.MCE.DSL.Process
 					Logger.LogInfo(this, "CompareUserListDelete", "Delete Show From User List and HDD");
 					try
 					{
-						new DriveInfo().DeleteShowFromHDD(show.DataFileName.ToString()); 
+						DriveInfo.DeleteShowFromHDD(show.DataFileName.ToString()); 
 						bShowDeleted = true;
 					}
 					catch(Exception e)
@@ -111,7 +111,7 @@ namespace iNetVOD.MCE.DSL.Process
 				{
 					try
 					{
-						fileExistFlag = new DriveInfo().CheckFileExistOnHDD(show.DataFileName.ToString());
+						fileExistFlag = DriveInfo.CheckFileExistOnHDD(show.DataFileName.ToString());
 					}
 					catch(Exception e)
 					{
@@ -156,7 +156,7 @@ namespace iNetVOD.MCE.DSL.Process
 				//Extention of File
 				FileExt = Path.GetExtension(show.ShowURL.ToString()); 
 				
-				FileName = new DriveInfo().CheckFileName(show.DataFileName.ToString());
+				FileName = DriveInfo.CheckFileName(show.DataFileName.ToString());
 
 				if(show.DownloadStatus.ToString().Equals("NotStarted"))     
 				{
@@ -197,7 +197,6 @@ namespace iNetVOD.MCE.DSL.Process
 			try
 			{
 				String DownloadURL = show.ShowURL.ToString();
-				DriveInfo driveInfo = new DriveInfo();
 				request = (HttpWebRequest)WebRequest.Create(DownloadURL);
 				resp = (HttpWebResponse)request.GetResponse();
 				fileSize = (resp.ContentLength / 1024) / 1024; 
@@ -205,15 +204,15 @@ namespace iNetVOD.MCE.DSL.Process
 				//Check for Free space on Disk
 				string localShowPath = UserDataMgr.GetThe().LocalShowPath.ToString();
 
-				if(fileSize + driveInfo.DirectorySize(localShowPath) <= driveInfo.FreeSpceOnDisk(localShowPath))
+				if(fileSize + DriveInfo.DirectorySize(localShowPath) <= DriveInfo.FreeSpceOnDisk(localShowPath))
 				{
 					long maxSizeForShows = UserDataMgr.GetThe().MaxSizeForShows.Value  * 1024 ;
 					//Chcek for Max size allocated for shows
-					if (fileSize + driveInfo.DirectorySize(localShowPath) <= maxSizeForShows)
+					if (fileSize + DriveInfo.DirectorySize(localShowPath) <= maxSizeForShows)
 					{
 						rcvStream = resp.GetResponseStream();
 						// File Name check 
-						fileName = driveInfo.NewFileName(localShowPath, Path.GetFileNameWithoutExtension(show.DataFileName.ToString()), FileExt);
+						fileName = DriveInfo.NewFileName(localShowPath, Path.GetFileNameWithoutExtension(show.DataFileName.ToString()), FileExt);
 
 						String sFileName = Path.Combine(localShowPath, fileName + FileExt);
 						StreamUtil.StreamToFile(rcvStream, sFileName);
@@ -241,7 +240,7 @@ namespace iNetVOD.MCE.DSL.Process
 			Show show = Show.NewInstance(downloadShow.RentedShowID);
 			show.ShowURL = downloadShow.ShowURL; 
 			String fileExt = Path.GetExtension(downloadShow.ShowURL.ToString() ); 
-			show.DataFileName = new TString(new DriveInfo().CheckFileName(downloadShow.RentedShowID.ToString() + fileExt)) ; 
+			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.RentedShowID.ToString() + fileExt)) ; 
 			Console.Out.WriteLine("TODO : Change the Method for DataFileName in AddDownloadShowToList");
 			show.DownloadStatus = new TString("NotStarted");
 			return show;
