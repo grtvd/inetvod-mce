@@ -4,5 +4,6 @@
 	url="http://api.inetvod.com/mce/index.htm"
 	name="iNetVOD Internet Video"
 	bgColor="RGB(0,38,81)"
+	thumbnailImage="http://www.inetvod.com/images/logo3color.png"
 	>
 </application>
