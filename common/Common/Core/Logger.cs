@@ -5,6 +5,8 @@
 using System;
 using System.IO;
 
+using iNetVOD.Common;
+
 namespace iNetVOD.Common.Core
 {
 	/// <summary>
@@ -31,10 +33,10 @@ namespace iNetVOD.Common.Core
 		{
 		}
 
-		public static void Initialize(string logDir, bool enable)
+		public static void Initialize(bool enable)
 		{
 			fLoggerEnabled = enable;
-			fLogDir = logDir;
+			fLogDir = Path.Combine(AppSettings.AppDataPath, "logs");
 
 			if(fLoggerEnabled)
 			{

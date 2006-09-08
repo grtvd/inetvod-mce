@@ -14,11 +14,6 @@ namespace iNetVOD.MCE.DSL
 {
 	public class Session
 	{
-		#region Constants
-		private static String AppPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-		private static String LogDir = Path.Combine(AppPath, "logs");
-		#endregion
-
 		#region Fields
 		private static Session fTheSession;
 
@@ -97,7 +92,7 @@ namespace iNetVOD.MCE.DSL
 		public void LoadFromConfig()
 		{
 			/************************************************************************/
-			ConfigDataMgr configDataMgr = ConfigDataMgr.Initialize(AppPath);
+			ConfigDataMgr configDataMgr = ConfigDataMgr.Initialize();
 			Config config = configDataMgr.GetConfig();
 			fNetworkURL = config.General.iNetVODServiceURL;
 			fPlayer = config.Player;
@@ -106,13 +101,13 @@ namespace iNetVOD.MCE.DSL
 			/************************************************************************/
 
 			/************************************************************************/
-			UserDataMgr userDataMgr = UserDataMgr.Initialize(AppPath, config.General.LoopIntervalSecs.Value);
+			UserDataMgr userDataMgr = UserDataMgr.Initialize(config.General.LoopIntervalSecs.Value);
 
 			fUserID = userDataMgr.UserLogonID;
 			fUserPassword = userDataMgr.UserPIN;
 			/************************************************************************/
 
-			Logger.Initialize(LogDir, userDataMgr.EnableLog.Value);   
+			Logger.Initialize(userDataMgr.EnableLog.Value);
 		}
 		#endregion
 

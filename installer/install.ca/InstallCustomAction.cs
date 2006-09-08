@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
+using iNetVOD.Common.Data;
+
 namespace iNetVOD.MCE.install.ca
 {
 	[RunInstaller(true)]
@@ -53,6 +55,21 @@ namespace iNetVOD.MCE.install.ca
 		}
 		#endregion
 
+		private void CreateDataFiles()
+		{
+			try
+			{
+				ConfigDataMgr.CreateNew();
+				UserDataMgr.CreateNew();
+			}
+			catch(Exception e)
+			{
+				String msg = String.Format("A failure occurred while creating the iNetVOD data files, Message: {0}.",
+					e.Message);
+				MessageBox.Show(msg);
+			}
+		}
+
 		private void RegisterMCEApp(bool uninstall, bool raiseFailure)
 		{
 			try
@@ -99,6 +116,7 @@ namespace iNetVOD.MCE.install.ca
 		private void AfterInstallEventHandler(object sender, InstallEventArgs ea)
 		{
 			//MessageBox.Show("InstallCustomAction.AfterInstall");
+			CreateDataFiles();
 			RegisterMCEApp(false, true);
 		}
 

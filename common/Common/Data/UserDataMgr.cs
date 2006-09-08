@@ -5,9 +5,10 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Text;
 
+using iNetVOD.Common;
 using iNetVOD.Common.Core;
-using iNetVOD.Common.Data;
 
 namespace iNetVOD.Common.Data
 {
@@ -47,10 +48,15 @@ namespace iNetVOD.Common.Data
 			fNextProcessTimeIncTicks = nextProcessTimeIncSecs * TimeSpan.TicksPerSecond;
 		}
 
-		public static UserDataMgr Initialize(string fileLocation,
-			long nextProcessTimeIncSecs)
+		public static void CreateNew()
 		{
-			fTheUserDataMgr = new UserDataMgr(fileLocation, nextProcessTimeIncSecs);
+			UserDataMgr userDataMgr = new UserDataMgr(AppSettings.AppDataPath, 0);
+			userDataMgr.CreateDataFile();
+		}
+
+		public static UserDataMgr Initialize(long nextProcessTimeIncSecs)
+		{
+			fTheUserDataMgr = new UserDataMgr(AppSettings.AppDataPath, nextProcessTimeIncSecs);
 			fTheUserDataMgr.Refresh();
 			return fTheUserDataMgr;
 		}
@@ -222,6 +228,39 @@ namespace iNetVOD.Common.Data
 			}
 		}
 
+		private void CreateDataFile()
+		{
+			string fileDir = Path.GetDirectoryName(fUserFilePath);
+			if(!Directory.Exists(fileDir))
+				Directory.CreateDirectory(fileDir);
+
+			if(File.Exists(fUserFilePath))
+				return;
+
+			Stream stream = new FileStream(fUserFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
+			try
+			{
+				string localShowPath = Path.Combine(Path.GetFullPath(Path.Combine(Path.Combine(
+					Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+					".."), "Documents")), "iNetVOD");
+
+				StreamWriter streamWriter = new StreamWriter(stream, Encoding.UTF8);
+				streamWriter.Write(String.Format(
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<UserData>
+  <Settings>
+    <LocalShowPath>{0}</LocalShowPath>
+    <MaxSizeForShows>20</MaxSizeForShows>
+  </Settings>
+</UserData>", localShowPath));
+				streamWriter.Flush();
+			}
+			finally
+			{
+				stream.Close();
+			}
+		}
+
 		private FileStream OpenDataFile()
 		{
 			for(int i = 0; i < FileOpenTries; i++)
@@ -239,7 +278,7 @@ namespace iNetVOD.Common.Data
 				Thread.Sleep(FileOpenRetryWaitTicks);
 			}
 
-			return null;
+			throw new Exception(String.Format("Can't open file({0})", fUserFilePath));
 		}
 
 		private UserData ReadDataFile(Stream stream)

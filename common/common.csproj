@@ -89,6 +89,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Common\AppSettings.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Common\Core\CoreID.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

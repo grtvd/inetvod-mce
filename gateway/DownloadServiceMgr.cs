@@ -13,10 +13,6 @@ namespace iNetVOD.MCE.Gateway
 {
 	public class DownloadServiceMgr : IObjectSafety
 	{
-		#region Constants
-		private static String AppPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-		#endregion
-
 		#region Fields
 		private ConfigDataMgr fConfigDataMgr;
 		private UserDataMgr fUserDataMgr;
@@ -25,10 +21,10 @@ namespace iNetVOD.MCE.Gateway
 		#region Implementation
 		public DownloadServiceMgr()
 		{
-			fConfigDataMgr = ConfigDataMgr.Initialize(AppPath);
-			fUserDataMgr = UserDataMgr.Initialize(AppPath,
-				fConfigDataMgr.GetConfig().General.LoopIntervalSecs.Value);
-			Logger.Initialize(Path.Combine(AppPath, "logs"), fUserDataMgr.EnableLog.Value);
+			fConfigDataMgr = ConfigDataMgr.Initialize();
+			fUserDataMgr = UserDataMgr.Initialize(fConfigDataMgr.GetConfig()
+				.General.LoopIntervalSecs.Value);
+			Logger.Initialize(fUserDataMgr.EnableLog.Value);
 		}
 
 		public void GetInterfaceSafetyOptions(ref Guid riid, out int supportedOptions, out int enabledOptions)

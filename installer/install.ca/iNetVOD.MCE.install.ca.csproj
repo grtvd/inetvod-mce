@@ -74,6 +74,11 @@
                     AssemblyName = "System.Management"
                     HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Management.dll"
                 />
+                <Reference
+                    Name = "iNetVOD.MCE.Common"
+                    AssemblyName = "iNetVOD.MCE.Common"
+                    HintPath = "..\Files\iNetVOD.MCE.Common.dll"
+                />
             </References>
         </Build>
         <Files>

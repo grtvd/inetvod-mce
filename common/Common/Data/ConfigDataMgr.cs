@@ -5,9 +5,10 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Text;
 
+using iNetVOD.Common;
 using iNetVOD.Common.Core;
-using iNetVOD.Common.Data;
 
 namespace iNetVOD.Common.Data
 {
@@ -31,9 +32,16 @@ namespace iNetVOD.Common.Data
 			fConfigFilePath = Path.Combine(fileLocation, ConfigFileName);
 		}
 
-		public static ConfigDataMgr Initialize(string fileLocation)
+		public static ConfigDataMgr CreateNew()
 		{
-			fTheConfigDataMgr = new ConfigDataMgr(fileLocation);
+			fTheConfigDataMgr = new ConfigDataMgr(AppSettings.AppDataPath);
+			fTheConfigDataMgr.CreateDataFile();
+			return fTheConfigDataMgr;
+		}
+
+		public static ConfigDataMgr Initialize()
+		{
+			fTheConfigDataMgr = new ConfigDataMgr(AppSettings.AppDataPath);
 			return fTheConfigDataMgr;
 		}
 
@@ -57,16 +65,34 @@ namespace iNetVOD.Common.Data
 			}
 		}
 
-		public void SetSerialNo()
+		private void CreateDataFile()
 		{
-			Stream stream = OpenDataFile();
+			string fileDir = Path.GetDirectoryName(fConfigFilePath);
+			if(!Directory.Exists(fileDir))
+				Directory.CreateDirectory(fileDir);
+
+			if(File.Exists(fConfigFilePath))
+				return;
+
+			Stream stream = new FileStream(fConfigFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.None);
 			try
 			{
-				Config config = ReadDataFile(stream);
-
-				config.Player.SerialNo = new TString(Guid.NewGuid());
-   
-				WriteDataFile(stream, config);
+				StreamWriter streamWriter = new StreamWriter(stream, Encoding.UTF8);
+				streamWriter.Write(String.Format(
+@"<?xml version=""1.0"" encoding=""utf-8""?>
+<Config>
+  <General>
+    <iNetVODServiceURL>http://api.inetvod.com/inetvod/playerapi/xml</iNetVODServiceURL>
+    <LoopIntervalSecs>300</LoopIntervalSecs>
+  </General>
+  <Player>
+    <ManufacturerID>inetvod</ManufacturerID>
+    <ModelNo>mce-dls</ModelNo>
+    <SerialNo>{0}</SerialNo>
+    <Version>1.0.0000</Version>
+  </Player>
+</Config>", Guid.NewGuid().ToString()));
+				streamWriter.Flush();
 			}
 			finally
 			{
@@ -91,7 +117,7 @@ namespace iNetVOD.Common.Data
 				Thread.Sleep(FileOpenRetryWaitTicks);
 			}
 
-			return null;
+			throw new Exception(String.Format("Can't open file({0})", fConfigFilePath));
 		}
 
 		private Config ReadDataFile(Stream stream)
