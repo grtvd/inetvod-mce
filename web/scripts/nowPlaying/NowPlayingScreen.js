@@ -40,7 +40,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 {
 	this.fRentedShowSearchList = rentedShowSearchList;
-	this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
+	//no initial sort - this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
 	this.ScreenID = NowPlayingScreen.ScreenID;
 	this.ScreenTitle = "playing";
 	this.ScreenTitleImage = "titlePlaying.gif";
