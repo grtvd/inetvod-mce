@@ -257,22 +257,4 @@ namespace iNetVOD.Common.Data
 		public static readonly ConstructorInfo Ctor = typeof(ShowFormatIDList).GetConstructor(new Type[] {});
 	}
 	#endregion
-
-	/*#region DownloadStatus
-	public class DownloadStatus : StringID
-	{
-		public static readonly DownloadStatus Undefined = new DownloadStatus();
-		public static readonly ConstructorInfo CtorString = typeof(DownloadStatus).GetConstructor(new Type[] { typeof (string) });
-
-		public DownloadStatus() : base()
-		{
-		}
-
-		public DownloadStatus(string value) : base(value)
-		{
-		}
-
-		public static int MaxLength { get { return 32; } }
-	}
-	#endregion*/
 }

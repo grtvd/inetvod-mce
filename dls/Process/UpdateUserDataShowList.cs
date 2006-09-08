@@ -40,8 +40,8 @@ namespace iNetVOD.MCE.DSL.Process
 				foreach(DownloadShow downloadShow in downloadShowList)
 				{
 					bRentedShowIDFound_Flag = false;
-					bRentedShowIDFound_Flag  = showList.ContainsByRentedShowID(downloadShow.RentedShowID);
-					if(!bRentedShowIDFound_Flag  ) 
+					bRentedShowIDFound_Flag = showList.ContainsByRentedShowID(downloadShow.RentedShowID);
+					if(!bRentedShowIDFound_Flag) 
 					{
 						//Insert Show In User List
 						Logger.LogInfo(this, "CompareUserListInsert", "Insert Show In User List");
@@ -71,7 +71,7 @@ namespace iNetVOD.MCE.DSL.Process
 
 			foreach(Show show in showList)
 			{
-				bRentedShowIDFound_Flag  = downloadShowList.ContainsByRentedShowID(show.RentedShowID);
+				bRentedShowIDFound_Flag = downloadShowList.ContainsByRentedShowID(show.RentedShowID);
 				if(!bRentedShowIDFound_Flag)
 				{
 					//Delete Show From User List
@@ -83,7 +83,7 @@ namespace iNetVOD.MCE.DSL.Process
 					}
 					catch(Exception e)
 					{
-						Logger.LogError(this,  "CompareUserListDelete", e); 
+						Logger.LogError(this, "CompareUserListDelete", e); 
 					}
 				}
 				else
@@ -99,7 +99,7 @@ namespace iNetVOD.MCE.DSL.Process
 
 		private void CompareUserListHDDDelete()
 		{
-			ShowList showList =  UserDataMgr.GetThe().ShowList; 
+			ShowList showList = UserDataMgr.GetThe().ShowList; 
 			ShowList newShowList = new ShowList();
 
 			bool fileExistFlag = false;
@@ -107,7 +107,7 @@ namespace iNetVOD.MCE.DSL.Process
 
 			foreach(Show show in showList)
 			{
-				if (show.DownloadStatus.ToString().Equals("Completed"))
+				if (DownloadStatus.Completed.Equals(show.DownloadStatus))
 				{
 					try
 					{
@@ -115,7 +115,7 @@ namespace iNetVOD.MCE.DSL.Process
 					}
 					catch(Exception e)
 					{
-						Logger.LogError(this,  "CompareUserListHDDDelete", e); 
+						Logger.LogError(this, "CompareUserListHDDDelete", e); 
 					}
 
 					if(!fileExistFlag)
@@ -146,7 +146,7 @@ namespace iNetVOD.MCE.DSL.Process
 			ShowList showList = UserDataMgr.GetThe().ShowList;
 
 			String newFileName, FileName, FileExt, FilePath = "";
-			FilePath = UserDataMgr.GetThe().LocalShowPath.ToString();   
+			FilePath = UserDataMgr.GetThe().LocalShowPath.ToString();
 
 			if(!Directory.Exists(FilePath))
 				Directory.CreateDirectory(FilePath);
@@ -158,7 +158,7 @@ namespace iNetVOD.MCE.DSL.Process
 				
 				FileName = DriveInfo.CheckFileName(show.DataFileName.ToString());
 
-				if(show.DownloadStatus.ToString().Equals("NotStarted"))     
+				if(DownloadStatus.NotStarted.Equals(show.DownloadStatus))
 				{
 					//Download File 
 					Logger.LogInfo(this, "CompareUserListDownload", "DownloadFile");
@@ -174,7 +174,7 @@ namespace iNetVOD.MCE.DSL.Process
 						/**********************************************************************************/
 						//Update File Status
 						show.DataFileName = new TString(newFileName + FileExt);
-						show.DownloadStatus = new TString("Completed");
+						show.DownloadStatus = DownloadStatus.Completed;
 
 						UserDataMgr.GetThe().SaveShowList(showList);
 						return true; // only process one show at a time
@@ -206,7 +206,7 @@ namespace iNetVOD.MCE.DSL.Process
 
 				if(fileSize + DriveInfo.DirectorySize(localShowPath) <= DriveInfo.FreeSpceOnDisk(localShowPath))
 				{
-					long maxSizeForShows = UserDataMgr.GetThe().MaxSizeForShows.Value  * 1024 ;
+					long maxSizeForShows = UserDataMgr.GetThe().MaxSizeForShows.Value * 1024 ;
 					//Chcek for Max size allocated for shows
 					if (fileSize + DriveInfo.DirectorySize(localShowPath) <= maxSizeForShows)
 					{
@@ -222,7 +222,7 @@ namespace iNetVOD.MCE.DSL.Process
 			}
 			catch(Exception e)
 			{
-				Logger.LogError(this,  "DownloadFile", e); 
+				Logger.LogError(this, "DownloadFile", e); 
 				return fileName;
 			}
 			finally
@@ -241,7 +241,7 @@ namespace iNetVOD.MCE.DSL.Process
 			show.ShowURL = downloadShow.ShowURL; 
 			String fileExt = Path.GetExtension(downloadShow.ShowURL.ToString() ); 
 			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.DataFileName.ToString() + fileExt)) ; 
-			show.DownloadStatus = new TString("NotStarted");
+			show.DownloadStatus = DownloadStatus.NotStarted;
 			return show;
 		}
 	}

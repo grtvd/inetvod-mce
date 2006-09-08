@@ -23,7 +23,7 @@ namespace iNetVOD.Common.Data
 		private RentedShowID fRentedShowID;
 		private TString fShowURL;
 		private TString fDataFileName;
-		private TString fDownloadStatus;
+		private DownloadStatus fDownloadStatus;
 		#endregion
 
 		#region Properties
@@ -38,7 +38,7 @@ namespace iNetVOD.Common.Data
 			get { return fDataFileName; }
 			set { fDataFileName = value; }
 		}
-		public TString DownloadStatus
+		public DownloadStatus DownloadStatus
 		{
 			get {return fDownloadStatus; }
 			set { fDownloadStatus = value; }
@@ -69,9 +69,8 @@ namespace iNetVOD.Common.Data
 				RentedShowID.CtorString);
 			fShowURL = reader.ReadString("ShowURL", ShowURLMaxLength);
 			fDataFileName = reader.ReadString("DataFileName", 200);  
-			fDownloadStatus = reader.ReadString("DownloadStatus", 200);
-			//fDownloadStatus = (DownloadStatus)Enum.Parse(typeof(DownloadStatus), 
-			//						reader.ReadString("DownloadStatus", 32).Value, false);      
+			fDownloadStatus = (DownloadStatus)Enum.Parse(typeof(DownloadStatus), 
+				reader.ReadString("DownloadStatus", 32).Value, false);      
 		}
 
 		public void WriteTo(DataWriter writer)
@@ -79,7 +78,7 @@ namespace iNetVOD.Common.Data
 			writer.WriteDataID("RentedShowID",  fRentedShowID ,  64);
 			writer.WriteString("ShowURL", fShowURL, ShowURLMaxLength);
 			writer.WriteString("DataFileName", fDataFileName, 200);
-			writer.WriteString("DownloadStatus", fDownloadStatus, 200);
+			writer.WriteString("DownloadStatus", new TString(fDownloadStatus.ToString()), 32);
 		}
 		#endregion
 	}
