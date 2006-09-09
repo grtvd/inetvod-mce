@@ -15,7 +15,19 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_0C6AB2A5B289498FAEA7FA9E09A7F588"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6DB0CEB1558447AF9D69294B2D130D3D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -27,14 +39,50 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C4453772A7B54B67B1BC50797BB7A51C"
-        "OwnerKey" = "8:_UNDEFINED"
+        "MsmKey" = "8:_B089FE521895F7997E73F321E3887B60"
+        "OwnerKey" = "8:_ADA27F3782DF4FFC92F938FA78DCEB4A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_CD16116C9DB74B4697D8F18A8B53483A"
+        "MsmKey" = "8:_B089FE521895F7997E73F321E3887B60"
+        "OwnerKey" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B089FE521895F7997E73F321E3887B60"
+        "OwnerKey" = "8:_0C6AB2A5B289498FAEA7FA9E09A7F588"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
+        "OwnerKey" = "8:_B089FE521895F7997E73F321E3887B60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
+        "OwnerKey" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
+        "OwnerKey" = "8:_0C6AB2A5B289498FAEA7FA9E09A7F588"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
         "OwnerKey" = "8:_ADA27F3782DF4FFC92F938FA78DCEB4A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C4453772A7B54B67B1BC50797BB7A51C"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -45,7 +93,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\inetvod.mce-1.0.2.msi"
+        "OutputFilename" = "8:Release\\inetvod.mce-1.0.3.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -61,6 +109,20 @@
     {
         "CustomAction"
         {
+            "{0C9D821E-95BB-411F-BE03-2864360EBF94}:_14E521A0B6F249568C3039FA7193EE92"
+            {
+            "Name" = "8:iNetVOD.MCE.DLS.exe"
+            "Condition" = "8:"
+            "Object" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+            "FileType" = "3:2"
+            "InstallAction" = "3:1"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:2"
+            "Identifier" = "8:_285A39FA_3A7F_4908_8509_96EBA7851515"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
             "{0C9D821E-95BB-411F-BE03-2864360EBF94}:_227312DD9914433695B468645D32C1FC"
             {
             "Name" = "8:Primary output from iNetVOD.MCE.install.ca (Release .NET)"
@@ -103,6 +165,34 @@
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
+            "{0C9D821E-95BB-411F-BE03-2864360EBF94}:_9B6119EA4BF846D4B1923D4179E32BF0"
+            {
+            "Name" = "8:iNetVOD.MCE.DLS.exe"
+            "Condition" = "8:"
+            "Object" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:2"
+            "Identifier" = "8:_D706BA77_15DD_4708_B207_EAF8B3337B44"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{0C9D821E-95BB-411F-BE03-2864360EBF94}:_E7AEC576241148B68F11F64A19C660E6"
+            {
+            "Name" = "8:iNetVOD.MCE.DLS.exe"
+            "Condition" = "8:"
+            "Object" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+            "FileType" = "3:2"
+            "InstallAction" = "3:3"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:2"
+            "Identifier" = "8:_A0353E85_E32F_499E_B660_DFE6C8654DEE"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
         }
         "DefaultFeature"
         {
@@ -128,6 +218,37 @@
         }
         "File"
         {
+            "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_0C6AB2A5B289498FAEA7FA9E09A7F588"
+            {
+            "AssemblyRegister" = "3:2"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Gateway, Version=1.0.2442.42540, Culture=neutral"
+                "ScatterAssemblies"
+                {
+                    "_0C6AB2A5B289498FAEA7FA9E09A7F588"
+                    {
+                    "Name" = "8:iNetVOD.MCE.Gateway.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Files\\iNetVOD.MCE.Gateway.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CAD27BFD370841F199F55B4624E1E651"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_6DB0CEB1558447AF9D69294B2D130D3D"
             {
             "SourcePath" = "8:Files\\iNetVOD.reg.xml"
@@ -146,6 +267,68 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_70A920CD6F384418B3AE1F79504C8E5B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.DLS, Version=1.0.2442.42540, Culture=neutral"
+                "ScatterAssemblies"
+                {
+                    "_70A920CD6F384418B3AE1F79504C8E5B"
+                    {
+                    "Name" = "8:iNetVOD.MCE.DLS.exe"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Files\\iNetVOD.MCE.DLS.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CAD27BFD370841F199F55B4624E1E651"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{FB480208-1853-44D0-9ABD-A3B734C3FAAA}:_B089FE521895F7997E73F321E3887B60"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Common, Version=1.0.2442.42540, Culture=neutral"
+                "ScatterAssemblies"
+                {
+                    "_B089FE521895F7997E73F321E3887B60"
+                    {
+                    "Name" = "8:iNetVOD.MCE.Common.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:iNetVOD.MCE.Common.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_CAD27BFD370841F199F55B4624E1E651"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{A582A373-4685-4296-BEFE-614B80A702C3}:_C4453772A7B54B67B1BC50797BB7A51C"
@@ -201,13 +384,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:iNetVOD Media Center Edition"
-        "ProductCode" = "8:{756CDA76-9A7E-4CE1-8690-3B7DE63EB751}"
-        "PackageCode" = "8:{D8C80DA3-1CDF-466F-97C8-231620872E32}"
+        "ProductCode" = "8:{D688632E-4D03-4B64-9D17-4326ED8A4A17}"
+        "PackageCode" = "8:{3B02C5F1-F7BF-48FC-9921-411E3A4146D6}"
         "UpgradeCode" = "8:{ACD907DA-672E-4361-830B-6A964D39C4BA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:1.0.2"
+        "ProductVersion" = "8:1.0.3"
         "Manufacturer" = "8:iNetVOD"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -699,7 +882,7 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_CD16116C9DB74B4697D8F18A8B53483A"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_B69F235EAD024000BCF136E16F4ED7B8"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
