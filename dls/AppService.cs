@@ -180,7 +180,8 @@ namespace iNetVOD.MCE.DSL
 					if(session.IsUserLoggedOn)
 					{
 						DownloadShowList downloadShowList = session.DownloadShowList();
-						if((new UpdateUserDataShowList()).DoUpdate(downloadShowList))
+						if((downloadShowList != null) &&
+								(new UpdateUserDataShowList()).DoUpdate(downloadShowList))
 							return;	// progess again immediately
 					}
 
