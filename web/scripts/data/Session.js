@@ -3,6 +3,12 @@
 /******************************************************************************/
 /******************************************************************************/
 
+var DownloadStatus_NotStarted = "NotStarted";
+var DownloadStatus_InProgress = "InProgress";
+var DownloadStatus_Completed = "Completed";
+
+/******************************************************************************/
+
 Session.newInstance = function()
 {
 	var session = new Session();
@@ -229,8 +235,11 @@ function Session()
 /*boolean*/ Session.prototype.saveDataSettings = function()
 {
 	if(this.fDownloadServiceMgr != null)
+	{
 		this.fDownloadServiceMgr.setUserCredentials(this.fUserID, this.fUserPassword,
 			this.fRememberPassword);
+		this.fDownloadServiceMgr.processNow();
+	}
 	else
 	{
 		deleteCookie("user");
@@ -694,7 +703,11 @@ function Session()
 
 		oWaitScreen.close();
 		if(statusCode == sc_Success)
+		{
+			if(this.fDownloadServiceMgr != null)
+				this.fDownloadServiceMgr.processNow();
 			return rentShowResp;
+		}
 
 		statusMessage = dataRequestor.getStatusMessage();
 	}
@@ -783,6 +796,36 @@ function Session()
 	this.showRequestError(statusMessage);
 
 	return null;
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.downloadRefresh = function()
+{
+	if(this.fDownloadServiceMgr == null)
+		return;
+
+	this.fDownloadServiceMgr.refresh();
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getDownloadRentedShowStatus = function(/*string*/ rentedShowID)
+{
+	if(this.fDownloadServiceMgr == null)
+		return null;
+
+	return this.fDownloadServiceMgr.getRentedShowStatus(rentedShowID);
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getDownloadRentedShowPath = function(/*string*/ rentedShowID)
+{
+	if(this.fDownloadServiceMgr == null)
+		return null;
+
+	return this.fDownloadServiceMgr.getRentedShowPath(rentedShowID);
 }
 
 /******************************************************************************/

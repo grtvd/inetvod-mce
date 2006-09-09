@@ -21,6 +21,7 @@
 				<file name="ListControlRowItem.js" />
 				<file name="CheckControl.js" />
 				<file name="TextControl.js" />
+				<file name="ImageControl.js" />
 				<file name="ViewPortControl.js" />
 				<file name="XmlDataReader.js" />
 				<file name="XmlDataWriter.js" />
