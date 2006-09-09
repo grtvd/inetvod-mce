@@ -3442,6 +3442,42 @@ function TextControl(/*string*/ controlID, /*string*/ screenID)
 
 /******************************************************************************/
 /******************************************************************************/
+/* ImageControl */
+
+/******************************************************************************/
+/******************************************************************************/
+
+ImageControl.prototype = new Control();
+ImageControl.prototype.constructor = ImageControl;
+
+/******************************************************************************/
+
+function ImageControl(/*string*/ controlID, /*string*/ screenID)
+{
+	this.ControlID = controlID;
+	this.ScreenID = screenID;
+	this.fUIObj = document.getElementById(controlID);
+	if(this.fUIObj == null)
+		throw "ImageControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fFocused = false;
+
+	this.setFocus(false);
+	this.show(true);
+}
+
+/******************************************************************************/
+
+/*void*/ ImageControl.prototype.setSource = function(/*string*/ src)
+{
+	this.fUIObj.src = src;
+}
+
+/******************************************************************************/
+
+/*boolean*/ ImageControl.prototype.canFocus = function() { return false; }
+
+/******************************************************************************/
+/******************************************************************************/
 /* ViewPortControl */
 
 /******************************************************************************/
@@ -4328,6 +4364,12 @@ function RentedShowListControl(/*string*/ controlID, /*string*/ screenID, /*int*
 /******************************************************************************/
 /******************************************************************************/
 
+var DownloadStatus_NotStarted = "NotStarted";
+var DownloadStatus_InProgress = "InProgress";
+var DownloadStatus_Completed = "Completed";
+
+/******************************************************************************/
+
 Session.newInstance = function()
 {
 	var session = new Session();
@@ -4554,8 +4596,11 @@ function Session()
 /*boolean*/ Session.prototype.saveDataSettings = function()
 {
 	if(this.fDownloadServiceMgr != null)
+	{
 		this.fDownloadServiceMgr.setUserCredentials(this.fUserID, this.fUserPassword,
 			this.fRememberPassword);
+		this.fDownloadServiceMgr.processNow();
+	}
 	else
 	{
 		deleteCookie("user");
@@ -5019,7 +5064,11 @@ function Session()
 
 		oWaitScreen.close();
 		if(statusCode == sc_Success)
+		{
+			if(this.fDownloadServiceMgr != null)
+				this.fDownloadServiceMgr.processNow();
 			return rentShowResp;
+		}
 
 		statusMessage = dataRequestor.getStatusMessage();
 	}
@@ -5108,6 +5157,36 @@ function Session()
 	this.showRequestError(statusMessage);
 
 	return null;
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.downloadRefresh = function()
+{
+	if(this.fDownloadServiceMgr == null)
+		return;
+
+	this.fDownloadServiceMgr.refresh();
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getDownloadRentedShowStatus = function(/*string*/ rentedShowID)
+{
+	if(this.fDownloadServiceMgr == null)
+		return null;
+
+	return this.fDownloadServiceMgr.getRentedShowStatus(rentedShowID);
+}
+
+/******************************************************************************/
+
+/*string*/ Session.prototype.getDownloadRentedShowPath = function(/*string*/ rentedShowID)
+{
+	if(this.fDownloadServiceMgr == null)
+		return null;
+
+	return this.fDownloadServiceMgr.getRentedShowPath(rentedShowID);
 }
 
 /******************************************************************************/
@@ -9793,7 +9872,7 @@ NowPlayingScreen.prototype.constructor = NowPlayingScreen;
 function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 {
 	this.fRentedShowSearchList = rentedShowSearchList;
-	this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
+	//no initial sort - this.fRentedShowSearchList.sort(RentedShowSearchByAvailableUntilCmpr);
 	this.ScreenID = NowPlayingScreen.ScreenID;
 	this.ScreenTitle = "playing";
 	this.ScreenTitleImage = "titlePlaying.gif";
@@ -9986,6 +10065,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 /******************************************************************************/
 
 RentedShowDetailScreen.ScreenID = "Show003";
+RentedShowDetailScreen.StatusIconID = "Show003_StatusIcon";
 RentedShowDetailScreen.NameID = "Show003_Name";
 RentedShowDetailScreen.EpisodeID = "Show003_Episode";
 RentedShowDetailScreen.ReleasedID = "Show003_Released";
@@ -10026,12 +10106,16 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	this.ScreenID = RentedShowDetailScreen.ScreenID;
 	this.ScreenTitle = "playing";
 	this.ScreenTitleImage = "titlePlaying.gif";
+	this.fDownloadStatus = "";
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 
 	this.newControl(new ButtonControl(RentedShowDetailScreen.WatchNowID, this.ScreenID));
 	this.newControl(new ButtonControl(RentedShowDetailScreen.DeleteNowID, this.ScreenID));
 
+	oControl = new ImageControl(RentedShowDetailScreen.StatusIconID, this.ScreenID);
+	oControl.setSource("images/ballRed32.gif");
+	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.NameID, this.ScreenID);
 	oControl.setText(this.fRentedShow.Name);
@@ -10123,12 +10207,58 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 
 /******************************************************************************/
 
+/*void*/ RentedShowDetailScreen.prototype.idle = function()
+{
+	if(this.fDownloadStatus != DownloadStatus_Completed)
+	{
+		var oSession = MainApp.getThe().getSession();
+
+		oSession.downloadRefresh();
+		var newDownloadStatus = oSession.getDownloadRentedShowStatus(this.fRentedShow.RentedShowID);
+
+		if(this.fDownloadStatus != newDownloadStatus)
+		{
+			this.fDownloadStatus = newDownloadStatus;
+
+			var oControl = this.findControl(RentedShowDetailScreen.StatusIconID);
+
+			if(this.fDownloadStatus == DownloadStatus_InProgress)
+				oControl.setSource("images/ballYellow32.gif");
+			else if(this.fDownloadStatus == DownloadStatus_Completed)
+				oControl.setSource("images/ballGreen32.gif");
+			else //if(this.fDownloadStatus == DownloadStatus_NotStarted)
+				oControl.setSource("images/ballRed32.gif");
+			//else
+			//	oControl.setSource("images/ballOrange32.gif");
+		}
+	}
+
+	Screen.prototype.idle.call(this);
+}
+
+/******************************************************************************/
+
 /*void*/ RentedShowDetailScreen.prototype.onButton = function(/*string*/ controlID)
 {
 	var oSession = MainApp.getThe().getSession();
 
 	if(controlID == RentedShowDetailScreen.WatchNowID)
 	{
+		oSession.downloadRefresh();
+		var downloadStatus = oSession.getDownloadRentedShowStatus(this.fRentedShow.RentedShowID);
+
+		if(downloadStatus == DownloadStatus_NotStarted)
+		{
+			showMsg("This show cannot be played until it has first been downloaded.");
+			return;
+		}
+
+		if(downloadStatus == DownloadStatus_InProgress)
+		{
+			showMsg("This show cannot be played until it has finished downloading.");
+			return;
+		}
+
 		var watchShowResp = oSession.watchShow(this.fRentedShow.RentedShowID);
 		if(watchShowResp == null)
 			return;
@@ -10147,7 +10277,11 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 		}
 
 		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
-		oControl.playMedia(watchShowResp.License.ShowURL);
+		var localURL = oSession.getDownloadRentedShowPath(this.fRentedShow.RentedShowID);
+		if(testStrHasLen(localURL))
+			oControl.playMedia(localURL);
+		else
+			oControl.playMedia(watchShowResp.License.ShowURL);
 		return;
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
