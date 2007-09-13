@@ -55,9 +55,22 @@ function AskAdultPINScreen()
 		return;
 	}
 
-	var oScreen = MainApp.getThe().getScreen(PreferencesScreen.ScreenID);
-	if(oScreen.doPIN(data))
+	var oSession = MainApp.getThe().getSession();
+
+	this.Callback = AskAdultPINScreen.prototype.afterEnableAdultAccess;
+	oSession.enableAdultAccess(this, data);
+}
+
+/******************************************************************************/
+
+/*void*/ AskAdultPINScreen.prototype.afterEnableAdultAccess = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
+		MainApp.getThe().getScreen(PreferencesScreen.ScreenID).updateAdultAccess();
 		this.close();
+	}
 }
 
 /******************************************************************************/

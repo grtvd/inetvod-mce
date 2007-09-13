@@ -35,17 +35,17 @@ function PreferencesScreen()
 	this.fContainerControl.onNavigate = PreferencesScreen.onNavigate;
 
 	oControl = new TextControl(PreferencesScreen.AccessAdultValueID, this.ScreenID);
-	oControl.setText(oSession.CanAccessAdult ? "Enabled" : "Disabled");
 	this.newControl(oControl);
 
 	oControl = new ButtonControl(PreferencesScreen.AccessAdultButtonID, this.ScreenID);
 	this.newControl(oControl);
-	oControl.setEnabled(!oSession.CanAccessAdult && (oSession.IncludeAdult == ina_PromptPassword));
 
 	this.newControl(new ButtonControl(PreferencesScreen.ResetFactoryButtonID, this.ScreenID));
 
 	if(ViewPortControl.isOpen())
 		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+
+	this.updateAdultAccess();
 }
 
 /******************************************************************************/
@@ -70,24 +70,15 @@ function PreferencesScreen()
 
 /******************************************************************************/
 
-/*boolean*/ PreferencesScreen.prototype.doPIN = function(/*string*/ adultPassword)
+/*boolean*/ PreferencesScreen.prototype.updateAdultAccess = function()
 {
 	var oSession = MainApp.getThe().getSession();
 
-	if(oSession.enableAdultAccess(adultPassword) == sc_Success)
-	{
-		//this.fContainerControl.setFocus(false);
+	var oControl = this.getControl(PreferencesScreen.AccessAdultValueID);
+	oControl.setText(oSession.CanAccessAdult ? "Enabled" : "Disabled");
 
-		var oControl = this.getControl(PreferencesScreen.AccessAdultValueID);
-		oControl.setText("Enabled");
-
-		oControl = this.getControl(PreferencesScreen.AccessAdultButtonID);
-		oControl.setEnabled(false);
-
-		return true;
-	}
-
-	return false;
+	oControl = this.getControl(PreferencesScreen.AccessAdultButtonID);
+	oControl.setEnabled(!oSession.CanAccessAdult && (oSession.IncludeAdult == ina_PromptPassword));
 }
 
 /******************************************************************************/

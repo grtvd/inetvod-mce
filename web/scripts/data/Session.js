@@ -434,40 +434,36 @@ function Session()
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.enableAdultAccess = function(/*string*/ password)
+/*void*/ Session.prototype.enableAdultAccess = function(/*object*/ callbackObj,
+	/*string*/ password)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var enableAdultAccessRqst;
 
 	enableAdultAccessRqst = EnableAdultAccessRqst.newInstance();
 	enableAdultAccessRqst.Password = CryptoAPI.newInstance().digest(password);
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.enableAdultAccessRequest(enableAdultAccessRqst);
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.enableAdultAccessResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(enableAdultAccessRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.CanAccessAdult = true;
-			return statusCode;
-		}
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.enableAdultAccessResponse = function(
+	/*EnableAdultAccessResp*/ enableAdultAccessResp, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.enableAdultAccess", e);
+		this.CanAccessAdult = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return statusCode;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

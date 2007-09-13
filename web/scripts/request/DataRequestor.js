@@ -164,16 +164,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*StatusCode*/ DataRequestor.prototype.enableAdultAccessRequest = function(
-	/*EnableAdultAccessRqst*/ enableAdultAccessRqst)
-{
-	var enableAdultAccessResp = this.sendRequest(enableAdultAccessRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
 /*ShowSearchResp*/ DataRequestor.prototype.showSearchRequest = function(
 	/*ShowSearchRqst*/ showSearchRqst)
 {
