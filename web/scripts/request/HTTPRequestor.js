@@ -10,9 +10,28 @@ HTTPRequestor.newInstance = function()
 
 /******************************************************************************/
 
-function HTTPRequestor(/*string*/ sessionData)
+function HTTPRequestor()
 {
-    this.fXmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+/******************************************************************************/
+
+/*XMLHttp*/ HTTPRequestor.prototype.createXMLHttp = function()
+{
+	var xmlHttp = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
+	{
+		xmlHttp = new XMLHttpRequest();
+		if(xmlHttp.overrideMimeType)
+			xmlHttp.overrideMimeType('text/xml');
+	}
+
+	return xmlHttp;
 }
 
 /******************************************************************************/
@@ -21,11 +40,72 @@ function HTTPRequestor(/*string*/ sessionData)
 {
 	var session = MainApp.getThe().getSession();
 
-	this.fXmlHttp.open("POST", session.getNetworkURL(), false);
-	this.fXmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
-	this.fXmlHttp.send(request);
+	var xmlHttp = this.createXMLHttp();
+	xmlHttp.open("POST", session.getNetworkURL(), false);
+	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
+	xmlHttp.send(request);
 
-	return this.fXmlHttp.responseText;
+	return xmlHttp.responseText;
+}
+
+/******************************************************************************/
+
+/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ request,
+	/*object*/ callbackObj)
+{
+	try
+	{
+		var session = MainApp.getThe().getSession();
+
+		var xmlHttp = this.createXMLHttp();
+		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
+		xmlHttp.open("POST", session.getNetworkURL(), true);
+		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
+		xmlHttp.send(request);
+	}
+	catch(e)
+	{
+		HTTPRequestor_callback(callbackObj, null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ function HTTPRequestor_checkRequest(/*XMLHttpRequest*/ xmlHttp,
+	/*object*/ callbackObj)
+{
+	if(xmlHttp.readyState == 4)
+	{
+		try
+		{
+			if(xmlHttp.status == 200)
+			{
+				HTTPRequestor_callback(callbackObj, xmlHttp.responseText);
+				return;
+			}
+		}
+		catch(e)
+		{
+		}
+
+		HTTPRequestor_callback(callbackObj, null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ function HTTPRequestor_callback(/*object*/ callbackObj, /*object*/ data)
+{
+	if(callbackObj && callbackObj.Callback)
+	{
+		try
+		{
+			callbackObj.Callback(data);
+		}
+		catch(e)
+		{
+		}
+	}
 }
 
 /******************************************************************************/
@@ -34,10 +114,11 @@ function HTTPRequestor(/*string*/ sessionData)
 {
 	var session = MainApp.getThe().getSession();
 
-	this.fXmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
-	this.fXmlHttp.send();
+	var xmlHttp = this.createXMLHttp();
+	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
+	xmlHttp.send();
 
-	return this.fXmlHttp.responseText;
+	return xmlHttp.responseText;
 }
 
 /******************************************************************************/

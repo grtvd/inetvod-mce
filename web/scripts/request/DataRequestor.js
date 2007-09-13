@@ -12,11 +12,14 @@ DataRequestor.newInstance = function(/*string*/ sessionData)
 
 function DataRequestor(/*string*/ sessionData)
 {
+	this.Callback = null;
+	this.CallerCallback = null;
+
 	this.fSessionData = null;
 	if(testStrHasLen(sessionData))
 		this.fSessionData = sessionData;
 
-	this.fStatusCode = sc_Success;
+	this.fStatusCode = sc_GeneralError;
 	this.fStatusMessage = null;
 }
 
@@ -77,6 +80,72 @@ function DataRequestor(/*string*/ sessionData)
 
 	var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
 	return this.parseHeader(requestable);
+}
+
+/******************************************************************************/
+
+/*void*/ DataRequestor.prototype.sendRequestAsync = function(/*Streamable*/ payload,
+	/*object*/ callbackObj)
+{
+	try
+	{
+		var httpRequestor = HTTPRequestor.newInstance();
+
+		// build the request header
+		var request = this.createHeader(payload);
+
+		// build request data
+		var dataWriter = new XmlDataWriter();
+		dataWriter.writeObject("INetVODPlayerRqst", request);
+
+		this.Callback = DataRequestor.prototype.parseResponse;
+		this.CallerCallback = callbackObj;
+		httpRequestor.sendRequestAsync(dataWriter.toString(), this);
+	}
+	catch(e)
+	{
+		this.callbackCaller(null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ DataRequestor.prototype.parseResponse = function(/*Streamable*/ response)
+{
+	try
+	{
+		var dataReader = new XmlDataReader(response);
+		var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+		this.callbackCaller(this.parseHeader(requestable));
+	}
+	catch(e)
+	{
+		this.callbackCaller(null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ DataRequestor.prototype.callbackCaller = function(/*object*/ data)
+{
+	if(isObject(this.CallerCallback) && isFunction(this.CallerCallback.Callback))
+	{
+		try
+		{
+			this.CallerCallback.Callback(data, this.fStatusCode, this.fStatusMessage);
+		}
+		catch(e)
+		{
+		}
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ DataRequestor.prototype.startRequest = function(/*object*/ request,
+	/*object*/ callbackObj)
+{
+	this.sendRequestAsync(request, callbackObj);
 }
 
 /******************************************************************************/
