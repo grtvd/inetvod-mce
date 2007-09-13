@@ -216,6 +216,9 @@ function Session()
 		this.fUserID = this.fDownloadServiceMgr.getUserLogonID();
 		this.fUserPassword = this.fDownloadServiceMgr.getUserPIN();
 		this.fRememberPassword = this.fDownloadServiceMgr.getRememberUserPIN();
+
+		if(!this.fRememberPassword)
+			this.fUserPassword = null;
 	}
 	else
 	{
@@ -280,45 +283,63 @@ function Session()
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.pingServer = function()
+/*void*/ Session.prototype.callbackCaller = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+	if(isObject(this.CallerCallback) && isFunction(this.CallerCallback.Callback))
 	{
-		var dataRequestor = DataRequestor.newInstance();
-		statusCode = dataRequestor.pingRequest();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
+		try
 		{
-			this.CanPingServer = true;
-			return this.CanPingServer;
+			this.CallerCallback.Callback(data, statusCode, statusMessage);
 		}
-
-		statusMessage = dataRequestor.getStatusMessage();
+		catch(e)
+		{
+		}
 	}
-	catch(e)
+	else if(isFunction(this.CallerCallback))
 	{
-		showError("Session.pingServer", e);
+		try
+		{
+			this.CallerCallback(data, statusCode, statusMessage);
+		}
+		catch(e)
+		{
+		}
 	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return this.CanPingServer;
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.signon = function(/*string*/ userID,
-	/*string*/ password, /*boolean*/ rememberPassword)
+/*void*/ Session.prototype.pingServer = function(/*object*/ callbackObj)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.pingServerResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance().startRequest(PingRqst.newInstance(), this);
+}
 
+/******************************************************************************/
+
+/*void*/ Session.prototype.pingServerResponse = function(/*PingResp*/ pingResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.CanPingServer = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.signon = function(/*object*/ callbackObj,
+	/*string*/ userID, /*string*/ password, /*boolean*/ rememberPassword)
+{
 	this.fIsUserLoggedOn = false;
 
 	if(testStrHasLen(userID))
@@ -341,40 +362,36 @@ function Session()
 	signonRqst.Password = this.fUserPassword;
 	signonRqst.Player = this.fPlayer;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.signonResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance().startRequest(signonRqst, this);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.signonResponse = function(/*SignonResp*/ signonResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		var dataRequestor = DataRequestor.newInstance();
-		signonResp = dataRequestor.signonRequest(signonRqst);
-		statusCode = dataRequestor.getStatusCode();
+		this.fSessionData = signonResp.SessionData;
+		this.fSessionExpires = signonResp.SessionExpires;
+		this.fMemberPrefs = signonResp.MemberState.MemberPrefs;
+		this.IncludeAdult = this.fMemberPrefs.IncludeAdult;
+		this.CanAccessAdult = (this.IncludeAdult == ina_Always);
+		this.fMemberProviderList = signonResp.MemberState.MemberProviderList;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fSessionData = signonResp.SessionData;
-			this.fSessionExpires = signonResp.SessionExpires;
-			this.fMemberPrefs = signonResp.MemberState.MemberPrefs;
-			this.IncludeAdult = this.fMemberPrefs.IncludeAdult;
-			this.CanAccessAdult = (this.IncludeAdult == ina_Always);
-			this.fMemberProviderList = signonResp.MemberState.MemberProviderList;
-
-			this.fIsUserLoggedOn = true;
-			return statusCode;
-		}
-		else if(statusCode == sc_InvalidUserIDPassword)
-			this.fUserPassword = null;
-
-		statusMessage = dataRequestor.getStatusMessage();
+		this.fIsUserLoggedOn = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	catch(e)
-	{
-		showError("Session.signon", e);
-	}
-	oWaitScreen.close();
+	else if(statusCode == sc_InvalidUserIDPassword)
+		this.fUserPassword = null;
 
 	this.showRequestError(statusMessage);
-
-	return statusCode;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/
@@ -386,40 +403,33 @@ function Session()
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.loadSystemData = function()
+/*void*/ Session.prototype.loadSystemData = function(/*object*/ callbackObj)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.loadSystemDataResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(SystemDataRqst.newInstance(), this);
+}
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+/******************************************************************************/
+
+/*void*/ Session.prototype.loadSystemDataResponse = function(/*SystemDataResp*/ systemDataResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		var systemDataResp = dataRequestor.systemDataRequest();
-		statusCode = dataRequestor.getStatusCode();
+		this.fProviderList = systemDataResp.ProviderList;
+		this.fCategoryList = systemDataResp.CategoryList;
+		this.fRatingList = systemDataResp.RatingList;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fProviderList = systemDataResp.ProviderList;
-			this.fCategoryList = systemDataResp.CategoryList;
-			this.fRatingList = systemDataResp.RatingList;
-
-			this.fIsSystemDataLoaded = true;
-			return this.fIsSystemDataLoaded;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
+		this.fIsSystemDataLoaded = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	catch(e)
-	{
-		showError("Session.loadSystemData", e);
-	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return this.fIsSystemDataLoaded;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

@@ -164,29 +164,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*StatusCode*/ DataRequestor.prototype.pingRequest = function()
-{
-	var pingResp = this.sendRequest(PingRqst.newInstance());
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*SignonResp*/ DataRequestor.prototype.signonRequest = function(/*SignonRqst*/ signonRqst)
-{
-	return this.sendRequest(signonRqst);
-}
-
-/******************************************************************************/
-
-/*SystemDataResp*/ DataRequestor.prototype.systemDataRequest = function()
-{
-	return this.sendRequest(SystemDataRqst.newInstance());
-}
-
-/******************************************************************************/
-
 /*StatusCode*/ DataRequestor.prototype.enableAdultAccessRequest = function(
 	/*EnableAdultAccessRqst*/ enableAdultAccessRqst)
 {

@@ -11,99 +11,79 @@ function StartupInitialCheck()
 	if(!oSession.checkInstall())
 	{
 		NotInstalledScreen.newInstance();
-		return false;
+		return;
 	}
 
 	/* connect to the server */
 	if(!oSession.CanPingServer)
-		if(!oSession.pingServer())
-			return false;
+	{
+		oSession.pingServer(StartupInitial_afterPingServer);
+	}
+	else
+		StartupInitial_afterPingServer(null, sc_Success, null);
+}
+
+/******************************************************************************/
+
+/*void*/ function StartupInitial_afterPingServer(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode != sc_Success)
+	{
+		StartScreen.newInstance();
+		return;
+	}
+
+	var oSession = MainApp.getThe().getSession();
 
 	if(!oSession.loadDataSettings())
 	{
 		SetupScreen.newInstance();
-		return true;
+		return;
 	}
 
 	if(!oSession.haveUserPassword())
 	{
 		AskPINScreen.newInstance();
-		return true;
+		return;
 	}
 
-	var statusCode = oSession.signon();
+	oSession.signon(StartupInitial_afterSignon);
+}
+
+/******************************************************************************/
+
+/*void*/ function StartupInitial_afterSignon(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
 	if(statusCode == sc_Success)
 	{
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-		else
-			oSession.clearLogonInfo();
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
 	}
 	else if(statusCode == sc_InvalidUserIDPassword)
 	{
 		AskPINScreen.newInstance();
-		return true;
 	}
-
-	return false;
 }
 
 /******************************************************************************/
 
-function StartupDoSignonPassword(/*string*/ userPassword)
+/*void*/ function StartupInitial_afterLoadSystemData(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
 {
 	var oSession = MainApp.getThe().getSession();
 
-	var statusCode = oSession.signon(null, userPassword);
 	if(statusCode == sc_Success)
 	{
-		oSession.saveDataSettings();	// for possible temp store of userPassword
-
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-
-		oSession.clearLogonInfo();
-		StartScreen.newInstance();
-		return true;
+		WelcomeScreen.newInstance();
 	}
-
-	return false;
-}
-
-/******************************************************************************/
-
-function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
-	/*boolean*/ rememberPassword)
-{
-	var oSession = MainApp.getThe().getSession();
-
-	var statusCode = oSession.signon(userID, userPassword, rememberPassword);
-	if(statusCode == sc_Success)
+	else
 	{
-		if(!oSession.saveDataSettings())
-		{
-			showMsg("An error occured while saving your settings.");
-			return false;
-		}
-
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-
 		oSession.clearLogonInfo();
 		StartScreen.newInstance();
-		return true;
 	}
-
-	return false;
 }
 
 /******************************************************************************/

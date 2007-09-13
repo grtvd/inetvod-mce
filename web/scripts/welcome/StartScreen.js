@@ -38,8 +38,8 @@ function StartScreen()
 
 /*void*/ StartScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(StartupInitialCheck())
-		this.close();
+	this.close();
+	StartupInitialCheck();
 }
 
 /******************************************************************************/

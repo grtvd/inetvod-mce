@@ -71,13 +71,29 @@ function AskPINScreen()
 		return;
 	}
 
-	if(StartupDoSignonPassword(data))
-	{
-		this.close();
-		return;
-	}
+	var oSession = MainApp.getThe().getSession();
+
+	this.Callback = AskPINScreen.prototype.afterSignon;
+	oSession.signon(this, null, data);
 
 	//Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ AskPINScreen.prototype.afterSignon = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		oSession.saveDataSettings();	// for possible temp store of userPassword
+
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
+	}
 }
 
 /******************************************************************************/

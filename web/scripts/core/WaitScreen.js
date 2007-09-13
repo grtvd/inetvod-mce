@@ -5,11 +5,17 @@
 
 WaitScreen.ScreenID = "Wait001";
 
+var gWaitScreen = null;
+var gWaitScreenCount = 0;
+
 /******************************************************************************/
 
 WaitScreen.newInstance = function()
 {
-	return new WaitScreen();
+	if(gWaitScreenCount == 0)
+		gWaitScreen = new WaitScreen();
+	gWaitScreenCount++;
+	return gWaitScreen;
 }
 
 /******************************************************************************/
@@ -30,9 +36,23 @@ function WaitScreen()
 
 /******************************************************************************/
 
+function WaitScreen_close()
+{
+	if(gWaitScreen)
+		gWaitScreen.close();
+}
+
+/******************************************************************************/
+
 /*void*/ WaitScreen.prototype.close = function()
 {
-	this.fContainerControl.show(false);
+	if(gWaitScreenCount > 0)
+		gWaitScreenCount--;
+	if(gWaitScreenCount == 0)
+	{
+		this.fContainerControl.show(false);
+		gWaitScreen = null;
+	}
 }
 
 /******************************************************************************/

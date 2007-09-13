@@ -145,9 +145,8 @@ function SetupScreen()
 		}
 		else if(controlID == AskSignedUpControl.AlreadyRegisteredID)
 		{
-			if(this.canPingServer())
-				if(this.closeStep(true))
-					this.openStep(ss_HaveLogonIDStep);
+			if(this.closeStep(true))
+				this.openStep(ss_HaveLogonIDStep);
 			return;
 		}
 	}
@@ -155,9 +154,8 @@ function SetupScreen()
 	{
 		if(controlID == NeedLogonIDControl.HaveLogonID)
 		{
-			if(this.canPingServer())
-				if(this.closeStep(true))
-					this.openStep(ss_HaveLogonIDStep);
+			if(this.closeStep(true))
+				this.openStep(ss_HaveLogonIDStep);
 			return;
 		}
 	}
@@ -175,30 +173,39 @@ function SetupScreen()
 
 /******************************************************************************/
 
-/*bool*/ SetupScreen.prototype.canPingServer = function()
-{
-	var oSession = MainApp.getThe().getSession();
-
-	if(!oSession.CanPingServer)
-		if(!oSession.pingServer())
-			return false;
-
-	return true;
-}
-
-/******************************************************************************/
-
 /*void*/ SetupScreen.prototype.doSetupSignon = function()
 {
 	var oContainerControl = this.getControl(this.fStepControlID);
 
 	if(oContainerControl.unloadData(this.fSetupData))
 	{
-		if(StartupDoSetupSignon(this.fSetupData.UserID, this.fSetupData.UserPassword,
-			this.fSetupData.RememberPassword))
+		var oSession = MainApp.getThe().getSession();
+
+		this.Callback = SetupScreen.prototype.doSetupAfterSignon;
+		oSession.signon(this, this.fSetupData.UserID, this.fSetupData.UserPassword,
+			this.fSetupData.RememberPassword);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ SetupScreen.prototype.doSetupAfterSignon = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		if(!oSession.saveDataSettings())
 		{
-			this.close();
+			showMsg("An error occured while saving your settings.");
+			SetupScreen.newInstance();
+			return;
 		}
+
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
 	}
 }
 
