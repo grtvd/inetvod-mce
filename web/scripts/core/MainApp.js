@@ -132,7 +132,7 @@ function MainApp()
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.BGColor = "#002651";
 	document.body.scroll = "no";
-	document.body.focus;
+	document.body.focus();
 
 	this.fMainTable = document.getElementById("MainTable");
 	this.fScreenTitle = document.getElementById("ScreenTitle");
