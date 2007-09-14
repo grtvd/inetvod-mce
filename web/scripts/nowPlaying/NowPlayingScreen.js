@@ -16,18 +16,21 @@ NowPlayingScreen.NoShowsTextID = "Show002_NoShowsText";
 
 NowPlayingScreen.newInstance = function()
 {
-	var oSession = MainApp.getThe().getSession();
-	var rentedShowSearchListRef = new Object();
+	MainApp.getThe().getSession().rentedShowList(NowPlayingScreen.afterRentedShowList);
+}
 
-	if(oSession.rentedShowList(rentedShowSearchListRef) == sc_Success)
+/******************************************************************************/
+
+/*void*/ NowPlayingScreen.afterRentedShowList = function(/*RentedShowSearchList*/ rentedShowSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
 	{
-		var oScreen = new NowPlayingScreen(rentedShowSearchListRef.value);
+		var oScreen = new NowPlayingScreen(rentedShowSearchList);
 		MainApp.getThe().openScreen(oScreen);
 		oScreen.focusControl(NowPlayingScreen.ShowListID, true);
 		return oScreen;
 	}
-
-	return null;
 }
 
 /******************************************************************************/
