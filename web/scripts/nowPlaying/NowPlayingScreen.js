@@ -125,11 +125,9 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	if(controlID == NowPlayingScreen.ShowListID)
 	{
 		oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
-		var rentedShow = oSession.rentedShow(
-			oRentedShowListControl.getFocusedItemValue().RentedShowID);
 
-		if(rentedShow != null)
-			RentedShowDetailScreen.newInstance(rentedShow);
+		this.Callback = NowPlayingScreen.prototype.afterRentedShow;
+		oSession.rentedShow(this, oRentedShowListControl.getFocusedItemValue().RentedShowID);
 		return;
 	}
 
@@ -147,6 +145,15 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ NowPlayingScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		RentedShowDetailScreen.newInstance(rentedShow);
 }
 
 /******************************************************************************/

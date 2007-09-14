@@ -200,14 +200,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*RentedShowResp*/ DataRequestor.prototype.rentedShowRequest = function(
-	/*RentedShowRqst*/ rentedShowRqst)
-{
-	return this.sendRequest(rentedShowRqst);
-}
-
-/******************************************************************************/
-
 /*WatchShowResp*/ DataRequestor.prototype.watchShowRequest = function(
 	/*WatchShowRqst*/ watchShowRqst)
 {

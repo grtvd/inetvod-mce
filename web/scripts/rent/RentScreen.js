@@ -348,11 +348,20 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 			oScreen.close();
 		this.close();
 
-		// fetch the rentedShow and open the
-		var rentedShow = oSession.rentedShow(oRentShowResp.RentedShowID);
-		if(rentedShow != null)
-			RentedShowDetailScreen.newInstance(rentedShow);
-		//this.fRentedShowID = oRentShowResp.RentedShowID;
+		// fetch the rentedShow and open the screen
+		this.Callback = RentScreen.prototype.afterRentedShow;
+		oSession.rentedShow(this, oRentShowResp.RentedShowID);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
+		RentedShowDetailScreen.newInstance(rentedShow);
 
 		// show message last, or will have focus problems
 		showMsg("This Show has been successfully added to your Now Playing list.");
