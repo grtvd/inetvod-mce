@@ -198,29 +198,8 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 			return;
 		}
 
-		var watchShowResp = oSession.watchShow(this.fRentedShow.RentedShowID);
-		if(watchShowResp == null)
-			return;
-
-		if(!ViewPortControl.canOpen())
-		{
-			showMsg("This player does not play audio or video content.");
-			return;
-		}
-
-		var oControl = this.findControl(ViewPortControl.ControlID);
-		if(oControl == null)
-		{
-			oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
-			this.newControl(oControl);
-		}
-
-		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
-		var localURL = oSession.getDownloadRentedShowPath(this.fRentedShow.RentedShowID);
-		if(testStrHasLen(localURL))
-			oControl.playMedia(localURL);
-		else
-			oControl.playMedia(watchShowResp.License.ShowURL);
+		this.Callback = RentedShowDetailScreen.prototype.afterWatchShow;
+		oSession.watchShow(this, this.fRentedShow.RentedShowID);
 		return;
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
@@ -239,6 +218,37 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowDetailScreen.prototype.afterWatchShow = function(/*License*/ license,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode != sc_Success)
+		return;
+
+	if(!ViewPortControl.canOpen())
+	{
+		showMsg("This player does not play audio or video content.");
+		return;
+	}
+
+	var oSession = MainApp.getThe().getSession();
+
+	var oControl = this.findControl(ViewPortControl.ControlID);
+	if(oControl == null)
+	{
+		oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
+		this.newControl(oControl);
+	}
+
+	this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
+	var localURL = oSession.getDownloadRentedShowPath(this.fRentedShow.RentedShowID);
+	if(testStrHasLen(localURL))
+		oControl.playMedia(localURL);
+	else
+		oControl.playMedia(license.ShowURL);
 }
 
 /******************************************************************************/

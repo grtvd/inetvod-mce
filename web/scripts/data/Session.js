@@ -807,39 +807,33 @@ function Session()
 
 /******************************************************************************/
 
-/*WatchShowResp*/ Session.prototype.watchShow = function(/*string*/ rentedShowID)
+/*void*/ Session.prototype.watchShow = function(/*object*/ callbackObj, /*string*/ rentedShowID)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var watchShowRqst;
-	var watchShowResp;
 
 	watchShowRqst = WatchShowRqst.newInstance();
 	watchShowRqst.RentedShowID = rentedShowID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		watchShowResp = dataRequestor.watchShowRequest(watchShowRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.watchShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(watchShowRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return watchShowResp;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.watchShowResponse = function(/*WatchShowResp*/ watchShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.watchShow", e);
+		this.callbackCaller(watchShowResp.License, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return null;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/
