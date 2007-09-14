@@ -55,13 +55,12 @@ function WelcomeScreen()
 	if(controlID == WelcomeScreen.FeaturedID)
 	{
 		var oSession = MainApp.getThe().getSession();
-		var showSearchListRef = new Object();
 
 		var oSearchData = new SearchData();
 		oSearchData.CategoryID = Category.FeaturedCategoryID;
 
-		if(oSession.showSearch(oSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.value);
+		this.Callback = WelcomeScreen.prototype.afterShowSearch;
+		oSession.showSearch(this, oSearchData);
 		return;
 	}
 
@@ -84,6 +83,15 @@ function WelcomeScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(data);
 }
 
 /******************************************************************************/

@@ -164,14 +164,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*ShowSearchResp*/ DataRequestor.prototype.showSearchRequest = function(
-	/*ShowSearchRqst*/ showSearchRqst)
-{
-	return this.sendRequest(showSearchRqst);
-}
-
-/******************************************************************************/
-
 /*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(
 	/*ShowDetailRqst*/ showDetailRqst)
 {

@@ -468,14 +468,10 @@ function Session()
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.showSearch = function(/*SearchData*/ searchData,
-	/*ShowSearchList reference*/ showSearchListRef)
+/*void*/ Session.prototype.showSearch = function(/*object*/ callbackObj,
+	/*SearchData*/ searchData)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var showSearchRqst;
-	var showSearchResp;
 
 	var providerIDList = new Array();
 	var categoryIDList = new Array();
@@ -494,34 +490,29 @@ function Session()
 	showSearchRqst.CategoryIDList = categoryIDList;
 	showSearchRqst.RatingIDList = ratingIDList;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.showSearchResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(showSearchRqst, this);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.showSearchResponse = function(/*ShowSearchResp*/ showSearchResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		showSearchResp = dataRequestor.showSearchRequest(showSearchRqst);
-		statusCode = dataRequestor.getStatusCode();
+		if(showSearchResp.ReachedMax)
+			showMsg("Over " + ShowSearchRqst.MaxResults + " shows were found.  Please try narrowing your search criteria.");
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(showSearchResp.ReachedMax)
-				showMsg("Over " + showSearchRqst.MaxResults + " shows were found.  Please try narrowing your search criteria.");
-
-			showSearchListRef.value = showSearchResp.ShowSearchList;
-			return true;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
+		this.callbackCaller(showSearchResp.ShowSearchList, statusCode, statusMessage);
+		return;
 	}
-	catch(e)
-	{
-		showError("Session.showSearch", e);
-	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return false;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

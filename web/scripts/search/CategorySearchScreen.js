@@ -53,13 +53,21 @@ function CategorySearchScreen()
 {
 	var oSession = MainApp.getThe().getSession();
 	var oTextListControl = this.getControl(CategorySearchScreen.CategoriesID);
-	var showSearchListRef = new Object();
 
 	var oSearchData = new SearchData();
 	oSearchData.CategoryID = oTextListControl.getFocusedItemValue().Name;
 
-	if(oSession.showSearch(oSearchData, showSearchListRef))
-		SearchResultsScreen.newInstance(showSearchListRef.value);
+	this.Callback = CategorySearchScreen.prototype.afterShowSearch;
+	oSession.showSearch(this, oSearchData);
+}
+
+/******************************************************************************/
+
+/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(data);
 }
 
 /******************************************************************************/

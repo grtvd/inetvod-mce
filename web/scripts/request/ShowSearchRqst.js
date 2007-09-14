@@ -3,6 +3,10 @@
 /******************************************************************************/
 /******************************************************************************/
 
+ShowSearchRqst.MaxResults = 1000;	//TODO: ???
+
+/******************************************************************************/
+
 ShowSearchRqst.newInstance = function()
 {
 	return new ShowSearchRqst();
@@ -18,7 +22,7 @@ function ShowSearchRqst()
 	this.CategoryIDList = null;
 	this.RatingIDList = null;
 
-	this.MaxResults = 1000;	//TODO: ???
+	this.MaxResults = ShowSearchRqst.MaxResults;
 }
 
 /******************************************************************************/

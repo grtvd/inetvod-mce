@@ -59,13 +59,11 @@ function SearchScreen()
 
 	if((controlID == SearchScreen.SearchID) || (controlID == SearchScreen.ShowNameID))
 	{
-		var showSearchListRef = new Object();
-
 		oControl = this.getControl(SearchScreen.ShowNameID);
 		this.fSearchData.Search = oControl.getText();
 
-		if(oSession.showSearch(this.fSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.value);
+		this.Callback = SearchScreen.prototype.afterShowSearch;
+		oSession.showSearch(this, this.fSearchData);
 		return;
 	}
 
@@ -88,6 +86,15 @@ function SearchScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ SearchScreen.prototype.afterShowSearch = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(data);
 }
 
 /******************************************************************************/
