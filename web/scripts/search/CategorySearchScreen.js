@@ -63,7 +63,7 @@ function CategorySearchScreen()
 
 /******************************************************************************/
 
-/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*object*/ showSearchList,
+/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)

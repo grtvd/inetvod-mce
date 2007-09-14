@@ -115,7 +115,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 /******************************************************************************/
 
-/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*object*/ showDetail,
+/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*ShowDetail*/ showDetail,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)

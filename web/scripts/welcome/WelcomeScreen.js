@@ -87,7 +87,7 @@ function WelcomeScreen()
 
 /******************************************************************************/
 
-/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*object*/ showSearchList,
+/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)

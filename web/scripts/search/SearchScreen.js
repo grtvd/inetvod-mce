@@ -90,7 +90,7 @@ function SearchScreen()
 
 /******************************************************************************/
 
-/*void*/ SearchScreen.prototype.afterShowSearch = function(/*object*/ showSearchList,
+/*void*/ SearchScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)
