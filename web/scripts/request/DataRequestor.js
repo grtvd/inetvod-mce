@@ -164,14 +164,6 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(
-	/*ShowDetailRqst*/ showDetailRqst)
-{
-	return this.sendRequest(showDetailRqst);
-}
-
-/******************************************************************************/
-
 /*StatusCode*/ DataRequestor.prototype.providerEnrollRequest = function(
 	/*ProviderEnrollRqst*/ providerEnrollRqst)
 {

@@ -517,39 +517,34 @@ function Session()
 
 /******************************************************************************/
 
-/*ShowDetail*/ Session.prototype.showDetail = function(/*string*/ showID)
+/*ShowDetail*/ Session.prototype.showDetail = function(/*object*/ callbackObj,
+	/*string*/ showID)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var showDetailRqst;
-	var showDetailResp;
 
 	showDetailRqst = ShowDetailRqst.newInstance();
 	showDetailRqst.ShowID = showID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		showDetailResp = dataRequestor.showDetailRequest(showDetailRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.showDetailResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(showDetailRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return showDetailResp.ShowDetail;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.showDetailResponse = function(/*ShowDetailResp*/ showDetailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.showDetail", e);
+		this.callbackCaller(showDetailResp.ShowDetail, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return null;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

@@ -89,10 +89,8 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
 		var oShowSearch = oShowSearchListControl.getFocusedItemValue();
 
-		var oShowDetail = oSession.showDetail(oShowSearch.ShowID);
-		if(oShowDetail != null)
-			SearchDetailScreen.newInstance(oShowDetail);
-
+		this.Callback = SearchResultsScreen.prototype.afterShowDetail;
+		oSession.showDetail(this, oShowSearch.ShowID);
 		return;
 	}
 
@@ -113,6 +111,15 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchDetailScreen.newInstance(data);
 }
 
 /******************************************************************************/
