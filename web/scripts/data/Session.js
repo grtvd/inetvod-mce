@@ -838,39 +838,33 @@ function Session()
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.releaseShow = function(/*string*/ rentedShowID)
+/*void*/ Session.prototype.releaseShow = function(/*object*/ callbackObj, /*string*/ rentedShowID)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var releaseShowRqst;
-	var releaseShowResp;
 
 	releaseShowRqst = ReleaseShowRqst.newInstance();
 	releaseShowRqst.RentedShowID = rentedShowID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		releaseShowResp = dataRequestor.releaseShowRequest(releaseShowRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.releaseShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(releaseShowRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return statusCode;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.releaseShowResponse = function(/*WatchShowResp*/ releaseShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.releaseShow", e);
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return statusCode;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

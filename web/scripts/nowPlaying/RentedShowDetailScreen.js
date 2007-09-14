@@ -204,16 +204,8 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
 	{
-		var statusCode = oSession.releaseShow(this.fRentedShow.RentedShowID);
-
-		if(statusCode == sc_Success)
-		{
-			this.close();
-
-			var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
-			if(oNowPlayingScreen != null)
-				oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);
-		}
+		this.Callback = RentedShowDetailScreen.prototype.afterReleaseShow;
+		oSession.releaseShow(this, this.fRentedShow.RentedShowID);
 		return;
 	}
 
@@ -249,6 +241,21 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 		oControl.playMedia(localURL);
 	else
 		oControl.playMedia(license.ShowURL);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowDetailScreen.prototype.afterReleaseShow = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
+		if(oNowPlayingScreen != null)
+			oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);
+	}
 }
 
 /******************************************************************************/
