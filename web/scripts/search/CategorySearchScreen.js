@@ -63,11 +63,11 @@ function CategorySearchScreen()
 
 /******************************************************************************/
 
-/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*object*/ data, /*StatusCode*/ statusCode,
-	/*string*/ statusMessage)
+/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*object*/ showSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)
-		SearchResultsScreen.newInstance(data);
+		SearchResultsScreen.newInstance(showSearchList);
 }
 
 /******************************************************************************/

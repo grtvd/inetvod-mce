@@ -115,11 +115,11 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 /******************************************************************************/
 
-/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*object*/ data, /*StatusCode*/ statusCode,
-	/*string*/ statusMessage)
+/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*object*/ showDetail,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)
-		SearchDetailScreen.newInstance(data);
+		SearchDetailScreen.newInstance(showDetail);
 }
 
 /******************************************************************************/

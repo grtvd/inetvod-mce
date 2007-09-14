@@ -87,11 +87,11 @@ function WelcomeScreen()
 
 /******************************************************************************/
 
-/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*object*/ data, /*StatusCode*/ statusCode,
-	/*string*/ statusMessage)
+/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*object*/ showSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	if(statusCode == sc_Success)
-		SearchResultsScreen.newInstance(data);
+		SearchResultsScreen.newInstance(showSearchList);
 }
 
 /******************************************************************************/
