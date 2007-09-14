@@ -337,7 +337,7 @@ function Session()
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.signon = function(/*object*/ callbackObj,
+/*void*/ Session.prototype.signon = function(/*object*/ callbackObj,
 	/*string*/ userID, /*string*/ password, /*boolean*/ rememberPassword)
 {
 	this.fIsUserLoggedOn = false;
@@ -517,7 +517,7 @@ function Session()
 
 /******************************************************************************/
 
-/*ShowDetail*/ Session.prototype.showDetail = function(/*object*/ callbackObj,
+/*void*/ Session.prototype.showDetail = function(/*object*/ callbackObj,
 	/*string*/ showID)
 {
 	var showDetailRqst;
