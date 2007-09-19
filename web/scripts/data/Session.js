@@ -672,46 +672,38 @@ function Session()
 
 /******************************************************************************/
 
-/*RentShowResp*/ Session.prototype.rentShow = function(/*string*/ showID,
+/*void*/ Session.prototype.rentShow = function(/*object*/ callbackObj, /*string*/ showID,
 	/*string*/ providerID, /*ShowCost*/ oApprovedCost)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var rentShowRqst;
-	var rentShowResp;
 
 	rentShowRqst = RentShowRqst.newInstance();
 	rentShowRqst.ShowID = showID;
 	rentShowRqst.ProviderID = providerID;
 	rentShowRqst.ApprovedCost = oApprovedCost;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		rentShowResp = dataRequestor.rentShowRequest(rentShowRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.rentShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(rentShowRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(this.fDownloadServiceMgr != null)
-				this.fDownloadServiceMgr.processNow();
-			return rentShowResp;
-		}
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.rentShowResponse = function(/*RentShowResp*/ rentShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.rentShow", e);
+		if(this.fDownloadServiceMgr != null)
+			this.fDownloadServiceMgr.processNow();
+		this.callbackCaller(rentShowResp, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return null;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

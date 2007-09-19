@@ -336,18 +336,21 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 /*void*/ RentScreen.prototype.rentShow = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var oRentShowResp;
 
-	oRentShowResp = oSession.rentShow(this.fRentData.getShowID(),
+	this.Callback = RentScreen.prototype.afterRentShow;
+	oSession.rentShow(this, this.fRentData.getShowID(),
 		this.fRentData.getProviderID(), this.fRentData.ShowCost);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterRentShow = function(/*RentShowResp*/ oRentShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
 	if(oRentShowResp != null)
 	{
-		// close the SearchDetailScreen and this screen
-		var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
-		if(oScreen != null)
-			oScreen.close();
-		this.close();
-
 		// fetch the rentedShow and open the screen
 		this.Callback = RentScreen.prototype.afterRentedShow;
 		oSession.rentedShow(this, oRentShowResp.RentedShowID);
@@ -359,13 +362,19 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 /*void*/ RentScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
+	// close the SearchDetailScreen and this screen
+	var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
+	if(oScreen != null)
+		oScreen.close();
+	this.close();
+
 	if(statusCode == sc_Success)
 	{
 		RentedShowDetailScreen.newInstance(rentedShow);
-
-		// show message last, or will have focus problems
-		showMsg("This Show has been successfully added to your Now Playing list.");
 	}
+
+	// show message last, or will have focus problems
+	showMsg("This Show has been successfully added to your Now Playing list.");
 }
 
 /******************************************************************************/
