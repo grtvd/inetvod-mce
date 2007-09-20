@@ -46,6 +46,8 @@ function Session()
 	this.fProviderList = null;
 	this.fCategoryList = null;
 	this.fRatingList = null;
+
+	this.fLastProviderID = null;
 }
 
 /******************************************************************************/
@@ -549,50 +551,44 @@ function Session()
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.providerEnroll = function(/*string*/ providerID)
+/*void*/ Session.prototype.providerEnroll = function(/*object*/ callbackObj, /*string*/ providerID)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var providerEnrollRqst;
 
 	providerEnrollRqst = ProviderEnrollRqst.newInstance();
 	providerEnrollRqst.ProviderID = providerID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.providerEnrollRequest(providerEnrollRqst);
+	this.fLastProviderID = providerID;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
-			return statusCode;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.providerEnroll", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.providerEnrollResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(providerEnrollRqst, this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.setProvider = function(/*string*/ providerID,
-	/*string*/ userID, /*string*/ password)
+/*void*/ Session.prototype.providerEnrollResponse = function(/*ProviderEnrollResp*/ providerEnrollResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.fMemberProviderList.push(MemberProvider.newInstance(this.fLastProviderID));
 
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.setProvider = function(/*object*/ callbackObj,
+	/*string*/ providerID, /*string*/ userID, /*string*/ password)
+{
 	var setProviderRqst;
 
 	//TODO: encrypt UserID and Password
@@ -602,72 +598,65 @@ function Session()
 	setProviderRqst.UserID = userID;
 	setProviderRqst.Password = password;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.setProviderRequest(setProviderRqst);
+	this.fLastProviderID = providerID;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(providerID)) == null)
-				this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
-			return statusCode;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.setProvider", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.setProviderResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(setProviderRqst, this);
 }
 
 /******************************************************************************/
 
-/*CheckShowAvailResp*/ Session.prototype.checkShowAvail = function(/*string*/ showID,
-	/*string*/ providerID, /*ShowCost*/ showCost, /*StatusCode reference*/ statusCodeRef)
+/*void*/ Session.prototype.setProviderResponse = function(/*SetProviderResp*/ setProviderResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		if(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(this.fLastProviderID)) == null)
+			this.fMemberProviderList.push(MemberProvider.newInstance(this.fLastProviderID));
 
-	statusCodeRef.value = sc_GeneralError;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.checkShowAvail = function(/*object*/ callbackObj,
+	/*string*/ showID, /*string*/ providerID, /*ShowCost*/ showCost)
+{
 	var checkShowAvailRqst;
-	var checkShowAvailResp;
 
 	checkShowAvailRqst = CheckShowAvailRqst.newInstance();
 	checkShowAvailRqst.ShowID = showID;
 	checkShowAvailRqst.ProviderID = providerID;
 	checkShowAvailRqst.ShowCost = showCost;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		checkShowAvailResp = dataRequestor.checkShowAvailRequest(checkShowAvailRqst);
-		statusCodeRef.value = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.checkShowAvailResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(checkShowAvailRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCodeRef.value == sc_Success)
-			return checkShowAvailResp;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.checkShowAvailResponse = function(/*CheckShowAvailResp*/ checkShowAvailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.checkShowAvail", e);
+		this.callbackCaller(checkShowAvailResp, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return null;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/

@@ -163,32 +163,4 @@ function DataRequestor(/*string*/ sessionData)
 }
 
 /******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.providerEnrollRequest = function(
-	/*ProviderEnrollRqst*/ providerEnrollRqst)
-{
-	var providerEnrollResp = this.sendRequest(providerEnrollRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.setProviderRequest = function(
-	/*SetProviderRqst*/ setProviderRqst)
-{
-	var setProviderResp = this.sendRequest(setProviderRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*CheckShowAvailResp*/ DataRequestor.prototype.checkShowAvailRequest = function(
-	/*CheckShowAvailRqst*/ checkShowAvailRqst)
-{
-	return this.sendRequest(checkShowAvailRqst);
-}
-
-/******************************************************************************/
 /******************************************************************************/

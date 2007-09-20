@@ -40,9 +40,9 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 
-	this.fStepControlID = AskHaveProviderControl.ControlID;
+	this.fStepControlID = null;
 	this.fRentData = new RentData(oShowDetail);
-	this.fCurStep = ss_AskHaveProviderStep;
+	this.fCurStep = ss_Undefined;
 }
 
 /******************************************************************************/
@@ -66,9 +66,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	else
 	{
 		var nextStep = this.allowAnonymous();
-		if (nextStep == ss_Undefined)
-			this.close();
-		else
+		if (nextStep != ss_Undefined)
 			this.openStep(nextStep);
 	}
 }
@@ -200,9 +198,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 			if(this.closeStep(true))
 			{
 				var nextStep = this.allowAnonymous();
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
+				if (nextStep != ss_Undefined)
 					this.openStep(nextStep);
 			}
 			return;
@@ -228,21 +224,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(controlID == NeedProviderControl.CreateMembershipID)
 		{
 			if(this.closeStep(true))
-			{
-				var nextStep = ss_Undefined;
-
-				if(this.providerEnroll())
-				{
-					nextStep = this.checkShowAvail();
-				}
-				else
-					nextStep = ss_NeedProviderStep;
-
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
-					this.openStep(nextStep);
-			}
+				this.providerEnroll();
 			return;
 		}
 	}
@@ -251,19 +233,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(controlID == HaveProviderControl.ContinueID)
 		{
 			if(this.closeStep(true))
-			{
-				var nextStep = ss_Undefined;
-
-				if(this.setProvider())
-					nextStep = this.checkShowAvail();
-				else
-					nextStep = ss_HaveProviderStep;
-
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
-					this.openStep(nextStep);
-			}
+				this.setProvider();
 
 			return;
 		}
@@ -298,7 +268,8 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	if((this.fRentData.ShowCost.ShowCostType == sct_Free) ||
 		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
 	{
-		return this.checkShowAvail();
+		this.checkShowAvail();
+		return ss_Undefined;
 	}
 	else
 		return ss_AskHaveProviderStep;
@@ -306,29 +277,43 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /******************************************************************************/
 
-/*RentStep*/ RentScreen.prototype.checkShowAvail = function()
+/*void*/ RentScreen.prototype.checkShowAvail = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var oCheckShowAvailResp;
-	var statusCodeRef = new Object();
-	var statusCode;
 
-	oCheckShowAvailResp = oSession.checkShowAvail(this.fRentData.getShowID(),
-		this.fRentData.getProviderID(), this.fRentData.ShowCost, statusCodeRef);
-	statusCode = statusCodeRef.value;
+	this.Callback = RentScreen.prototype.afterCheckShowAvail;
+	oSession.checkShowAvail(this, this.fRentData.getShowID(), this.fRentData.getProviderID(),
+		this.fRentData.ShowCost);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterCheckShowAvail = function(/*CheckShowAvailResp*/ oCheckShowAvailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
 	if(statusCode == sc_InvalidProviderUserIDPassword)
-		return ss_HaveProviderStep;
+	{
+		this.openStep(ss_HaveProviderStep);
+		return;
+	}
 	if(statusCode != sc_Success)
-		return ss_Undefined;
+	{
+		this.close();
+		return;
+	}
 
 	var oShowCost = oCheckShowAvailResp.ShowCost;
 
 	this.fRentData.ShowCost = oShowCost;
 	if(oShowCost.ShowCostType == sct_PayPerView)
-		return ss_ConfirmChargeStep;
+	{
+		this.openStep(ss_ConfirmChargeStep);
+		return;
+	}
 
 	this.rentShow();
-	return ss_Undefined;
 }
 
 /******************************************************************************/
@@ -349,6 +334,12 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 {
 	var oSession = MainApp.getThe().getSession();
 
+	// close the SearchDetailScreen and this screen
+	var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
+	if(oScreen != null)
+		oScreen.close();
+	this.close();
+
 	if(oRentShowResp != null)
 	{
 		// fetch the rentedShow and open the screen
@@ -362,12 +353,6 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 /*void*/ RentScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	// close the SearchDetailScreen and this screen
-	var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
-	if(oScreen != null)
-		oScreen.close();
-	this.close();
-
 	if(statusCode == sc_Success)
 	{
 		RentedShowDetailScreen.newInstance(rentedShow);
@@ -379,26 +364,43 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /******************************************************************************/
 
-/*boolean*/ RentScreen.prototype.setProvider = function()
+/*void*/ RentScreen.prototype.setProvider = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var statusCode;
 
-	statusCode = oSession.setProvider(this.fRentData.getProviderID(),
+	this.Callback = RentScreen.prototype.afterSetProvider;
+	oSession.setProvider(this, this.fRentData.getProviderID(),
 		this.fRentData.UserID, this.fRentData.Password);
-
-	return (statusCode == sc_Success);
 }
 
 /******************************************************************************/
 
-/*boolean*/ RentScreen.prototype.providerEnroll = function()
+/*void*/ RentScreen.prototype.afterSetProvider = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		this.checkShowAvail();
+	else
+		this.openStep(ss_HaveProviderStep);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.providerEnroll = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var statusCode;
-	var tempStr;
 
-	statusCode = oSession.providerEnroll(this.fRentData.getProviderID());
+	this.Callback = RentScreen.prototype.afterProviderEnroll;
+	oSession.providerEnroll(this, this.fRentData.getProviderID());
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterProviderEnroll = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+	var tempStr;
 
 	if(statusCode == sc_Success)
 	{
@@ -407,10 +409,11 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		tempStr += "'s membership.";
 
 		showMsg(tempStr);
-		return true;
-	}
 
-	return false;
+		this.checkShowAvail();
+	}
+	else
+		this.openStep(ss_NeedProviderStep);
 }
 
 /******************************************************************************/
