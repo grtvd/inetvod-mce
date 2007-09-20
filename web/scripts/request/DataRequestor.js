@@ -149,18 +149,4 @@ function DataRequestor(/*string*/ sessionData)
 }
 
 /******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.getStatusCode = function()
-{
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*string*/ DataRequestor.prototype.getStatusMessage = function()
-{
-	return this.fStatusMessage;
-}
-
-/******************************************************************************/
 /******************************************************************************/
