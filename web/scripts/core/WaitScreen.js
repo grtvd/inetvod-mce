@@ -30,13 +30,27 @@ function WaitScreen()
 	var mainTable = document.getElementById("MainTable");
 	this.fContainerControl.moveTo(mainTable.offsetLeft, mainTable.offsetTop);
 
-	this.fContainerControl.show(true);
-	forceRedraw();
+	setTimeout('WaitScreen_show()', 500);	//show after 1 second
 }
 
 /******************************************************************************/
 
-function WaitScreen_close()
+/*boolean*/ function WaitScreen_isOpen()
+{
+	return (gWaitScreen != null);
+}
+
+/******************************************************************************/
+
+/*void*/ function WaitScreen_show()
+{
+	if(gWaitScreen)
+		gWaitScreen.fContainerControl.show(true);
+}
+
+/******************************************************************************/
+
+/*void*/ function WaitScreen_close()
 {
 	if(gWaitScreen)
 		gWaitScreen.close();

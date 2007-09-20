@@ -443,7 +443,8 @@ function MainAppOnRemoteEvent(keyCode)
 {
 	try
 	{
-		return MainApp.getThe().key(MainAppMapKey(keyCode));
+		if(!WaitScreen_isOpen())
+			return MainApp.getThe().key(MainAppMapKey(keyCode));
 	}
 	catch(e)
 	{
@@ -498,9 +499,12 @@ function MainAppOnMouseClick(obj)
 {
 	try
 	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().mouseClick(obj.id);
+		if(!WaitScreen_isOpen())
+		{
+			obj = findObjectWithID(obj);
+			if(obj != null)
+				MainApp.getThe().mouseClick(obj.id);
+		}
 	}
 	catch(e)
 	{
