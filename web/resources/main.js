@@ -1,79 +1,3 @@
-/* ButtonControl */
-
-/******************************************************************************/
-/******************************************************************************/
-
-ButtonControl.prototype = new Control();
-ButtonControl.prototype.constructor = ButtonControl;
-
-/******************************************************************************/
-
-function ButtonControl(/*string*/ controlID, /*string*/ screenID)
-{
-	this.ControlID = controlID;
-	this.ScreenID = screenID;
-	this.fUIObj = document.getElementById(controlID);
-	if(this.fUIObj == null)
-		throw "ButtonControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
-	this.fFocused = false;
-
-	this.setFocus(false);
-}
-
-/******************************************************************************/
-
-/*void*/ ButtonControl.prototype.setText = function(/*string*/ text)
-{
-	this.fUIObj.innerHTML = text;
-}
-
-/******************************************************************************/
-
-/*void*/ ButtonControl.prototype.setEnabled = function(/*boolean*/ enable)
-{
-	this.fEnabled = enable;
-	checkClassName(this.fUIObj, this.fEnabled ? (this.fFocused ? 'hilite' : 'normal') : 'disabled');
-}
-
-/******************************************************************************/
-
-/*void*/ ButtonControl.prototype.setFocus = function(/*boolean*/ set)
-{
-	var wasFocused = this.fFocused;
-	checkClassName(this.fUIObj, set ? 'hilite' : 'normal');
-	this.fFocused = set;
-	if(set)
-	{
-		if(document.activeElement.id != this.fUIObj.id)
-			this.fUIObj.focus();
-
-		if(!wasFocused)
-			this.getScreen().onFocus(this.ControlID);
-	}
-}
-
-/******************************************************************************/
-
-/*boolean*/ ButtonControl.prototype.key = function(/*int*/ key)
-{
-	if(key == ek_Select)
-	{
-		this.getScreen().onButton(this.ControlID);
-		return true;
-	}
-
-	return Control.prototype.key.call(this, key);
-}
-
-/******************************************************************************/
-
-/*void*/ ButtonControl.prototype.mouseClick = function(/*string*/ controlID)
-{
-	this.getScreen().onButton(this.ControlID);
-}
-
-/******************************************************************************/
-/******************************************************************************/
 /* Common.js */
 
 /******************************************************************************/
@@ -384,16 +308,6 @@ function checkClassName(obj, classNameExt)
 		if(oObj.style.display != newDisplay)
 			oObj.style.display = newDisplay;
 
-}
-
-/******************************************************************************/
-/******************************************************************************/
-
-function forceRedraw(pauseMills)
-{
-	var val = "javascript:document.writeln('<" + "script" + ">setTimeout(\\\'window.close()\\\', "
-		+ ((pauseMills) ? pauseMills : 1) + ");</" + "script" + ">')";
-	window.showModalDialog(val);
 }
 
 /******************************************************************************/
@@ -980,23 +894,17 @@ function onRemoteEvent(keyCode)
 	if((keyCode >= 48) && (keyCode <= 57))
 		return true;
 
-	return MainAppOnRemoteEvent(keyCode);
+	return !MainAppOnRemoteEvent(keyCode);
 }
 
 /******************************************************************************/
 
 function onScaleEvent(vScale)
 {
-	try
-	{
-		if(!window.external.MediaCenter)
-			document.getElementById("ScaleText").innerHTML = vScale;
+	if(!window.external.MediaCenter)
+		document.getElementById("ScaleText").innerHTML = vScale;
+	if(isString(document.body.style.zoom))
 		document.body.style.zoom = vScale;
-	}
-	catch(e)
-	{
-		// ignore error
-	}
 }
 
 /******************************************************************************/
@@ -1067,10 +975,15 @@ function MainApp()
 	this.fInit = true;
 	//DebugOn(true);
 
+	document.onkeyup = MainAppOnKeyUp;
+	document.onkeydown = MainAppOnKeyDown;
+	document.onkeypress = MainAppOnKeyPress;
+	window.onresize = MainAppOnResize;
+
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.BGColor = "#002651";
 	document.body.scroll = "no";
-	document.body.focus;
+	document.body.focus();
 
 	this.fMainTable = document.getElementById("MainTable");
 	this.fScreenTitle = document.getElementById("ScreenTitle");
@@ -1219,7 +1132,7 @@ function MainApp()
 	// toggle on scaling on and off
 	var newScale = "";
 
-	if(document.body.style.zoom.length == 0)
+	if(isString(document.body.style.zoom) && (document.body.style.zoom.length == 0))
 	{
 		var horzScale = document.body.getBoundingClientRect().right / 1024;
 		var vertScale = document.body.getBoundingClientRect().bottom / 768;
@@ -1354,14 +1267,14 @@ function MainAppOnKeyDown()
 			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
 			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
 		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
+	return true;
 }
 
 /******************************************************************************/
 
 function MainAppOnKeyUp()
 {
-	return false;
+	return true;
 }
 
 /******************************************************************************/
@@ -1372,7 +1285,7 @@ function MainAppOnKeyPress()
 			&& (event.keyCode != 9)
 			&& (event.keyCode != 13))
 		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
+	return true;
 }
 
 /******************************************************************************/
@@ -1381,14 +1294,15 @@ function MainAppOnRemoteEvent(keyCode)
 {
 	try
 	{
-		return MainApp.getThe().key(MainAppMapKey(keyCode));
+		if(!WaitScreen_isOpen())
+			return !MainApp.getThe().key(MainAppMapKey(keyCode));
 	}
 	catch(e)
 	{
 		showError("MainAppOnRemoteEvent", e);
 	}
 
-	return false;
+	return true;
 }
 
 /******************************************************************************/
@@ -1436,9 +1350,12 @@ function MainAppOnMouseClick(obj)
 {
 	try
 	{
-		obj = findObjectWithID(obj);
-		if(obj != null)
-			MainApp.getThe().mouseClick(obj.id);
+		if(!WaitScreen_isOpen())
+		{
+			obj = findObjectWithID(obj);
+			if(obj != null)
+				MainApp.getThe().mouseClick(obj.id);
+		}
 	}
 	catch(e)
 	{
@@ -3585,10 +3502,9 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 /******************************************************************************/
 /******************************************************************************/
 
-function XmlDataReader(xml)
+function XmlDataReader(xmlDocument)
 {
-	this.fDocument = new ActiveXObject("Msxml2.DOMDocument.3.0");
-	this.fDocument.loadXML(xml);
+	this.fDocument = xmlDocument;
 	this.fCurNodeList = new Array();
 	this.fCurNodeList.push(this.fDocument);
 }
@@ -3989,11 +3905,17 @@ function XmlDataWriter()
 
 WaitScreen.ScreenID = "Wait001";
 
+var gWaitScreen = null;
+var gWaitScreenCount = 0;
+
 /******************************************************************************/
 
 WaitScreen.newInstance = function()
 {
-	return new WaitScreen();
+	if(gWaitScreenCount == 0)
+		gWaitScreen = new WaitScreen();
+	gWaitScreenCount++;
+	return gWaitScreen;
 }
 
 /******************************************************************************/
@@ -4008,15 +3930,43 @@ function WaitScreen()
 	var mainTable = document.getElementById("MainTable");
 	this.fContainerControl.moveTo(mainTable.offsetLeft, mainTable.offsetTop);
 
-	this.fContainerControl.show(true);
-	forceRedraw();
+	setTimeout('WaitScreen_show()', 500);	//show after 1 second
+}
+
+/******************************************************************************/
+
+/*boolean*/ function WaitScreen_isOpen()
+{
+	return (gWaitScreen != null);
+}
+
+/******************************************************************************/
+
+/*void*/ function WaitScreen_show()
+{
+	if(gWaitScreen)
+		gWaitScreen.fContainerControl.show(true);
+}
+
+/******************************************************************************/
+
+/*void*/ function WaitScreen_close()
+{
+	if(gWaitScreen)
+		gWaitScreen.close();
 }
 
 /******************************************************************************/
 
 /*void*/ WaitScreen.prototype.close = function()
 {
-	this.fContainerControl.show(false);
+	if(gWaitScreenCount > 0)
+		gWaitScreenCount--;
+	if(gWaitScreenCount == 0)
+	{
+		this.fContainerControl.show(false);
+		gWaitScreen = null;
+	}
 }
 
 /******************************************************************************/
@@ -4407,6 +4357,8 @@ function Session()
 	this.fProviderList = null;
 	this.fCategoryList = null;
 	this.fRatingList = null;
+
+	this.fLastProviderID = null;
 }
 
 /******************************************************************************/
@@ -4577,6 +4529,9 @@ function Session()
 		this.fUserID = this.fDownloadServiceMgr.getUserLogonID();
 		this.fUserPassword = this.fDownloadServiceMgr.getUserPIN();
 		this.fRememberPassword = this.fDownloadServiceMgr.getRememberUserPIN();
+
+		if(!this.fRememberPassword)
+			this.fUserPassword = null;
 	}
 	else
 	{
@@ -4641,45 +4596,63 @@ function Session()
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.pingServer = function()
+/*void*/ Session.prototype.callbackCaller = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+	if(isObject(this.CallerCallback) && isFunction(this.CallerCallback.Callback))
 	{
-		var dataRequestor = DataRequestor.newInstance();
-		statusCode = dataRequestor.pingRequest();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
+		try
 		{
-			this.CanPingServer = true;
-			return this.CanPingServer;
+			this.CallerCallback.Callback(data, statusCode, statusMessage);
 		}
-
-		statusMessage = dataRequestor.getStatusMessage();
+		catch(e)
+		{
+		}
 	}
-	catch(e)
+	else if(isFunction(this.CallerCallback))
 	{
-		showError("Session.pingServer", e);
+		try
+		{
+			this.CallerCallback(data, statusCode, statusMessage);
+		}
+		catch(e)
+		{
+		}
 	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return this.CanPingServer;
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.signon = function(/*string*/ userID,
-	/*string*/ password, /*boolean*/ rememberPassword)
+/*void*/ Session.prototype.pingServer = function(/*object*/ callbackObj)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.pingServerResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance().startRequest(PingRqst.newInstance(), this);
+}
 
+/******************************************************************************/
+
+/*void*/ Session.prototype.pingServerResponse = function(/*PingResp*/ pingResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.CanPingServer = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.signon = function(/*object*/ callbackObj,
+	/*string*/ userID, /*string*/ password, /*boolean*/ rememberPassword)
+{
 	this.fIsUserLoggedOn = false;
 
 	if(testStrHasLen(userID))
@@ -4702,40 +4675,36 @@ function Session()
 	signonRqst.Password = this.fUserPassword;
 	signonRqst.Player = this.fPlayer;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.signonResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance().startRequest(signonRqst, this);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.signonResponse = function(/*SignonResp*/ signonResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		var dataRequestor = DataRequestor.newInstance();
-		signonResp = dataRequestor.signonRequest(signonRqst);
-		statusCode = dataRequestor.getStatusCode();
+		this.fSessionData = signonResp.SessionData;
+		this.fSessionExpires = signonResp.SessionExpires;
+		this.fMemberPrefs = signonResp.MemberState.MemberPrefs;
+		this.IncludeAdult = this.fMemberPrefs.IncludeAdult;
+		this.CanAccessAdult = (this.IncludeAdult == ina_Always);
+		this.fMemberProviderList = signonResp.MemberState.MemberProviderList;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fSessionData = signonResp.SessionData;
-			this.fSessionExpires = signonResp.SessionExpires;
-			this.fMemberPrefs = signonResp.MemberState.MemberPrefs;
-			this.IncludeAdult = this.fMemberPrefs.IncludeAdult;
-			this.CanAccessAdult = (this.IncludeAdult == ina_Always);
-			this.fMemberProviderList = signonResp.MemberState.MemberProviderList;
-
-			this.fIsUserLoggedOn = true;
-			return statusCode;
-		}
-		else if(statusCode == sc_InvalidUserIDPassword)
-			this.fUserPassword = null;
-
-		statusMessage = dataRequestor.getStatusMessage();
+		this.fIsUserLoggedOn = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	catch(e)
-	{
-		showError("Session.signon", e);
-	}
-	oWaitScreen.close();
+	else if(statusCode == sc_InvalidUserIDPassword)
+		this.fUserPassword = null;
 
 	this.showRequestError(statusMessage);
-
-	return statusCode;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/
@@ -4747,90 +4716,75 @@ function Session()
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.loadSystemData = function()
+/*void*/ Session.prototype.loadSystemData = function(/*object*/ callbackObj)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		var systemDataResp = dataRequestor.systemDataRequest();
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fProviderList = systemDataResp.ProviderList;
-			this.fCategoryList = systemDataResp.CategoryList;
-			this.fRatingList = systemDataResp.RatingList;
-
-			this.fIsSystemDataLoaded = true;
-			return this.fIsSystemDataLoaded;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.loadSystemData", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return this.fIsSystemDataLoaded;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.loadSystemDataResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(SystemDataRqst.newInstance(), this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.enableAdultAccess = function(/*string*/ password)
+/*void*/ Session.prototype.loadSystemDataResponse = function(/*SystemDataResp*/ systemDataResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.fProviderList = systemDataResp.ProviderList;
+		this.fCategoryList = systemDataResp.CategoryList;
+		this.fRatingList = systemDataResp.RatingList;
 
+		this.fIsSystemDataLoaded = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.enableAdultAccess = function(/*object*/ callbackObj,
+	/*string*/ password)
+{
 	var enableAdultAccessRqst;
 
 	enableAdultAccessRqst = EnableAdultAccessRqst.newInstance();
 	enableAdultAccessRqst.Password = CryptoAPI.newInstance().digest(password);
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.enableAdultAccessRequest(enableAdultAccessRqst);
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.CanAccessAdult = true;
-			return statusCode;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.enableAdultAccess", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.enableAdultAccessResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(enableAdultAccessRqst, this);
 }
 
 /******************************************************************************/
 
-/*boolean*/ Session.prototype.showSearch = function(/*SearchData*/ searchData,
-	/*ShowSearchList reference*/ showSearchListRef)
+/*void*/ Session.prototype.enableAdultAccessResponse = function(
+	/*EnableAdultAccessResp*/ enableAdultAccessResp, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.CanAccessAdult = true;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.showSearch = function(/*object*/ callbackObj,
+	/*SearchData*/ searchData)
+{
 	var showSearchRqst;
-	var showSearchResp;
 
 	var providerIDList = new Array();
 	var categoryIDList = new Array();
@@ -4849,119 +4803,103 @@ function Session()
 	showSearchRqst.CategoryIDList = categoryIDList;
 	showSearchRqst.RatingIDList = ratingIDList;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		showSearchResp = dataRequestor.showSearchRequest(showSearchRqst);
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(showSearchResp.ReachedMax)
-				showMsg("Over " + showSearchRqst.MaxResults + " shows were found.  Please try narrowing your search criteria.");
-
-			showSearchListRef.value = showSearchResp.ShowSearchList;
-			return true;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.showSearch", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return false;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.showSearchResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(showSearchRqst, this);
 }
 
 /******************************************************************************/
 
-/*ShowDetail*/ Session.prototype.showDetail = function(/*string*/ showID)
+/*void*/ Session.prototype.showSearchResponse = function(/*ShowSearchResp*/ showSearchResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		if(showSearchResp.ReachedMax)
+			showMsg("Over " + ShowSearchRqst.MaxResults + " shows were found.  Please try narrowing your search criteria.");
 
+		this.callbackCaller(showSearchResp.ShowSearchList, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.showDetail = function(/*object*/ callbackObj,
+	/*string*/ showID)
+{
 	var showDetailRqst;
-	var showDetailResp;
 
 	showDetailRqst = ShowDetailRqst.newInstance();
 	showDetailRqst.ShowID = showID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		showDetailResp = dataRequestor.showDetailRequest(showDetailRqst);
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return showDetailResp.ShowDetail;
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.showDetail", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.showDetailResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(showDetailRqst, this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.providerEnroll = function(/*string*/ providerID)
+/*void*/ Session.prototype.showDetailResponse = function(/*ShowDetailResp*/ showDetailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.callbackCaller(showDetailResp.ShowDetail, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.providerEnroll = function(/*object*/ callbackObj, /*string*/ providerID)
+{
 	var providerEnrollRqst;
 
 	providerEnrollRqst = ProviderEnrollRqst.newInstance();
 	providerEnrollRqst.ProviderID = providerID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.providerEnrollRequest(providerEnrollRqst);
+	this.fLastProviderID = providerID;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
-			return statusCode;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.providerEnroll", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.providerEnrollResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(providerEnrollRqst, this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.setProvider = function(/*string*/ providerID,
-	/*string*/ userID, /*string*/ password)
+/*void*/ Session.prototype.providerEnrollResponse = function(/*ProviderEnrollResp*/ providerEnrollResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.fMemberProviderList.push(MemberProvider.newInstance(this.fLastProviderID));
 
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*StatusCode*/ Session.prototype.setProvider = function(/*object*/ callbackObj,
+	/*string*/ providerID, /*string*/ userID, /*string*/ password)
+{
 	var setProviderRqst;
 
 	//TODO: encrypt UserID and Password
@@ -4971,192 +4909,162 @@ function Session()
 	setProviderRqst.UserID = userID;
 	setProviderRqst.Password = password;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		statusCode = dataRequestor.setProviderRequest(setProviderRqst);
+	this.fLastProviderID = providerID;
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(providerID)) == null)
-				this.fMemberProviderList.push(MemberProvider.newInstance(providerID));
-			return statusCode;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.setProvider", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.setProviderResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(setProviderRqst, this);
 }
 
 /******************************************************************************/
 
-/*CheckShowAvailResp*/ Session.prototype.checkShowAvail = function(/*string*/ showID,
-	/*string*/ providerID, /*ShowCost*/ showCost, /*StatusCode reference*/ statusCodeRef)
+/*void*/ Session.prototype.setProviderResponse = function(/*SetProviderResp*/ setProviderResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		if(arrayFindItemByCmpr(this.fMemberProviderList, new ProviderIDCmpr(this.fLastProviderID)) == null)
+			this.fMemberProviderList.push(MemberProvider.newInstance(this.fLastProviderID));
 
-	statusCodeRef.value = sc_GeneralError;
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.checkShowAvail = function(/*object*/ callbackObj,
+	/*string*/ showID, /*string*/ providerID, /*ShowCost*/ showCost)
+{
 	var checkShowAvailRqst;
-	var checkShowAvailResp;
 
 	checkShowAvailRqst = CheckShowAvailRqst.newInstance();
 	checkShowAvailRqst.ShowID = showID;
 	checkShowAvailRqst.ProviderID = providerID;
 	checkShowAvailRqst.ShowCost = showCost;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		checkShowAvailResp = dataRequestor.checkShowAvailRequest(checkShowAvailRqst);
-		statusCodeRef.value = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCodeRef.value == sc_Success)
-			return checkShowAvailResp;
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.checkShowAvail", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.checkShowAvailResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(checkShowAvailRqst, this);
 }
 
 /******************************************************************************/
 
-/*RentShowResp*/ Session.prototype.rentShow = function(/*string*/ showID,
+/*void*/ Session.prototype.checkShowAvailResponse = function(/*CheckShowAvailResp*/ checkShowAvailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.callbackCaller(checkShowAvailResp, statusCode, statusMessage);
+		return;
+	}
+
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.rentShow = function(/*object*/ callbackObj, /*string*/ showID,
 	/*string*/ providerID, /*ShowCost*/ oApprovedCost)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var rentShowRqst;
-	var rentShowResp;
 
 	rentShowRqst = RentShowRqst.newInstance();
 	rentShowRqst.ShowID = showID;
 	rentShowRqst.ProviderID = providerID;
 	rentShowRqst.ApprovedCost = oApprovedCost;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		rentShowResp = dataRequestor.rentShowRequest(rentShowRqst);
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			if(this.fDownloadServiceMgr != null)
-				this.fDownloadServiceMgr.processNow();
-			return rentShowResp;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.rentShow", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.rentShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(rentShowRqst, this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.rentedShowList = function(/*RentedShowSearch reference*/ rentedShowSearchListRef)
+/*void*/ Session.prototype.rentShowResponse = function(/*RentShowResp*/ rentShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		if(this.fDownloadServiceMgr != null)
+			this.fDownloadServiceMgr.processNow();
+		this.callbackCaller(rentShowResp, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.rentedShowList = function(/*object*/ callbackObj)
+{
 	var rentedShowListRqst;
-	var rentedShowListResp;
 
 	rentedShowListRqst = RentedShowListRqst.newInstance();
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		rentedShowListResp = dataRequestor.rentedShowListRequest(rentedShowListRqst);
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-		{
-			rentedShowSearchListRef.value = rentedShowListResp.RentedShowSearchList;
-			return sc_Success;
-		}
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.rentedShowList", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return statusCode;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.rentedShowListResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(rentedShowListRqst, this);
 }
 
 /******************************************************************************/
 
-/*RentedShow*/ Session.prototype.rentedShow = function(/*string*/ rentedShowID)
+/*void*/ Session.prototype.rentedShowListResponse = function(/*RentedShowListResp*/ rentedShowListResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.callbackCaller(rentedShowListResp.RentedShowSearchList, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.rentedShow = function(/*object*/ callbackObj, /*string*/ rentedShowID)
+{
 	var rentedShowRqst;
-	var rentedShowResp;
 
 	rentedShowRqst = RentedShowRqst.newInstance();
 	rentedShowRqst.RentedShowID = rentedShowID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		rentedShowResp = dataRequestor.rentedShowRequest(rentedShowRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.rentedShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(rentedShowRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return rentedShowResp.RentedShow;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.rentedShowResponse = function(/*RentedShowResp*/ rentedShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.rentedShow", e);
+		this.callbackCaller(rentedShowResp.RentedShow, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return null;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/
@@ -5191,76 +5099,64 @@ function Session()
 
 /******************************************************************************/
 
-/*WatchShowResp*/ Session.prototype.watchShow = function(/*string*/ rentedShowID)
+/*void*/ Session.prototype.watchShow = function(/*object*/ callbackObj, /*string*/ rentedShowID)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
-
 	var watchShowRqst;
-	var watchShowResp;
 
 	watchShowRqst = WatchShowRqst.newInstance();
 	watchShowRqst.RentedShowID = rentedShowID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		watchShowResp = dataRequestor.watchShowRequest(watchShowRqst);
-		statusCode = dataRequestor.getStatusCode();
-
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return watchShowResp;
-
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
-	{
-		showError("Session.watchShow", e);
-	}
-	oWaitScreen.close();
-
-	this.showRequestError(statusMessage);
-
-	return null;
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.watchShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(watchShowRqst, this);
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ Session.prototype.releaseShow = function(/*string*/ rentedShowID)
+/*void*/ Session.prototype.watchShowResponse = function(/*WatchShowResp*/ watchShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var statusCode = sc_GeneralError;
-	var statusMessage = null;
+	WaitScreen_close();
+	if(statusCode == sc_Success)
+	{
+		this.callbackCaller(watchShowResp.License, statusCode, statusMessage);
+		return;
+	}
 
+	this.showRequestError(statusMessage);
+	this.callbackCaller(null, statusCode, statusMessage);
+}
+
+/******************************************************************************/
+
+/*void*/ Session.prototype.releaseShow = function(/*object*/ callbackObj, /*string*/ rentedShowID)
+{
 	var releaseShowRqst;
-	var releaseShowResp;
 
 	releaseShowRqst = ReleaseShowRqst.newInstance();
 	releaseShowRqst.RentedShowID = rentedShowID;
 
-	var oWaitScreen = WaitScreen.newInstance();
-	try
-	{
-		var dataRequestor = DataRequestor.newInstance(this.fSessionData);
-		releaseShowResp = dataRequestor.releaseShowRequest(releaseShowRqst);
-		statusCode = dataRequestor.getStatusCode();
+	WaitScreen.newInstance();
+	this.Callback = Session.prototype.releaseShowResponse;
+	this.CallerCallback = callbackObj;
+	DataRequestor.newInstance(this.fSessionData).startRequest(releaseShowRqst, this);
+}
 
-		oWaitScreen.close();
-		if(statusCode == sc_Success)
-			return statusCode;
+/******************************************************************************/
 
-		statusMessage = dataRequestor.getStatusMessage();
-	}
-	catch(e)
+/*void*/ Session.prototype.releaseShowResponse = function(/*WatchShowResp*/ releaseShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	WaitScreen_close();
+	if(statusCode == sc_Success)
 	{
-		showError("Session.releaseShow", e);
+		this.callbackCaller(null, statusCode, statusMessage);
+		return;
 	}
-	oWaitScreen.close();
 
 	this.showRequestError(statusMessage);
-
-	return statusCode;
+	this.callbackCaller(null, statusCode, statusMessage);
 }
 
 /******************************************************************************/
@@ -6029,9 +5925,28 @@ HTTPRequestor.newInstance = function()
 
 /******************************************************************************/
 
-function HTTPRequestor(/*string*/ sessionData)
+function HTTPRequestor()
 {
-    this.fXmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+/******************************************************************************/
+
+/*XMLHttp*/ HTTPRequestor.prototype.createXMLHttp = function()
+{
+	var xmlHttp = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
+	{
+		xmlHttp = new XMLHttpRequest();
+		if(xmlHttp.overrideMimeType)
+			xmlHttp.overrideMimeType('text/xml');
+	}
+
+	return xmlHttp;
 }
 
 /******************************************************************************/
@@ -6040,11 +5955,72 @@ function HTTPRequestor(/*string*/ sessionData)
 {
 	var session = MainApp.getThe().getSession();
 
-	this.fXmlHttp.open("POST", session.getNetworkURL(), false);
-	this.fXmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
-	this.fXmlHttp.send(request);
+	var xmlHttp = this.createXMLHttp();
+	xmlHttp.open("POST", session.getNetworkURL(), false);
+	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
+	xmlHttp.send(request);
 
-	return this.fXmlHttp.responseText;
+	return xmlHttp.responseText;
+}
+
+/******************************************************************************/
+
+/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ request,
+	/*object*/ callbackObj)
+{
+	try
+	{
+		var session = MainApp.getThe().getSession();
+
+		var xmlHttp = this.createXMLHttp();
+		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
+		xmlHttp.open("POST", session.getNetworkURL(), true);
+		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
+		xmlHttp.send(request);
+	}
+	catch(e)
+	{
+		HTTPRequestor_callback(callbackObj, null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ function HTTPRequestor_checkRequest(/*XMLHttpRequest*/ xmlHttp,
+	/*object*/ callbackObj)
+{
+	if(xmlHttp.readyState == 4)
+	{
+		try
+		{
+			if(xmlHttp.status == 200)
+			{
+				HTTPRequestor_callback(callbackObj, xmlHttp.responseXML);
+				return;
+			}
+		}
+		catch(e)
+		{
+		}
+
+		HTTPRequestor_callback(callbackObj, null);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ function HTTPRequestor_callback(/*object*/ callbackObj, /*object*/ data)
+{
+	if(callbackObj && callbackObj.Callback)
+	{
+		try
+		{
+			callbackObj.Callback(data);
+		}
+		catch(e)
+		{
+		}
+	}
 }
 
 /******************************************************************************/
@@ -6053,10 +6029,11 @@ function HTTPRequestor(/*string*/ sessionData)
 {
 	var session = MainApp.getThe().getSession();
 
-	this.fXmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
-	this.fXmlHttp.send();
+	var xmlHttp = this.createXMLHttp();
+	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
+	xmlHttp.send();
 
-	return this.fXmlHttp.responseText;
+	return xmlHttp.responseText;
 }
 
 /******************************************************************************/
@@ -6075,11 +6052,14 @@ DataRequestor.newInstance = function(/*string*/ sessionData)
 
 function DataRequestor(/*string*/ sessionData)
 {
+	this.Callback = null;
+	this.CallerCallback = null;
+
 	this.fSessionData = null;
 	if(testStrHasLen(sessionData))
 		this.fSessionData = sessionData;
 
-	this.fStatusCode = sc_Success;
+	this.fStatusCode = sc_GeneralError;
 	this.fStatusMessage = null;
 }
 
@@ -6144,133 +6124,68 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*StatusCode*/ DataRequestor.prototype.getStatusCode = function()
+/*void*/ DataRequestor.prototype.sendRequestAsync = function(/*Streamable*/ payload,
+	/*object*/ callbackObj)
 {
-	return this.fStatusCode;
+	try
+	{
+		var httpRequestor = HTTPRequestor.newInstance();
+
+		// build the request header
+		var request = this.createHeader(payload);
+
+		// build request data
+		var dataWriter = new XmlDataWriter();
+		dataWriter.writeObject("INetVODPlayerRqst", request);
+
+		this.Callback = DataRequestor.prototype.parseResponse;
+		this.CallerCallback = callbackObj;
+		httpRequestor.sendRequestAsync(dataWriter.toString(), this);
+	}
+	catch(e)
+	{
+		this.callbackCaller(null);
+	}
 }
 
 /******************************************************************************/
 
-/*string*/ DataRequestor.prototype.getStatusMessage = function()
+/*void*/ DataRequestor.prototype.parseResponse = function(/*Streamable*/ response)
 {
-	return this.fStatusMessage;
+	try
+	{
+		var dataReader = new XmlDataReader(response);
+		var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+		this.callbackCaller(this.parseHeader(requestable));
+	}
+	catch(e)
+	{
+		this.callbackCaller(null);
+	}
 }
 
 /******************************************************************************/
 
-/*StatusCode*/ DataRequestor.prototype.pingRequest = function()
+/*void*/ DataRequestor.prototype.callbackCaller = function(/*object*/ data)
 {
-	var pingResp = this.sendRequest(PingRqst.newInstance());
-
-	return this.fStatusCode;
+	if(isObject(this.CallerCallback) && isFunction(this.CallerCallback.Callback))
+	{
+		try
+		{
+			this.CallerCallback.Callback(data, this.fStatusCode, this.fStatusMessage);
+		}
+		catch(e)
+		{
+		}
+	}
 }
 
 /******************************************************************************/
 
-/*SignonResp*/ DataRequestor.prototype.signonRequest = function(/*SignonRqst*/ signonRqst)
+/*void*/ DataRequestor.prototype.startRequest = function(/*object*/ request,
+	/*object*/ callbackObj)
 {
-	return this.sendRequest(signonRqst);
-}
-
-/******************************************************************************/
-
-/*SystemDataResp*/ DataRequestor.prototype.systemDataRequest = function()
-{
-	return this.sendRequest(SystemDataRqst.newInstance());
-}
-
-/******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.enableAdultAccessRequest = function(
-	/*EnableAdultAccessRqst*/ enableAdultAccessRqst)
-{
-	var enableAdultAccessResp = this.sendRequest(enableAdultAccessRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*ShowSearchResp*/ DataRequestor.prototype.showSearchRequest = function(
-	/*ShowSearchRqst*/ showSearchRqst)
-{
-	return this.sendRequest(showSearchRqst);
-}
-
-/******************************************************************************/
-
-/*ShowDetailResp*/ DataRequestor.prototype.showDetailRequest = function(
-	/*ShowDetailRqst*/ showDetailRqst)
-{
-	return this.sendRequest(showDetailRqst);
-}
-
-/******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.providerEnrollRequest = function(
-	/*ProviderEnrollRqst*/ providerEnrollRqst)
-{
-	var providerEnrollResp = this.sendRequest(providerEnrollRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*StatusCode*/ DataRequestor.prototype.setProviderRequest = function(
-	/*SetProviderRqst*/ setProviderRqst)
-{
-	var setProviderResp = this.sendRequest(setProviderRqst);
-
-	return this.fStatusCode;
-}
-
-/******************************************************************************/
-
-/*CheckShowAvailResp*/ DataRequestor.prototype.checkShowAvailRequest = function(
-	/*CheckShowAvailRqst*/ checkShowAvailRqst)
-{
-	return this.sendRequest(checkShowAvailRqst);
-}
-
-/******************************************************************************/
-
-/*RentShowResp*/ DataRequestor.prototype.rentShowRequest = function(
-	/*RentShowRqst*/ rentShowRqst)
-{
-	return this.sendRequest(rentShowRqst);
-}
-
-/******************************************************************************/
-
-/*RentedShowListResp*/ DataRequestor.prototype.rentedShowListRequest = function(
-	/*RentedShowListRqst*/ rentedShowListRqst)
-{
-	return this.sendRequest(rentedShowListRqst);
-}
-
-/******************************************************************************/
-
-/*RentedShowResp*/ DataRequestor.prototype.rentedShowRequest = function(
-	/*RentedShowRqst*/ rentedShowRqst)
-{
-	return this.sendRequest(rentedShowRqst);
-}
-
-/******************************************************************************/
-
-/*WatchShowResp*/ DataRequestor.prototype.watchShowRequest = function(
-	/*WatchShowRqst*/ watchShowRqst)
-{
-	return this.sendRequest(watchShowRqst);
-}
-
-/******************************************************************************/
-
-/*ReleaseShowResp*/ DataRequestor.prototype.releaseShowRequest = function(
-	/*ReleaseShowRqst*/ releaseShowRqst)
-{
-	return this.sendRequest(releaseShowRqst);
+	this.sendRequestAsync(request, callbackObj);
 }
 
 /******************************************************************************/
@@ -6675,6 +6590,10 @@ function EnableAdultAccessResp(reader)
 /******************************************************************************/
 /******************************************************************************/
 
+ShowSearchRqst.MaxResults = 1000;	//TODO: ???
+
+/******************************************************************************/
+
 ShowSearchRqst.newInstance = function()
 {
 	return new ShowSearchRqst();
@@ -6690,7 +6609,7 @@ function ShowSearchRqst()
 	this.CategoryIDList = null;
 	this.RatingIDList = null;
 
-	this.MaxResults = 1000;	//TODO: ???
+	this.MaxResults = ShowSearchRqst.MaxResults;
 }
 
 /******************************************************************************/
@@ -7286,8 +7205,8 @@ function StartScreen()
 
 /*void*/ StartScreen.prototype.onButton = function(/*string*/ controlID)
 {
-	if(StartupInitialCheck())
-		this.close();
+	this.close();
+	StartupInitialCheck();
 }
 
 /******************************************************************************/
@@ -7360,13 +7279,12 @@ function WelcomeScreen()
 	if(controlID == WelcomeScreen.FeaturedID)
 	{
 		var oSession = MainApp.getThe().getSession();
-		var showSearchListRef = new Object();
 
 		var oSearchData = new SearchData();
 		oSearchData.CategoryID = Category.FeaturedCategoryID;
 
-		if(oSession.showSearch(oSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.value);
+		this.Callback = WelcomeScreen.prototype.afterShowSearch;
+		oSession.showSearch(this, oSearchData);
 		return;
 	}
 
@@ -7389,6 +7307,15 @@ function WelcomeScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ WelcomeScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(showSearchList);
 }
 
 /******************************************************************************/
@@ -7426,99 +7353,79 @@ function StartupInitialCheck()
 	if(!oSession.checkInstall())
 	{
 		NotInstalledScreen.newInstance();
-		return false;
+		return;
 	}
 
 	/* connect to the server */
 	if(!oSession.CanPingServer)
-		if(!oSession.pingServer())
-			return false;
+	{
+		oSession.pingServer(StartupInitial_afterPingServer);
+	}
+	else
+		StartupInitial_afterPingServer(null, sc_Success, null);
+}
+
+/******************************************************************************/
+
+/*void*/ function StartupInitial_afterPingServer(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	if(statusCode != sc_Success)
+	{
+		StartScreen.newInstance();
+		return;
+	}
+
+	var oSession = MainApp.getThe().getSession();
 
 	if(!oSession.loadDataSettings())
 	{
 		SetupScreen.newInstance();
-		return true;
+		return;
 	}
 
 	if(!oSession.haveUserPassword())
 	{
 		AskPINScreen.newInstance();
-		return true;
+		return;
 	}
 
-	var statusCode = oSession.signon();
+	oSession.signon(StartupInitial_afterSignon);
+}
+
+/******************************************************************************/
+
+/*void*/ function StartupInitial_afterSignon(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
 	if(statusCode == sc_Success)
 	{
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-		else
-			oSession.clearLogonInfo();
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
 	}
 	else if(statusCode == sc_InvalidUserIDPassword)
 	{
 		AskPINScreen.newInstance();
-		return true;
 	}
-
-	return false;
 }
 
 /******************************************************************************/
 
-function StartupDoSignonPassword(/*string*/ userPassword)
+/*void*/ function StartupInitial_afterLoadSystemData(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
 {
 	var oSession = MainApp.getThe().getSession();
 
-	var statusCode = oSession.signon(null, userPassword);
 	if(statusCode == sc_Success)
 	{
-		oSession.saveDataSettings();	// for possible temp store of userPassword
-
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-
-		oSession.clearLogonInfo();
-		StartScreen.newInstance();
-		return true;
+		WelcomeScreen.newInstance();
 	}
-
-	return false;
-}
-
-/******************************************************************************/
-
-function StartupDoSetupSignon(/*string*/ userID, /*string*/ userPassword,
-	/*boolean*/ rememberPassword)
-{
-	var oSession = MainApp.getThe().getSession();
-
-	var statusCode = oSession.signon(userID, userPassword, rememberPassword);
-	if(statusCode == sc_Success)
+	else
 	{
-		if(!oSession.saveDataSettings())
-		{
-			showMsg("An error occured while saving your settings.");
-			return false;
-		}
-
-		if(oSession.loadSystemData())
-		{
-			WelcomeScreen.newInstance();
-			return true;
-		}
-
 		oSession.clearLogonInfo();
 		StartScreen.newInstance();
-		return true;
 	}
-
-	return false;
 }
 
 /******************************************************************************/
@@ -7658,13 +7565,29 @@ function AskPINScreen()
 		return;
 	}
 
-	if(StartupDoSignonPassword(data))
-	{
-		this.close();
-		return;
-	}
+	var oSession = MainApp.getThe().getSession();
+
+	this.Callback = AskPINScreen.prototype.afterSignon;
+	oSession.signon(this, null, data);
 
 	//Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ AskPINScreen.prototype.afterSignon = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		oSession.saveDataSettings();	// for possible temp store of userPassword
+
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
+	}
 }
 
 /******************************************************************************/
@@ -7827,9 +7750,8 @@ function SetupScreen()
 		}
 		else if(controlID == AskSignedUpControl.AlreadyRegisteredID)
 		{
-			if(this.canPingServer())
-				if(this.closeStep(true))
-					this.openStep(ss_HaveLogonIDStep);
+			if(this.closeStep(true))
+				this.openStep(ss_HaveLogonIDStep);
 			return;
 		}
 	}
@@ -7837,9 +7759,8 @@ function SetupScreen()
 	{
 		if(controlID == NeedLogonIDControl.HaveLogonID)
 		{
-			if(this.canPingServer())
-				if(this.closeStep(true))
-					this.openStep(ss_HaveLogonIDStep);
+			if(this.closeStep(true))
+				this.openStep(ss_HaveLogonIDStep);
 			return;
 		}
 	}
@@ -7857,30 +7778,39 @@ function SetupScreen()
 
 /******************************************************************************/
 
-/*bool*/ SetupScreen.prototype.canPingServer = function()
-{
-	var oSession = MainApp.getThe().getSession();
-
-	if(!oSession.CanPingServer)
-		if(!oSession.pingServer())
-			return false;
-
-	return true;
-}
-
-/******************************************************************************/
-
 /*void*/ SetupScreen.prototype.doSetupSignon = function()
 {
 	var oContainerControl = this.getControl(this.fStepControlID);
 
 	if(oContainerControl.unloadData(this.fSetupData))
 	{
-		if(StartupDoSetupSignon(this.fSetupData.UserID, this.fSetupData.UserPassword,
-			this.fSetupData.RememberPassword))
+		var oSession = MainApp.getThe().getSession();
+
+		this.Callback = SetupScreen.prototype.doSetupAfterSignon;
+		oSession.signon(this, this.fSetupData.UserID, this.fSetupData.UserPassword,
+			this.fSetupData.RememberPassword);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ SetupScreen.prototype.doSetupAfterSignon = function(/*object*/ data, /*StatusCode*/ statusCode,
+	/*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		if(!oSession.saveDataSettings())
 		{
-			this.close();
+			showMsg("An error occured while saving your settings.");
+			SetupScreen.newInstance();
+			return;
 		}
+
+		oSession.loadSystemData(StartupInitial_afterLoadSystemData);
 	}
 }
 
@@ -8169,13 +8099,21 @@ function CategorySearchScreen()
 {
 	var oSession = MainApp.getThe().getSession();
 	var oTextListControl = this.getControl(CategorySearchScreen.CategoriesID);
-	var showSearchListRef = new Object();
 
 	var oSearchData = new SearchData();
 	oSearchData.CategoryID = oTextListControl.getFocusedItemValue().Name;
 
-	if(oSession.showSearch(oSearchData, showSearchListRef))
-		SearchResultsScreen.newInstance(showSearchListRef.value);
+	this.Callback = CategorySearchScreen.prototype.afterShowSearch;
+	oSession.showSearch(this, oSearchData);
+}
+
+/******************************************************************************/
+
+/*void*/ CategorySearchScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(showSearchList);
 }
 
 /******************************************************************************/
@@ -8252,13 +8190,11 @@ function SearchScreen()
 
 	if((controlID == SearchScreen.SearchID) || (controlID == SearchScreen.ShowNameID))
 	{
-		var showSearchListRef = new Object();
-
 		oControl = this.getControl(SearchScreen.ShowNameID);
 		this.fSearchData.Search = oControl.getText();
 
-		if(oSession.showSearch(this.fSearchData, showSearchListRef))
-			SearchResultsScreen.newInstance(showSearchListRef.value);
+		this.Callback = SearchScreen.prototype.afterShowSearch;
+		oSession.showSearch(this, this.fSearchData);
 		return;
 	}
 
@@ -8281,6 +8217,15 @@ function SearchScreen()
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ SearchScreen.prototype.afterShowSearch = function(/*ShowSearchList*/ showSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchResultsScreen.newInstance(showSearchList);
 }
 
 /******************************************************************************/
@@ -8695,10 +8640,8 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		oShowSearchListControl = this.getControl(SearchResultsScreen.ShowListID);
 		var oShowSearch = oShowSearchListControl.getFocusedItemValue();
 
-		var oShowDetail = oSession.showDetail(oShowSearch.ShowID);
-		if(oShowDetail != null)
-			SearchDetailScreen.newInstance(oShowDetail);
-
+		this.Callback = SearchResultsScreen.prototype.afterShowDetail;
+		oSession.showDetail(this, oShowSearch.ShowID);
 		return;
 	}
 
@@ -8719,6 +8662,15 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ SearchResultsScreen.prototype.afterShowDetail = function(/*ShowDetail*/ showDetail,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		SearchDetailScreen.newInstance(showDetail);
 }
 
 /******************************************************************************/
@@ -9036,9 +8988,9 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 130, 170);
 
-	this.fStepControlID = AskHaveProviderControl.ControlID;
+	this.fStepControlID = null;
 	this.fRentData = new RentData(oShowDetail);
-	this.fCurStep = ss_AskHaveProviderStep;
+	this.fCurStep = ss_Undefined;
 }
 
 /******************************************************************************/
@@ -9062,9 +9014,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	else
 	{
 		var nextStep = this.allowAnonymous();
-		if (nextStep == ss_Undefined)
-			this.close();
-		else
+		if (nextStep != ss_Undefined)
 			this.openStep(nextStep);
 	}
 }
@@ -9196,9 +9146,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 			if(this.closeStep(true))
 			{
 				var nextStep = this.allowAnonymous();
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
+				if (nextStep != ss_Undefined)
 					this.openStep(nextStep);
 			}
 			return;
@@ -9224,21 +9172,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(controlID == NeedProviderControl.CreateMembershipID)
 		{
 			if(this.closeStep(true))
-			{
-				var nextStep = ss_Undefined;
-
-				if(this.providerEnroll())
-				{
-					nextStep = this.checkShowAvail();
-				}
-				else
-					nextStep = ss_NeedProviderStep;
-
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
-					this.openStep(nextStep);
-			}
+				this.providerEnroll();
 			return;
 		}
 	}
@@ -9247,19 +9181,7 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		if(controlID == HaveProviderControl.ContinueID)
 		{
 			if(this.closeStep(true))
-			{
-				var nextStep = ss_Undefined;
-
-				if(this.setProvider())
-					nextStep = this.checkShowAvail();
-				else
-					nextStep = ss_HaveProviderStep;
-
-				if (nextStep == ss_Undefined)
-					this.close();
-				else
-					this.openStep(nextStep);
-			}
+				this.setProvider();
 
 			return;
 		}
@@ -9294,7 +9216,8 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 	if((this.fRentData.ShowCost.ShowCostType == sct_Free) ||
 		oSession.isMemberOfProvider(this.fRentData.getProviderID()))
 	{
-		return this.checkShowAvail();
+		this.checkShowAvail();
+		return ss_Undefined;
 	}
 	else
 		return ss_AskHaveProviderStep;
@@ -9302,29 +9225,43 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 
 /******************************************************************************/
 
-/*RentStep*/ RentScreen.prototype.checkShowAvail = function()
+/*void*/ RentScreen.prototype.checkShowAvail = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var oCheckShowAvailResp;
-	var statusCodeRef = new Object();
-	var statusCode;
 
-	oCheckShowAvailResp = oSession.checkShowAvail(this.fRentData.getShowID(),
-		this.fRentData.getProviderID(), this.fRentData.ShowCost, statusCodeRef);
-	statusCode = statusCodeRef.value;
+	this.Callback = RentScreen.prototype.afterCheckShowAvail;
+	oSession.checkShowAvail(this, this.fRentData.getShowID(), this.fRentData.getProviderID(),
+		this.fRentData.ShowCost);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterCheckShowAvail = function(/*CheckShowAvailResp*/ oCheckShowAvailResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
 	if(statusCode == sc_InvalidProviderUserIDPassword)
-		return ss_HaveProviderStep;
+	{
+		this.openStep(ss_HaveProviderStep);
+		return;
+	}
 	if(statusCode != sc_Success)
-		return ss_Undefined;
+	{
+		this.close();
+		return;
+	}
 
 	var oShowCost = oCheckShowAvailResp.ShowCost;
 
 	this.fRentData.ShowCost = oShowCost;
 	if(oShowCost.ShowCostType == sct_PayPerView)
-		return ss_ConfirmChargeStep;
+	{
+		this.openStep(ss_ConfirmChargeStep);
+		return;
+	}
 
 	this.rentShow();
-	return ss_Undefined;
 }
 
 /******************************************************************************/
@@ -9332,51 +9269,86 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 /*void*/ RentScreen.prototype.rentShow = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var oRentShowResp;
 
-	oRentShowResp = oSession.rentShow(this.fRentData.getShowID(),
+	this.Callback = RentScreen.prototype.afterRentShow;
+	oSession.rentShow(this, this.fRentData.getShowID(),
 		this.fRentData.getProviderID(), this.fRentData.ShowCost);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterRentShow = function(/*RentShowResp*/ oRentShowResp,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+
+	// close the SearchDetailScreen and this screen
+	var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
+	if(oScreen != null)
+		oScreen.close();
+	this.close();
+
 	if(oRentShowResp != null)
 	{
-		// close the SearchDetailScreen and this screen
-		var oScreen = MainApp.getThe().findScreen(SearchDetailScreen.ScreenID);
-		if(oScreen != null)
-			oScreen.close();
-		this.close();
-
-		// fetch the rentedShow and open the
-		var rentedShow = oSession.rentedShow(oRentShowResp.RentedShowID);
-		if(rentedShow != null)
-			RentedShowDetailScreen.newInstance(rentedShow);
-		//this.fRentedShowID = oRentShowResp.RentedShowID;
-
-		// show message last, or will have focus problems
-		showMsg("This Show has been successfully added to your Now Playing list.");
+		// fetch the rentedShow and open the screen
+		this.Callback = RentScreen.prototype.afterRentedShow;
+		oSession.rentedShow(this, oRentShowResp.RentedShowID);
 	}
 }
 
 /******************************************************************************/
 
-/*boolean*/ RentScreen.prototype.setProvider = function()
+/*void*/ RentScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
-	var oSession = MainApp.getThe().getSession();
-	var statusCode;
+	if(statusCode == sc_Success)
+	{
+		RentedShowDetailScreen.newInstance(rentedShow);
+	}
 
-	statusCode = oSession.setProvider(this.fRentData.getProviderID(),
-		this.fRentData.UserID, this.fRentData.Password);
-
-	return (statusCode == sc_Success);
+	// show message last, or will have focus problems
+	showMsg("This Show has been successfully added to your Now Playing list.");
 }
 
 /******************************************************************************/
 
-/*boolean*/ RentScreen.prototype.providerEnroll = function()
+/*void*/ RentScreen.prototype.setProvider = function()
 {
 	var oSession = MainApp.getThe().getSession();
-	var statusCode;
-	var tempStr;
 
-	statusCode = oSession.providerEnroll(this.fRentData.getProviderID());
+	this.Callback = RentScreen.prototype.afterSetProvider;
+	oSession.setProvider(this, this.fRentData.getProviderID(),
+		this.fRentData.UserID, this.fRentData.Password);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterSetProvider = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		this.checkShowAvail();
+	else
+		this.openStep(ss_HaveProviderStep);
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.providerEnroll = function()
+{
+	var oSession = MainApp.getThe().getSession();
+
+	this.Callback = RentScreen.prototype.afterProviderEnroll;
+	oSession.providerEnroll(this, this.fRentData.getProviderID());
+}
+
+/******************************************************************************/
+
+/*void*/ RentScreen.prototype.afterProviderEnroll = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	var oSession = MainApp.getThe().getSession();
+	var tempStr;
 
 	if(statusCode == sc_Success)
 	{
@@ -9385,10 +9357,11 @@ function RentScreen(/*ShowDetail*/ oShowDetail)
 		tempStr += "'s membership.";
 
 		showMsg(tempStr);
-		return true;
-	}
 
-	return false;
+		this.checkShowAvail();
+	}
+	else
+		this.openStep(ss_NeedProviderStep);
 }
 
 /******************************************************************************/
@@ -9857,18 +9830,21 @@ NowPlayingScreen.NoShowsTextID = "Show002_NoShowsText";
 
 NowPlayingScreen.newInstance = function()
 {
-	var oSession = MainApp.getThe().getSession();
-	var rentedShowSearchListRef = new Object();
+	MainApp.getThe().getSession().rentedShowList(NowPlayingScreen.afterRentedShowList);
+}
 
-	if(oSession.rentedShowList(rentedShowSearchListRef) == sc_Success)
+/******************************************************************************/
+
+/*void*/ NowPlayingScreen.afterRentedShowList = function(/*RentedShowSearchList*/ rentedShowSearchList,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
 	{
-		var oScreen = new NowPlayingScreen(rentedShowSearchListRef.value);
+		var oScreen = new NowPlayingScreen(rentedShowSearchList);
 		MainApp.getThe().openScreen(oScreen);
 		oScreen.focusControl(NowPlayingScreen.ShowListID, true);
 		return oScreen;
 	}
-
-	return null;
 }
 
 /******************************************************************************/
@@ -9963,11 +9939,9 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	if(controlID == NowPlayingScreen.ShowListID)
 	{
 		oRentedShowListControl = this.getControl(NowPlayingScreen.ShowListID);
-		var rentedShow = oSession.rentedShow(
-			oRentedShowListControl.getFocusedItemValue().RentedShowID);
 
-		if(rentedShow != null)
-			RentedShowDetailScreen.newInstance(rentedShow);
+		this.Callback = NowPlayingScreen.prototype.afterRentedShow;
+		oSession.rentedShow(this, oRentedShowListControl.getFocusedItemValue().RentedShowID);
 		return;
 	}
 
@@ -9985,6 +9959,15 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ NowPlayingScreen.prototype.afterRentedShow = function(/*RentedShow*/ rentedShow,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+		RentedShowDetailScreen.newInstance(rentedShow);
 }
 
 /******************************************************************************/
@@ -10268,47 +10251,64 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 			return;
 		}
 
-		var watchShowResp = oSession.watchShow(this.fRentedShow.RentedShowID);
-		if(watchShowResp == null)
-			return;
-
-		if(!ViewPortControl.canOpen())
-		{
-			showMsg("This player does not play audio or video content.");
-			return;
-		}
-
-		var oControl = this.findControl(ViewPortControl.ControlID);
-		if(oControl == null)
-		{
-			oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
-			this.newControl(oControl);
-		}
-
-		this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
-		var localURL = oSession.getDownloadRentedShowPath(this.fRentedShow.RentedShowID);
-		if(testStrHasLen(localURL))
-			oControl.playMedia(localURL);
-		else
-			oControl.playMedia(watchShowResp.License.ShowURL);
+		this.Callback = RentedShowDetailScreen.prototype.afterWatchShow;
+		oSession.watchShow(this, this.fRentedShow.RentedShowID);
 		return;
 	}
 	else if(controlID == RentedShowDetailScreen.DeleteNowID)
 	{
-		var statusCode = oSession.releaseShow(this.fRentedShow.RentedShowID);
-
-		if(statusCode == sc_Success)
-		{
-			this.close();
-
-			var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
-			if(oNowPlayingScreen != null)
-				oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);
-		}
+		this.Callback = RentedShowDetailScreen.prototype.afterReleaseShow;
+		oSession.releaseShow(this, this.fRentedShow.RentedShowID);
 		return;
 	}
 
 	Screen.prototype.onButton.call(this, controlID);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowDetailScreen.prototype.afterWatchShow = function(/*License*/ license,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode != sc_Success)
+		return;
+
+	if(!ViewPortControl.canOpen())
+	{
+		showMsg("This player does not play audio or video content.");
+		return;
+	}
+
+	var oSession = MainApp.getThe().getSession();
+
+	var oControl = this.findControl(ViewPortControl.ControlID);
+	if(oControl == null)
+	{
+		oControl = new ViewPortControl(ViewPortControl.ControlID, this.ScreenID);
+		this.newControl(oControl);
+	}
+
+	this.fContainerControl.focusControl(ViewPortControl.ControlID, true);
+	var localURL = oSession.getDownloadRentedShowPath(this.fRentedShow.RentedShowID);
+	if(testStrHasLen(localURL))
+		oControl.playMedia(localURL);
+	else
+		oControl.playMedia(license.ShowURL);
+}
+
+/******************************************************************************/
+
+/*void*/ RentedShowDetailScreen.prototype.afterReleaseShow = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
+		this.close();
+
+		var oNowPlayingScreen = MainApp.getThe().findScreen(NowPlayingScreen.ScreenID);
+		if(oNowPlayingScreen != null)
+			oNowPlayingScreen.removeRentedShow(this.fRentedShow.RentedShowID);
+	}
 }
 
 /******************************************************************************/
@@ -10350,17 +10350,17 @@ function PreferencesScreen()
 	this.fContainerControl.onNavigate = PreferencesScreen.onNavigate;
 
 	oControl = new TextControl(PreferencesScreen.AccessAdultValueID, this.ScreenID);
-	oControl.setText(oSession.CanAccessAdult ? "Enabled" : "Disabled");
 	this.newControl(oControl);
 
 	oControl = new ButtonControl(PreferencesScreen.AccessAdultButtonID, this.ScreenID);
 	this.newControl(oControl);
-	oControl.setEnabled(!oSession.CanAccessAdult && (oSession.IncludeAdult == ina_PromptPassword));
 
 	this.newControl(new ButtonControl(PreferencesScreen.ResetFactoryButtonID, this.ScreenID));
 
 	if(ViewPortControl.isOpen())
 		this.newControl(new ViewPortControl(ViewPortControl.ControlID, this.ScreenID));
+
+	this.updateAdultAccess();
 }
 
 /******************************************************************************/
@@ -10385,24 +10385,15 @@ function PreferencesScreen()
 
 /******************************************************************************/
 
-/*boolean*/ PreferencesScreen.prototype.doPIN = function(/*string*/ adultPassword)
+/*boolean*/ PreferencesScreen.prototype.updateAdultAccess = function()
 {
 	var oSession = MainApp.getThe().getSession();
 
-	if(oSession.enableAdultAccess(adultPassword) == sc_Success)
-	{
-		//this.fContainerControl.setFocus(false);
+	var oControl = this.getControl(PreferencesScreen.AccessAdultValueID);
+	oControl.setText(oSession.CanAccessAdult ? "Enabled" : "Disabled");
 
-		var oControl = this.getControl(PreferencesScreen.AccessAdultValueID);
-		oControl.setText("Enabled");
-
-		oControl = this.getControl(PreferencesScreen.AccessAdultButtonID);
-		oControl.setEnabled(false);
-
-		return true;
-	}
-
-	return false;
+	oControl = this.getControl(PreferencesScreen.AccessAdultButtonID);
+	oControl.setEnabled(!oSession.CanAccessAdult && (oSession.IncludeAdult == ina_PromptPassword));
 }
 
 /******************************************************************************/
@@ -10475,9 +10466,22 @@ function AskAdultPINScreen()
 		return;
 	}
 
-	var oScreen = MainApp.getThe().getScreen(PreferencesScreen.ScreenID);
-	if(oScreen.doPIN(data))
+	var oSession = MainApp.getThe().getSession();
+
+	this.Callback = AskAdultPINScreen.prototype.afterEnableAdultAccess;
+	oSession.enableAdultAccess(this, data);
+}
+
+/******************************************************************************/
+
+/*void*/ AskAdultPINScreen.prototype.afterEnableAdultAccess = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
+		MainApp.getThe().getScreen(PreferencesScreen.ScreenID).updateAdultAccess();
 		this.close();
+	}
 }
 
 /******************************************************************************/
