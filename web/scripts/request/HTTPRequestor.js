@@ -80,7 +80,7 @@ function HTTPRequestor()
 		{
 			if(xmlHttp.status == 200)
 			{
-				HTTPRequestor_callback(callbackObj, xmlHttp.responseText);
+				HTTPRequestor_callback(callbackObj, xmlHttp.responseXML);
 				return;
 			}
 		}

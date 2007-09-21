@@ -3,10 +3,9 @@
 /******************************************************************************/
 /******************************************************************************/
 
-function XmlDataReader(xml)
+function XmlDataReader(xmlDocument)
 {
-	this.fDocument = new ActiveXObject("Msxml2.DOMDocument.3.0");
-	this.fDocument.loadXML(xml);
+	this.fDocument = xmlDocument;
 	this.fCurNodeList = new Array();
 	this.fCurNodeList.push(this.fDocument);
 }
