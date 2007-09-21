@@ -10,7 +10,7 @@ function init()
 	MainApp.getThe().init();
 }
 </script>
-<body id="MainBody">
+<body id="MainBody" onload="tryit('init();')">
 
 <!-- *********************************************************************** -->
 <!-- *********************************************************************** -->
@@ -1067,18 +1067,3 @@ be downloaded while your are watching another show.
 
 </body>
 </html>
-<script for=document event=onkeyup type="text/javascript">
-	return !MainAppOnKeyUp();
-</script>
-<script for=document event=onkeydown type="text/javascript">
-	return !MainAppOnKeyDown();
-</script>
-<script for=document event=onkeypress type="text/javascript">
-	return !MainAppOnKeyPress();
-</script>
-<script for=window event=onresize type="text/javascript">
-	MainAppOnResize();
-</script>
-<script for=window event=onload type="text/javascript">
-	tryit('init();');
-</script>

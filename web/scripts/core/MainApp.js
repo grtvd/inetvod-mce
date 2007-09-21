@@ -42,23 +42,17 @@ function onRemoteEvent(keyCode)
 	if((keyCode >= 48) && (keyCode <= 57))
 		return true;
 
-	return MainAppOnRemoteEvent(keyCode);
+	return !MainAppOnRemoteEvent(keyCode);
 }
 
 /******************************************************************************/
 
 function onScaleEvent(vScale)
 {
-	try
-	{
-		if(!window.external.MediaCenter)
-			document.getElementById("ScaleText").innerHTML = vScale;
+	if(!window.external.MediaCenter)
+		document.getElementById("ScaleText").innerHTML = vScale;
+	if(isString(document.body.style.zoom))
 		document.body.style.zoom = vScale;
-	}
-	catch(e)
-	{
-		// ignore error
-	}
 }
 
 /******************************************************************************/
@@ -128,6 +122,11 @@ function MainApp()
 		return;
 	this.fInit = true;
 	//DebugOn(true);
+
+	document.onkeyup = MainAppOnKeyUp;
+	document.onkeydown = MainAppOnKeyDown;
+	document.onkeypress = MainAppOnKeyPress;
+	window.onresize = MainAppOnResize;
 
 	if(window.external.MediaCenter)
 		window.external.MediaCenter.BGColor = "#002651";
@@ -281,7 +280,7 @@ function MainApp()
 	// toggle on scaling on and off
 	var newScale = "";
 
-	if(document.body.style.zoom.length == 0)
+	if(isString(document.body.style.zoom) && (document.body.style.zoom.length == 0))
 	{
 		var horzScale = document.body.getBoundingClientRect().right / 1024;
 		var vertScale = document.body.getBoundingClientRect().bottom / 768;
@@ -416,14 +415,14 @@ function MainAppOnKeyDown()
 			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
 			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
 		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
+	return true;
 }
 
 /******************************************************************************/
 
 function MainAppOnKeyUp()
 {
-	return false;
+	return true;
 }
 
 /******************************************************************************/
@@ -434,7 +433,7 @@ function MainAppOnKeyPress()
 			&& (event.keyCode != 9)
 			&& (event.keyCode != 13))
 		return MainAppOnRemoteEvent(event.keyCode);
-	return false;
+	return true;
 }
 
 /******************************************************************************/
@@ -444,14 +443,14 @@ function MainAppOnRemoteEvent(keyCode)
 	try
 	{
 		if(!WaitScreen_isOpen())
-			return MainApp.getThe().key(MainAppMapKey(keyCode));
+			return !MainApp.getThe().key(MainAppMapKey(keyCode));
 	}
 	catch(e)
 	{
 		showError("MainAppOnRemoteEvent", e);
 	}
 
-	return false;
+	return true;
 }
 
 /******************************************************************************/
