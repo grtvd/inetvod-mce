@@ -5,7 +5,7 @@
 	- Open "Settings -> Paths -> J2EE Build Settings"
 		- Check "Create web modeule jar file"
 	- Run "Build -> Rebuild Project"
-	- Will create "C:\projects\iNetVOD\webapi\trunk\mce.war"
+	- Will create "C:\projects\iNetVOD\webapi\trunk\web\mce.war"
 	- Open "Settings -> Paths -> J2EE Build Settings"
 		- Unheck "Create web modeule jar file"
 	- Close IDEA
@@ -21,4 +21,4 @@
 	- In "Applications" section, Undeploy "mce"
 
 	- In "Deploy:WAR file to deploy", specify WAR file as:
-		- C:\projects\iNetVOD\mce\trunk\mce.war
+		- C:\projects\iNetVOD\mce\trunk\web\mce.war
