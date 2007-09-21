@@ -2,7 +2,6 @@
 	<target name="main.js">
 		<concat destfile="resources/main.js" append="no" force="yes">
 			<filelist dir="scripts/core">
-				<file name="ButtonControl.js" />
 				<file name="Common.js" />
 				<file name="Debugger.js" />
 				<file name="DateTimeUtil.js" />
