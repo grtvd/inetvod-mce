@@ -18,10 +18,10 @@ Player.newInstance = function()
 
 function Player()
 {
-	this.ManufacturerID;
-	this.ModelNo;
-	this.SerialNo;
-	this.Version;
+	this.ManufacturerID = null;
+	this.ModelNo = null;
+	this.SerialNo = null;
+	this.Version = null;
 }
 
 /******************************************************************************/
