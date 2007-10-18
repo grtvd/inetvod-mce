@@ -4,6 +4,7 @@
 /******************************************************************************/
 
 SearchResultsScreen.ScreenID = "Search003";
+SearchResultsScreen.BodyID = "Search003_Body";
 SearchResultsScreen.ShowListID = "Search003_ShowList";
 SearchResultsScreen.NameID = "Search003_Name";
 SearchResultsScreen.EpisodeNameID = "Search003_EpisodeName";
@@ -19,7 +20,6 @@ SearchResultsScreen.newInstance = function(/*Array*/ showSearchList)
 {
 	var oScreen = new SearchResultsScreen(showSearchList);
 	MainApp.getThe().openScreen(oScreen);
-	oScreen.focusControl(SearchResultsScreen.ShowListID, true);
 	return oScreen;
 }
 
@@ -45,6 +45,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.onNavigate = SearchResultsScreen.onNavigate;
+	this.fContainerControl.DefaultFocusControlID = SearchResultsScreen.ShowListID;
 
 	var oControl;
 
@@ -59,7 +60,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		6, oRowItemList, showSearchList);
 	if(showSearchList.length > 0)
 		this.newControl(oControl);
-	oControl.show(showSearchList.length > 0);
+	(new ContainerControl(SearchResultsScreen.BodyID, 0, 0)).show(showSearchList.length > 0);
 
 	if(showSearchList.length > 0)
 	{

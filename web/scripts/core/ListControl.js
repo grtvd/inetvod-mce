@@ -25,6 +25,10 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "ListControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
 	this.fFocused = false;
 	this.fFocusedItem = null;			// focused item, null if no focused item
 
@@ -36,7 +40,11 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	}
 
 	this.fUIUpIconObj = document.getElementById(controlID + "_Up");
+	this.fUIUpIconObj.onmouseover = MainAppOnMouseOver;
+	this.fUIUpIconObj.onclick = MainAppOnMouseClick;
 	this.fUIDownIconObj = document.getElementById(controlID + "_Down");
+	this.fUIDownIconObj.onmouseover = MainAppOnMouseOver;
+	this.fUIDownIconObj.onclick = MainAppOnMouseClick;
 	this.fUICountObj = document.getElementById(controlID + "_Count");
 
 	this.fTopItem = 0;
@@ -111,7 +119,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 		if((this.fFocusedItem != null) && (this.fBottomItem >= 0) && (this.fFocusedItem.RowIndex > this.fBottomItem))
 			this.setFocusedItem(this.fRowList[this.fBottomItem]);
 	}
-	this.drawItems(false);
+	this.drawItems(true);
 	this.drawUpIcon(false);
 	this.drawDownIcon(false);
 	this.drawCount();
@@ -236,18 +244,32 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
+/*boolean*/ ListControl.prototype.isUpIconEnabled = function()
+{
+	return (this.fTopItem > 0);
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.drawUpIcon = function(/*boolean*/ showFocus)
 {
-	var enabled = (this.fTopItem > 0);
+	var enabled = this.isUpIconEnabled();
 
 	checkClassName(this.fUIUpIconObj, enabled ? (showFocus ? 'hilite' : 'normal') : 'disabled');
 }
 
 /******************************************************************************/
 
+/*boolean*/ ListControl.prototype.isDownIconEnabled = function()
+{
+	return (this.fBottomItem < this.getItemCount() - 1);
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.drawDownIcon = function(/*boolean*/ showFocus)
 {
-	var enabled = (this.fBottomItem < this.getItemCount() - 1);
+	var enabled = this.isDownIconEnabled();
 
 	checkClassName(this.fUIDownIconObj, enabled ? (showFocus ? 'hilite' : 'normal') : 'disabled');
 }
@@ -452,18 +474,22 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	// check more icons
 	if(controlID == this.fUIUpIconObj.id)
 	{
-		this.key(ek_PageUp);
+		if(this.isUpIconEnabled())
+			this.key(ek_PageUp);
 		return;
 	}
 
 	if(controlID == this.fUIDownIconObj.id)
 	{
-		this.key(ek_PageDown);
+		if(this.isDownIconEnabled())
+			this.key(ek_PageDown);
 		return;
 	}
 
 	// must be in list row
-	this.getScreen().onButton(this.ControlID);
+	var rowPos = this.findRowPos(controlID);
+	if((rowPos >= 0) && (rowPos < this.getItemCount()))
+		this.getScreen().onButton(this.ControlID);
 }
 
 /******************************************************************************/
@@ -471,13 +497,14 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 /*void*/ ListControl.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
 {
 	// check rows
-	var oRow = this.findRow(controlID);
-	if(oRow != null)
+	var rowPos = this.findRowPos(controlID);
+	if((rowPos >= 0) && (rowPos < this.getItemCount()))
 	{
-		this.setFocusedItem(oRow);
+		this.setFocusedItem(this.fRowList[rowPos]);
 		this.drawUpIcon(false);
 		this.drawDownIcon(false);
-		this.drawCount(true);
+		this.drawCount();
+		return;
 	}
 
 	// check more icons

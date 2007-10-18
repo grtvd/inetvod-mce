@@ -28,6 +28,10 @@ function Control()
 
 /******************************************************************************/
 
+/*boolean*/ Control.prototype.isEnabled = function() { return this.fEnabled; }
+
+/******************************************************************************/
+
 /*void*/ Control.prototype.setEnabled = function(/*boolean*/ enable)
 {
 	this.fEnabled = enable;

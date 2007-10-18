@@ -165,7 +165,6 @@ body
 
 .listCtrRow438_normal
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -177,7 +176,6 @@ body
 }
 .listCtrRow438_hilite
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -190,10 +188,10 @@ body
 .listCtrRow438_hide
 {
 	height: 54px;
+	cursor: default;
 }
 .listCtrRow680_normal
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -205,7 +203,6 @@ body
 }
 .listCtrRow680_hilite
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -218,10 +215,10 @@ body
 .listCtrRow680_hide
 {
 	height: 54px;
+	cursor: default;
 }
 .listCtrRow952_normal
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -233,7 +230,6 @@ body
 }
 .listCtrRow952_hilite
 {
-	behavior: url(styles/controls.htc);
 	height: 54px;
 	font-weight: bold;
 	font-size: 22pt;
@@ -246,11 +242,11 @@ body
 .listCtrRow952_hide
 {
 	height: 54px;
+	cursor: default;
 }
 
 .listCtrItem_normal
 {
-	/*behavior: url(styles/listControlItem.htc);*/
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: bold;
@@ -264,7 +260,6 @@ body
 }
 .listCtrItem_hilite
 {
-	/*behavior: url(styles/listControlItem.htc);*/
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: bold;
@@ -279,7 +274,6 @@ body
 
 .listCtrSmallItem_normal
 {
-	/*behavior: url(styles/listControlItem.htc);*/
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: normal;
@@ -293,7 +287,6 @@ body
 }
 .listCtrSmallItem_hilite
 {
-	/*behavior: url(styles/listControlItem.htc);*/
 	padding-left: 10px;
 	padding-right: 5px;
 	font-weight: normal;
@@ -316,7 +309,6 @@ body
 
 .listCtrPrev_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 27px;
 	height: 32px;
 	background-image: url(../images/listCtrPrevNormal.gif);
@@ -324,7 +316,6 @@ body
 }
 .listCtrPrev_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 27px;
 	height: 32px;
 	background-image: url(../images/listCtrPrevHilite.gif);
@@ -338,7 +329,6 @@ body
 }
 .listCtrNext_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 27px;
 	height: 32px;
 	background-image: url(../images/listCtrNextNormal.gif);
@@ -346,7 +336,6 @@ body
 }
 .listCtrNext_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 27px;
 	height: 32px;
 	background-image: url(../images/listCtrNextHilite.gif);
@@ -361,7 +350,6 @@ body
 
 .buttonCtr180_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 180px;
 	height: 54px;
 	font-weight: bold;
@@ -374,7 +362,6 @@ body
 }
 .buttonCtr180_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 180px;
 	height: 54px;
 	font-weight: bold;
@@ -399,7 +386,6 @@ body
 
 .buttonCtr220_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 200px;
 	padding-left: 20px;
 	height: 54px;
@@ -413,7 +399,6 @@ body
 }
 .buttonCtr220_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 200px;
 	padding-left: 20px;
 	height: 54px;
@@ -428,7 +413,6 @@ body
 
 .buttonCtr438_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 418px;
 	padding-left: 20px;
 	height: 54px;
@@ -443,7 +427,6 @@ body
 }
 .buttonCtr438_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 418px;
 	padding-left: 20px;
 	height: 54px;
@@ -459,7 +442,6 @@ body
 
 .buttonCtr600_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 580px;
 	padding-left: 20px;
 	height: 54px;
@@ -473,7 +455,6 @@ body
 }
 .buttonCtr600_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 580px;
 	padding-left: 20px;
 	height: 54px;
@@ -488,7 +469,6 @@ body
 
 .editCtr225_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 225px;
 	height: 54px;
 	padding: 9px;
@@ -498,7 +478,6 @@ body
 }
 .editCtr225_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 225px;
 	height: 54px;
 	padding: 9px;
@@ -509,7 +488,6 @@ body
 
 .editCtr150_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 150px;
 	height: 54px;
 	padding: 9px;
@@ -520,7 +498,6 @@ body
 }
 .editCtr150_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 150px;
 	height: 54px;
 	padding: 9px;
@@ -532,7 +509,6 @@ body
 
 .editCtr500_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 500px;
 	height: 54px;
 	padding: 9px;
@@ -542,7 +518,6 @@ body
 }
 .editCtr500_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 500px;
 	height: 54px;
 	padding: 9px;
@@ -613,7 +588,6 @@ body
 
 .checkCtr_normal
 {
-	behavior: url(styles/controls.htc);
 	width: 51px;
 	height: 50px;
 	background-image: url(../images/checkCtrNormal.gif);
@@ -621,7 +595,6 @@ body
 }
 .checkCtr_hilite
 {
-	behavior: url(styles/controls.htc);
 	width: 51px;
 	height: 50px;
 	background-image: url(../images/checkCtrHilite.gif);
@@ -629,7 +602,6 @@ body
 }
 .checkCtr_normalchk
 {
-	behavior: url(styles/controls.htc);
 	width: 51px;
 	height: 50px;
 	background-image: url(../images/checkCtrNormalChk.gif);
@@ -637,7 +609,6 @@ body
 }
 .checkCtr_hilitechk
 {
-	behavior: url(styles/controls.htc);
 	width: 51px;
 	height: 50px;
 	background-image: url(../images/checkCtrHiliteChk.gif);

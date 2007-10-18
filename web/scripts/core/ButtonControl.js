@@ -15,6 +15,11 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "ButtonControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
+
 	this.fFocused = false;
 
 	this.setFocus(false);

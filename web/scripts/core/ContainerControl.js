@@ -21,6 +21,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	this.fTop = top;
 	this.fControlArray = new Array();
 	this.fFocusedControlPos = -1;
+	this.DefaultFocusControlID = null;
 	this.onNavigate = new Function("return null;");
 }
 
@@ -38,6 +39,10 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	setStyleDisplay(this.fUIObj, show);
 }
+
+/******************************************************************************/
+
+/*boolean*/ ContainerControl.prototype.isEnabled = function() { return true; }
 
 /******************************************************************************/
 
@@ -197,6 +202,20 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 		this.fFocusedControlPos = -1;	// clear focused control
 	}
 
+	// was a "default" control specified?
+	if(this.DefaultFocusControlID)
+	{
+		oControl = this.findControl(this.DefaultFocusControlID);
+		if(oControl != null)
+		{
+			if(oControl.canFocus())		// check canFocus in case control became disabled
+			{
+				this.focusControl(this.DefaultFocusControlID, set);
+				return;
+			}
+		}
+	}
+
 	// if setting, give first child the focus
 	if(set)
 	{
@@ -317,7 +336,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	var oControl = this.findControl(controlID);
 
-	if(oControl != null)
+	if((oControl != null) && oControl.isEnabled())
 		oControl.mouseClick(controlID);
 }
 

@@ -4,6 +4,7 @@
 /******************************************************************************/
 
 NowPlayingScreen.ScreenID = "Show002";
+NowPlayingScreen.BodyID = "Show002_Body";
 NowPlayingScreen.ShowListID = "Show002_ShowList";
 NowPlayingScreen.NameID = "Show002_Name";
 NowPlayingScreen.EpisodeNameID = "Show002_EpisodeName";
@@ -28,7 +29,6 @@ NowPlayingScreen.newInstance = function()
 	{
 		var oScreen = new NowPlayingScreen(rentedShowSearchList);
 		MainApp.getThe().openScreen(oScreen);
-		oScreen.focusControl(NowPlayingScreen.ShowListID, true);
 		return oScreen;
 	}
 }
@@ -54,6 +54,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.onNavigate = NowPlayingScreen.onNavigate;
+	this.fContainerControl.DefaultFocusControlID = NowPlayingScreen.ShowListID;
 
 	var oControl;
 
@@ -67,7 +68,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 		6, oRowItemList, rentedShowSearchList);
 	if(rentedShowSearchList.length > 0)
 		this.newControl(oControl);
-	oControl.show(rentedShowSearchList.length > 0);
+	(new ContainerControl(NowPlayingScreen.BodyID, 0, 0)).show(rentedShowSearchList.length > 0);
 
 	if(rentedShowSearchList.length > 0)
 	{
@@ -100,8 +101,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	}
 	else
 	{
-		oControl = this.getControl(NowPlayingScreen.ShowListID);
-		oControl.show(false);
+		(new ContainerControl(NowPlayingScreen.BodyID, 0, 0)).show(false);
 		this.deleteControl(NowPlayingScreen.ShowListID);
 		this.deleteControl(NowPlayingScreen.SortByNameID);
 		this.deleteControl(NowPlayingScreen.SortByUntilID);

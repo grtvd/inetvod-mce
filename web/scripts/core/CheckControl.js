@@ -15,6 +15,10 @@ function CheckControl(/*string*/ controlID, /*string*/ screenID)
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "CheckControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
 	this.fFocused = false;
 	this.fChecked = false;
 
