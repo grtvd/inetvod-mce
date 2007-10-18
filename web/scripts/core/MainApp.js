@@ -28,13 +28,6 @@ var gMainApp = null;
 /******************************************************************************/
 /******************************************************************************/
 
-function IsMCEEnabled()
-{
-	return true
-}
-
-/******************************************************************************/
-
 function onRemoteEvent(keyCode)
 {
 	// for the numerics on the Remote, MCE returns both "keypress" and "onremote" events, causing double chars.
