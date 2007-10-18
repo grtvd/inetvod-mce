@@ -252,6 +252,19 @@ function validateStrHasLen(str, method)
 /******************************************************************************/
 /******************************************************************************/
 
+function getClassNameBase(curr)
+{
+	if(curr == undefined)
+		return '';
+
+	var parts = curr.split('_');
+	if(parts.length != 2)
+		return curr;
+	return parts[0];
+}
+
+/******************************************************************************/
+
 function buildClassName(curr, ext)
 {
 	if(curr == undefined)
@@ -410,6 +423,22 @@ function arrayRemoveByCmpr(arr, itemComparer)
 		return;
 
 	arr.splice(pos, 1);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function stopEventPropagation(evt)
+{
+	if(!isObject(evt) && isObject(event))
+		evt = event;
+	if(isObject(evt))
+	{
+		if(isFunction(evt.stopPropagation))
+			evt.stopPropagation();
+		else if(isBoolean(evt.cancelBubble))
+			evt.cancelBubble = true;
+	}
 }
 
 /******************************************************************************/
