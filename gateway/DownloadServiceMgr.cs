@@ -1,8 +1,9 @@
 #region Copyright
-// Copyright © 2006 iNetVOD, Inc. All Rights Reserved.
+// Copyright © 2006-2007 iNetVOD, Inc. All Rights Reserved.
 // iNetVOD Confidential and Proprietary.  See LEGAL.txt.
 #endregion
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 
@@ -13,6 +14,12 @@ namespace iNetVOD.MCE.Gateway
 {
 	public class DownloadServiceMgr : IObjectSafety
 	{
+		#region Constants
+		private static string QuickTimePlayer = "qt";
+		private static string WindowsMediaPlayer = "wm";
+		private static string InternetExplorer = "ie";
+		#endregion
+
 		#region Fields
 		private ConfigDataMgr fConfigDataMgr;
 		private UserDataMgr fUserDataMgr;
@@ -105,10 +112,72 @@ namespace iNetVOD.MCE.Gateway
 
 		public string getRentedShowStatus(string rentedShowID)
 		{
+			Logger.LogInfo(this, "getRentedShowStatus", String.Format("rentedShowID({0})", rentedShowID));
 			Show show = fUserDataMgr.ShowList.FindByRentedShowID(new RentedShowID(rentedShowID));
 			if(show == null)
 				return null;
 			return show.DownloadStatus.ToString();
+		}
+
+		public bool playRentedShow(string rentedShowID, string useApp)
+		{
+			Logger.LogInfo(this, "playRentedShow", String.Format("rentedShowID({0}), useApp({1})", rentedShowID, useApp));
+			Show show = fUserDataMgr.ShowList.FindByRentedShowID(new RentedShowID(rentedShowID));
+			if(show == null)
+				return false;
+			return openPlayer(Path.Combine(fUserDataMgr.LocalShowPath.ToString(), show.DataFileName.ToString()),
+				useApp);
+		}
+
+		private bool openPlayer(string mediaFile, string useApp)
+		{
+			Logger.LogInfo(this, "openPlayer", String.Format("mediaFile({0}), useApp({1})", mediaFile, useApp));
+			if(QuickTimePlayer.Equals(useApp))
+				openQuickTime(mediaFile);
+			else if(WindowsMediaPlayer.Equals(useApp))
+				openMediaPlayer(mediaFile);
+			else if(InternetExplorer.Equals(useApp))
+				openInternetExplorer(mediaFile);
+			else
+				return false;
+
+			return true;
+		}
+
+		private void openMediaPlayer(string mediaFile)
+		{
+			Process proc = new System.Diagnostics.Process();
+			proc.EnableRaisingEvents = false;
+			//proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.FileName = "C:\\Program Files\\Windows Media Player\\wmplayer.exe";
+			//proc.StartInfo.WorkingDirectory = work;
+			proc.StartInfo.Arguments = "/prefetch:9 /Play \"" + mediaFile + "\"";
+			proc.Start();
+			//proc.WaitForExit();
+		}
+
+		private void openQuickTime(string mediaFile)
+		{
+			Process proc = new System.Diagnostics.Process();
+			proc.EnableRaisingEvents = false;
+			//proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.FileName = "C:\\Program Files\\QuickTime\\QuickTimePlayer.exe";
+			//proc.StartInfo.WorkingDirectory = work;
+			proc.StartInfo.Arguments = "\"" + mediaFile + "\"";
+			proc.Start();
+			//proc.WaitForExit();
+		}
+
+		private void openInternetExplorer(string mediaFile)
+		{
+			Process proc = new System.Diagnostics.Process();
+			proc.EnableRaisingEvents = false;
+			//proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+			proc.StartInfo.FileName = "C:\\Program Files\\Internet Explorer\\iexplore.exe";
+			//proc.StartInfo.WorkingDirectory = work;
+			proc.StartInfo.Arguments = mediaFile;
+			proc.Start();
+			//proc.WaitForExit();
 		}
 		#endregion
 	}
