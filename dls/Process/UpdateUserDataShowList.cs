@@ -1,5 +1,5 @@
 #region Copyright
-// Copyright © 2006 iNetVOD, Inc. All Rights Reserved.
+// Copyright © 2006-2007 iNetVOD, Inc. All Rights Reserved.
 // iNetVOD Confidential and Proprietary.  See LEGAL.txt.
 #endregion
 using System;
@@ -13,6 +13,10 @@ namespace iNetVOD.MCE.DSL.Process
 {
 	public class UpdateUserDataShowList
 	{
+		#region Constants
+		private static int DataFileNameMaxLen = 63;
+		#endregion
+
 		public bool DoUpdate(DownloadShowList downloadShowList)
 		{
 			//Omnie : Compare downloadlist item with UserList. If not found in User List then insert in UserList
@@ -45,7 +49,7 @@ namespace iNetVOD.MCE.DSL.Process
 					{
 						//Insert Show In User List
 						Logger.LogInfo(this, "CompareUserListInsert", "Insert Show In User List");
-						showList.Add(AddDownloadShowToList(downloadShow)); 
+						AddDownloadShowToList(showList, downloadShow); 
 						bNewShowInserted = true;
 					}
 				}
@@ -161,27 +165,10 @@ namespace iNetVOD.MCE.DSL.Process
 					show.DownloadStatus = DownloadStatus.InProgress;
 					UserDataMgr.GetThe().SaveShowList(showList);
 
-					String fileName = DriveInfo.CheckFileName(show.RentedShowID.ToString());
-					String origFullFileName = Path.Combine(filePath, fileName);
-					if(DownloadFile(show.ShowURL.ToString(), origFullFileName))
+					String fullFileName = Path.Combine(filePath, show.DataFileName.ToString());
+					if(DownloadFile(show.ShowURL.ToString(), fullFileName))
 					{
-						/**********************************************************************************/
-						//Convert To Media File
-						System.Console.Out.WriteLine("-----------------ConvertToMediaFile-------------------");
-
-						/**********************************************************************************/
-
-						// Determine new file name
-						String newFileName = DriveInfo.NewFileName(filePath,
-							DriveInfo.CheckFileName(show.DataFileName.ToString()),
-							Path.GetExtension(show.ShowURL.ToString()));
-						String newFullFileName = Path.Combine(filePath, newFileName);
-
-						// Rename file
-						File.Move(origFullFileName, newFullFileName);
-
-						//Update Show
-						show.DataFileName = new TString(newFileName);
+						//Update Show status
 						show.DownloadStatus = DownloadStatus.Completed;
 					}
 					else
@@ -239,13 +226,40 @@ namespace iNetVOD.MCE.DSL.Process
 
 
 		//Create Show from DownloadShow
-		private Show AddDownloadShowToList(DownloadShow downloadShow)
+		private void AddDownloadShowToList(ShowList showList, DownloadShow downloadShow)
 		{
 			Show show = Show.NewInstance(downloadShow.RentedShowID);
 			show.ShowURL = downloadShow.ShowURL;
-			show.DataFileName = new TString(DriveInfo.CheckFileName(downloadShow.DataFileName.ToString())) ; 
+			show.DataFileName = new TString(determineNewShowName(showList, downloadShow)); 
 			show.DownloadStatus = DownloadStatus.NotStarted;
-			return show;
+
+			showList.Add(show);
+		}
+
+		private String determineNewShowName(ShowList showList, DownloadShow downloadShow)
+		{
+			String baseFileName = DriveInfo.CheckFileName(downloadShow.DataFileName.ToString());
+			String fileExt = FileUtil.DetermineFileExtFromURL(downloadShow.ShowURL.ToString());
+
+			if(fileExt == null)
+				fileExt = "";
+
+			if(baseFileName.Length + fileExt.Length > DataFileNameMaxLen)
+				baseFileName = baseFileName.Substring(0, DataFileNameMaxLen - fileExt.Length);
+
+			int count = 2;
+			String testFileName = baseFileName + fileExt;
+			while(true)
+			{
+				if(!showList.ContainsByDataFileName(testFileName))
+					return testFileName;
+
+				String postfix = String.Format(" ({0})", count++);
+
+				if(baseFileName.Length + postfix.Length + fileExt.Length > DataFileNameMaxLen)
+					baseFileName = baseFileName.Substring(0, DataFileNameMaxLen - postfix.Length - fileExt.Length);
+				testFileName = baseFileName + postfix + fileExt;
+			}
 		}
 	}
 }
