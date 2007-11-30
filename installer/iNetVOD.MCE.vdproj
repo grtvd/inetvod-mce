@@ -21,6 +21,30 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_39136F9709D6416CA2704C01B8486FB3"
+        "OwnerKey" = "8:_B089FE521895F7997E73F321E3887B60"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_39136F9709D6416CA2704C01B8486FB3"
+        "OwnerKey" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_39136F9709D6416CA2704C01B8486FB3"
+        "OwnerKey" = "8:_0C6AB2A5B289498FAEA7FA9E09A7F588"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_39136F9709D6416CA2704C01B8486FB3"
+        "OwnerKey" = "8:_ADA27F3782DF4FFC92F938FA78DCEB4A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_6DB0CEB1558447AF9D69294B2D130D3D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -57,30 +81,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
-        "OwnerKey" = "8:_B089FE521895F7997E73F321E3887B60"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
-        "OwnerKey" = "8:_70A920CD6F384418B3AE1F79504C8E5B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
-        "OwnerKey" = "8:_0C6AB2A5B289498FAEA7FA9E09A7F588"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B69F235EAD024000BCF136E16F4ED7B8"
-        "OwnerKey" = "8:_ADA27F3782DF4FFC92F938FA78DCEB4A"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C4453772A7B54B67B1BC50797BB7A51C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -93,7 +93,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\inetvod.mce-1.0.3.msi"
+        "OutputFilename" = "8:Release\\inetvod.mce-1.0.4.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -222,7 +222,7 @@
             {
             "AssemblyRegister" = "3:2"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Gateway, Version=1.0.2442.42540, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Gateway, Version=1.0.2889.42056, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_0C6AB2A5B289498FAEA7FA9E09A7F588"
@@ -273,7 +273,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.DLS, Version=1.0.2442.42540, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.DLS, Version=1.0.2889.42056, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_70A920CD6F384418B3AE1F79504C8E5B"
@@ -304,7 +304,7 @@
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Common, Version=1.0.2442.42540, Culture=neutral"
+            "AssemblyAsmDisplayName" = "8:iNetVOD.MCE.Common, Version=1.0.2889.42055, Culture=neutral"
                 "ScatterAssemblies"
                 {
                     "_B089FE521895F7997E73F321E3887B60"
@@ -384,13 +384,13 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:iNetVOD Media Center Edition"
-        "ProductCode" = "8:{D688632E-4D03-4B64-9D17-4326ED8A4A17}"
-        "PackageCode" = "8:{3B02C5F1-F7BF-48FC-9921-411E3A4146D6}"
+        "ProductCode" = "8:{610110C8-7E83-4DA5-9E28-D1547D7E0DCA}"
+        "PackageCode" = "8:{4E939E76-9185-4D67-BF57-BC47B57645DF}"
         "UpgradeCode" = "8:{ACD907DA-672E-4361-830B-6A964D39C4BA}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
-        "ProductVersion" = "8:1.0.3"
+        "ProductVersion" = "8:1.0.4"
         "Manufacturer" = "8:iNetVOD"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -882,7 +882,7 @@
         }
         "MergeModule"
         {
-            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_B69F235EAD024000BCF136E16F4ED7B8"
+            "{35A69C6E-5BA4-440D-803D-762B59A45393}:_39136F9709D6416CA2704C01B8486FB3"
             {
             "UseDynamicProperties" = "11:TRUE"
             "IsDependency" = "11:TRUE"
