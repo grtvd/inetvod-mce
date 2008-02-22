@@ -10,6 +10,7 @@ function RentedShowSearch(reader)
 	this.ProviderID = null;
 	this.Name = null;
 	this.EpisodeName = null;
+	this.PictureURL = null;
 	this.AvailableUntil = null;
 
 	if(reader != undefined)
@@ -25,6 +26,7 @@ function RentedShowSearch(reader)
 	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
 	this.Name = reader.readString("Name", 64);
 	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
 	this.AvailableUntil = reader.readDateTime("AvailableUntil");
 }
 
