@@ -69,6 +69,20 @@ function AskAdultPINScreen()
 	if(statusCode == sc_Success)
 	{
 		MainApp.getThe().getScreen(PreferencesScreen.ScreenID).updateAdultAccess();
+
+		var oSession = MainApp.getThe().getSession();
+		this.Callback = AskAdultPINScreen.prototype.afterLoadSystemData;
+		oSession.loadSystemData(this);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ AskAdultPINScreen.prototype.afterLoadSystemData = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
 		this.close();
 	}
 }
