@@ -61,52 +61,6 @@ function showError(loc, e)
 }
 
 /******************************************************************************/
-
-// This function detects whether user is in a remote session on a Media Center Extender device
-
-function IsMCExtender()
-{
-	try
-	{
-		if(!window.external.MediaCenter)
-			return false;
-
-		// if this is not a console session ...
-		if (window.external.MediaCenter.Capabilities.IsConsole == false)
-		{
-			/* ...then it is either a Media Center Extender session or a traditional Remote Desktop session.
-			 To tell which type of session it is, check if video is allowed. If video is allowed... */
-			if (window.external.MediaCenter.Capabilities.IsVideoAllowed == true)
-			{
-				// ... then it is an extender session, so return true
-				return true
-			}
-			// Media Center does not allow video in a traditional Remote Desktop session. So if video is not allowed ...
-			else
-			{
-				/* IsConsole and IsVideoAllowed are both false false, so user is accessing through a traditional Remote
-				Desktop session, rather than from an extender device. That means that they probably have access to a keyboard
-				and mouse, but they cannot play video. If your application features video playback, you may want to
-				adjust your functionality for this user accordingly.
-				Returning false simply indicates that this is not an Extender session.  */
-				return false
-			}
-		}
-		else
-		{
-			// If not, this is a Media Center session on the console PC, so return false
-			return false
-		}
-	}
-	catch(e)
-	{
-		/* If above cause errors, user is probably accessing from a browser outside of Media Center.
-		Return false to indicate that it is not an extender session. */
-		return false
-	}
-}
-
-/******************************************************************************/
 /******************************************************************************/
 
 function isAlien(a)
@@ -250,6 +204,19 @@ function validateStrHasLen(str, method)
 }
 
 /******************************************************************************/
+/******************************************************************************/
+
+function getClassNameBase(curr)
+{
+	if(curr == undefined)
+		return '';
+
+	var parts = curr.split('_');
+	if(parts.length != 2)
+		return curr;
+	return parts[0];
+}
+
 /******************************************************************************/
 
 function buildClassName(curr, ext)
@@ -410,6 +377,22 @@ function arrayRemoveByCmpr(arr, itemComparer)
 		return;
 
 	arr.splice(pos, 1);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function stopEventPropagation(evt)
+{
+	if(!isObject(evt) && isObject(event))
+		evt = event;
+	if(isObject(evt))
+	{
+		if(isFunction(evt.stopPropagation))
+			evt.stopPropagation();
+		else if(isBoolean(evt.cancelBubble))
+			evt.cancelBubble = true;
+	}
 }
 
 /******************************************************************************/
@@ -850,6 +833,64 @@ function Money(reader)
 
 /******************************************************************************/
 /******************************************************************************/
+/* MediaCenter.js */
+
+/******************************************************************************/
+/******************************************************************************/
+
+function IsMCEEnabled()
+{
+	return true;
+}
+
+/******************************************************************************/
+
+// This function detects whether user is in a remote session on a Media Center Extender device
+
+function IsMCExtender()
+{
+	try
+	{
+		if(!window.external.MediaCenter)
+			return false;
+
+		// if this is not a console session ...
+		if (window.external.MediaCenter.Capabilities.IsConsole == false)
+		{
+			/* ...then it is either a Media Center Extender session or a traditional Remote Desktop session.
+			 To tell which type of session it is, check if video is allowed. If video is allowed... */
+			if (window.external.MediaCenter.Capabilities.IsVideoAllowed == true)
+			{
+				// ... then it is an extender session, so return true
+				return true
+			}
+			// Media Center does not allow video in a traditional Remote Desktop session. So if video is not allowed ...
+			else
+			{
+				/* IsConsole and IsVideoAllowed are both false false, so user is accessing through a traditional Remote
+				Desktop session, rather than from an extender device. That means that they probably have access to a keyboard
+				and mouse, but they cannot play video. If your application features video playback, you may want to
+				adjust your functionality for this user accordingly.
+				Returning false simply indicates that this is not an Extender session.  */
+				return false
+			}
+		}
+		else
+		{
+			// If not, this is a Media Center session on the console PC, so return false
+			return false
+		}
+	}
+	catch(e)
+	{
+		/* If above cause errors, user is probably accessing from a browser outside of Media Center.
+		Return false to indicate that it is not an extender session. */
+		return false
+	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
 /* MainApp.js */
 
 /******************************************************************************/
@@ -878,13 +919,6 @@ var g_Color_Black = "#101010";
 var gMainApp = null;
 
 /******************************************************************************/
-/******************************************************************************/
-
-function IsMCEEnabled()
-{
-	return true
-}
-
 /******************************************************************************/
 
 function onRemoteEvent(keyCode)
@@ -1259,14 +1293,15 @@ function MainApp()
 /******************************************************************************/
 /******************************************************************************/
 
-function MainAppOnKeyDown()
+function MainAppOnKeyDown(evt)
 {
-	if((event.keyCode == 8)
-			|| (event.keyCode == 9)
-			|| (event.keyCode == 13)
-			|| ((event.keyCode >= 33) && (event.keyCode <= 34))
-			|| ((event.keyCode >= 37) && (event.keyCode <= 40)))
-		return MainAppOnRemoteEvent(event.keyCode);
+	var keyCode = evt ? evt.keyCode : event.keyCode;
+	if((keyCode == 8)
+			|| (keyCode == 9)
+			|| (keyCode == 13)
+			|| ((keyCode >= 33) && (keyCode <= 34))
+			|| ((keyCode >= 37) && (keyCode <= 40)))
+		return MainAppOnRemoteEvent(keyCode);
 	return true;
 }
 
@@ -1279,12 +1314,13 @@ function MainAppOnKeyUp()
 
 /******************************************************************************/
 
-function MainAppOnKeyPress()
+function MainAppOnKeyPress(evt)
 {
-	if((event.keyCode != 8)
-			&& (event.keyCode != 9)
-			&& (event.keyCode != 13))
-		return MainAppOnRemoteEvent(event.keyCode);
+	var keyCode = evt ? evt.keyCode : event.keyCode;
+	if((keyCode != 8)
+			&& (keyCode != 9)
+			&& (keyCode != 13))
+		return MainAppOnRemoteEvent(keyCode);
 	return true;
 }
 
@@ -1346,12 +1382,13 @@ function MainAppIdle()
 
 /******************************************************************************/
 
-function MainAppOnMouseClick(obj)
+function MainAppOnMouseClick(evt)
 {
 	try
 	{
 		if(!WaitScreen_isOpen())
 		{
+			var obj = evt ? evt.target : event.srcElement;
 			obj = findObjectWithID(obj);
 			if(obj != null)
 				MainApp.getThe().mouseClick(obj.id);
@@ -1365,10 +1402,11 @@ function MainAppOnMouseClick(obj)
 
 /******************************************************************************/
 
-function MainAppOnMouseOver(obj)
+function MainAppOnMouseOver(evt)
 {
 	try
 	{
+		var obj = evt ? evt.target : event.srcElement;
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().mouseMove(obj.id);
@@ -1381,10 +1419,11 @@ function MainAppOnMouseOver(obj)
 
 /******************************************************************************/
 
-function MainAppOnFocus(obj)
+function MainAppOnFocus(evt)
 {
 	try
 	{
+		var obj = evt ? evt.target : event.srcElement;
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().focusEvent(obj.id);
@@ -1397,10 +1436,11 @@ function MainAppOnFocus(obj)
 
 /******************************************************************************/
 
-function MainAppOnBlur(obj)
+function MainAppOnBlur(evt)
 {
 	try
 	{
+		var obj = evt ? evt.target : event.srcElement;
 		obj = findObjectWithID(obj);
 		if(obj != null)
 			MainApp.getThe().blurEvent(obj.id);
@@ -1615,6 +1655,10 @@ function Control()
 
 /******************************************************************************/
 
+/*boolean*/ Control.prototype.isEnabled = function() { return this.fEnabled; }
+
+/******************************************************************************/
+
 /*void*/ Control.prototype.setEnabled = function(/*boolean*/ enable)
 {
 	this.fEnabled = enable;
@@ -1691,6 +1735,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	this.fTop = top;
 	this.fControlArray = new Array();
 	this.fFocusedControlPos = -1;
+	this.DefaultFocusControlID = null;
 	this.onNavigate = new Function("return null;");
 }
 
@@ -1708,6 +1753,10 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	setStyleDisplay(this.fUIObj, show);
 }
+
+/******************************************************************************/
+
+/*boolean*/ ContainerControl.prototype.isEnabled = function() { return true; }
 
 /******************************************************************************/
 
@@ -1867,6 +1916,20 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 		this.fFocusedControlPos = -1;	// clear focused control
 	}
 
+	// was a "default" control specified?
+	if(this.DefaultFocusControlID)
+	{
+		oControl = this.findControl(this.DefaultFocusControlID);
+		if(oControl != null)
+		{
+			if(oControl.canFocus())		// check canFocus in case control became disabled
+			{
+				this.focusControl(this.DefaultFocusControlID, set);
+				return;
+			}
+		}
+	}
+
 	// if setting, give first child the focus
 	if(set)
 	{
@@ -1987,7 +2050,7 @@ function ContainerControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 {
 	var oControl = this.findControl(controlID);
 
-	if(oControl != null)
+	if((oControl != null) && oControl.isEnabled())
 		oControl.mouseClick(controlID);
 }
 
@@ -2068,6 +2131,11 @@ function ButtonControl(/*string*/ controlID, /*string*/ screenID)
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "ButtonControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
+
 	this.fFocused = false;
 
 	this.setFocus(false);
@@ -2158,6 +2226,10 @@ function EditControl(/*string*/ controlID, /*string*/ screenID, /*int*/ viewable
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "EditControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
 	this.fFocused = false;
 
 	this.Type = ect_Numeric;
@@ -2635,6 +2707,10 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "ListControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
 	this.fFocused = false;
 	this.fFocusedItem = null;			// focused item, null if no focused item
 
@@ -2646,7 +2722,11 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	}
 
 	this.fUIUpIconObj = document.getElementById(controlID + "_Up");
+	this.fUIUpIconObj.onmouseover = MainAppOnMouseOver;
+	this.fUIUpIconObj.onclick = MainAppOnMouseClick;
 	this.fUIDownIconObj = document.getElementById(controlID + "_Down");
+	this.fUIDownIconObj.onmouseover = MainAppOnMouseOver;
+	this.fUIDownIconObj.onclick = MainAppOnMouseClick;
 	this.fUICountObj = document.getElementById(controlID + "_Count");
 
 	this.fTopItem = 0;
@@ -2721,7 +2801,7 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 		if((this.fFocusedItem != null) && (this.fBottomItem >= 0) && (this.fFocusedItem.RowIndex > this.fBottomItem))
 			this.setFocusedItem(this.fRowList[this.fBottomItem]);
 	}
-	this.drawItems(false);
+	this.drawItems(true);
 	this.drawUpIcon(false);
 	this.drawDownIcon(false);
 	this.drawCount();
@@ -2846,18 +2926,32 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 
 /******************************************************************************/
 
+/*boolean*/ ListControl.prototype.isUpIconEnabled = function()
+{
+	return (this.fTopItem > 0);
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.drawUpIcon = function(/*boolean*/ showFocus)
 {
-	var enabled = (this.fTopItem > 0);
+	var enabled = this.isUpIconEnabled();
 
 	checkClassName(this.fUIUpIconObj, enabled ? (showFocus ? 'hilite' : 'normal') : 'disabled');
 }
 
 /******************************************************************************/
 
+/*boolean*/ ListControl.prototype.isDownIconEnabled = function()
+{
+	return (this.fBottomItem < this.getItemCount() - 1);
+}
+
+/******************************************************************************/
+
 /*void*/ ListControl.prototype.drawDownIcon = function(/*boolean*/ showFocus)
 {
-	var enabled = (this.fBottomItem < this.getItemCount() - 1);
+	var enabled = this.isDownIconEnabled();
 
 	checkClassName(this.fUIDownIconObj, enabled ? (showFocus ? 'hilite' : 'normal') : 'disabled');
 }
@@ -3062,18 +3156,22 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 	// check more icons
 	if(controlID == this.fUIUpIconObj.id)
 	{
-		this.key(ek_PageUp);
+		if(this.isUpIconEnabled())
+			this.key(ek_PageUp);
 		return;
 	}
 
 	if(controlID == this.fUIDownIconObj.id)
 	{
-		this.key(ek_PageDown);
+		if(this.isDownIconEnabled())
+			this.key(ek_PageDown);
 		return;
 	}
 
 	// must be in list row
-	this.getScreen().onButton(this.ControlID);
+	var rowPos = this.findRowPos(controlID);
+	if((rowPos >= 0) && (rowPos < this.getItemCount()))
+		this.getScreen().onButton(this.ControlID);
 }
 
 /******************************************************************************/
@@ -3081,13 +3179,14 @@ function ListControl(/*string*/ controlID, /*string*/ screenID, /*int*/ numRows,
 /*void*/ ListControl.prototype.mouseMove = function(/*bool buttonDown,*/ controlID)
 {
 	// check rows
-	var oRow = this.findRow(controlID);
-	if(oRow != null)
+	var rowPos = this.findRowPos(controlID);
+	if((rowPos >= 0) && (rowPos < this.getItemCount()))
 	{
-		this.setFocusedItem(oRow);
+		this.setFocusedItem(this.fRowList[rowPos]);
 		this.drawUpIcon(false);
 		this.drawDownIcon(false);
-		this.drawCount(true);
+		this.drawCount();
+		return;
 	}
 
 	// check more icons
@@ -3250,6 +3349,10 @@ function CheckControl(/*string*/ controlID, /*string*/ screenID)
 	this.fUIObj = document.getElementById(controlID);
 	if(this.fUIObj == null)
 		throw "CheckControl::ctor(controlID): Can't find UI object, ID(" + controlID + ")";
+	this.fUIObj.onmouseover = MainAppOnMouseOver;
+	this.fUIObj.onclick = MainAppOnMouseClick;
+	this.fUIObj.onfocus = MainAppOnFocus;
+	this.fUIObj.onblur = MainAppOnBlur;
 	this.fFocused = false;
 	this.fChecked = false;
 
@@ -5223,10 +5326,10 @@ Player.newInstance = function()
 
 function Player()
 {
-	this.ManufacturerID;
-	this.ModelNo;
-	this.SerialNo;
-	this.Version;
+	this.ManufacturerID = null;
+	this.ModelNo = null;
+	this.SerialNo = null;
+	this.Version = null;
 }
 
 /******************************************************************************/
@@ -5456,6 +5559,7 @@ function ShowSearch(reader)
 	this.EpisodeName = null;
 	this.ReleasedOn = null;
 	this.ReleasedYear = null;
+	this.PictureURL = null;
 	this.ShowProviderList = null;
 
 	if(reader != undefined)
@@ -5471,6 +5575,7 @@ function ShowSearch(reader)
 	this.EpisodeName = reader.readString("EpisodeName", 64);
 	this.ReleasedOn = reader.readDate("ReleasedOn");
 	this.ReleasedYear = reader.readShort("ReleasedYear");
+	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
 	this.ShowProviderList = reader.readList("ShowProvider", ShowProvider);
 }
 
@@ -5721,6 +5826,7 @@ function RentedShowSearch(reader)
 	this.ProviderID = null;
 	this.Name = null;
 	this.EpisodeName = null;
+	this.PictureURL = null;
 	this.AvailableUntil = null;
 
 	if(reader != undefined)
@@ -5736,6 +5842,7 @@ function RentedShowSearch(reader)
 	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
 	this.Name = reader.readString("Name", 64);
 	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
 	this.AvailableUntil = reader.readDateTime("AvailableUntil");
 }
 
@@ -8555,6 +8662,7 @@ function RatingSelectScreen(/*SearchDataPtr*/ oSearchData)
 /******************************************************************************/
 
 SearchResultsScreen.ScreenID = "Search003";
+SearchResultsScreen.BodyID = "Search003_Body";
 SearchResultsScreen.ShowListID = "Search003_ShowList";
 SearchResultsScreen.NameID = "Search003_Name";
 SearchResultsScreen.EpisodeNameID = "Search003_EpisodeName";
@@ -8570,7 +8678,6 @@ SearchResultsScreen.newInstance = function(/*Array*/ showSearchList)
 {
 	var oScreen = new SearchResultsScreen(showSearchList);
 	MainApp.getThe().openScreen(oScreen);
-	oScreen.focusControl(SearchResultsScreen.ShowListID, true);
 	return oScreen;
 }
 
@@ -8596,6 +8703,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.onNavigate = SearchResultsScreen.onNavigate;
+	this.fContainerControl.DefaultFocusControlID = SearchResultsScreen.ShowListID;
 
 	var oControl;
 
@@ -8610,7 +8718,7 @@ function SearchResultsScreen(/*Array*/ showSearchList)
 		6, oRowItemList, showSearchList);
 	if(showSearchList.length > 0)
 		this.newControl(oControl);
-	oControl.show(showSearchList.length > 0);
+	(new ContainerControl(SearchResultsScreen.BodyID, 0, 0)).show(showSearchList.length > 0);
 
 	if(showSearchList.length > 0)
 	{
@@ -9818,6 +9926,7 @@ function ConfirmChargeControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 /******************************************************************************/
 
 NowPlayingScreen.ScreenID = "Show002";
+NowPlayingScreen.BodyID = "Show002_Body";
 NowPlayingScreen.ShowListID = "Show002_ShowList";
 NowPlayingScreen.NameID = "Show002_Name";
 NowPlayingScreen.EpisodeNameID = "Show002_EpisodeName";
@@ -9842,7 +9951,6 @@ NowPlayingScreen.newInstance = function()
 	{
 		var oScreen = new NowPlayingScreen(rentedShowSearchList);
 		MainApp.getThe().openScreen(oScreen);
-		oScreen.focusControl(NowPlayingScreen.ShowListID, true);
 		return oScreen;
 	}
 }
@@ -9868,6 +9976,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 
 	this.fContainerControl = new ContainerControl(this.ScreenID, 30, 120);
 	this.fContainerControl.onNavigate = NowPlayingScreen.onNavigate;
+	this.fContainerControl.DefaultFocusControlID = NowPlayingScreen.ShowListID;
 
 	var oControl;
 
@@ -9881,7 +9990,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 		6, oRowItemList, rentedShowSearchList);
 	if(rentedShowSearchList.length > 0)
 		this.newControl(oControl);
-	oControl.show(rentedShowSearchList.length > 0);
+	(new ContainerControl(NowPlayingScreen.BodyID, 0, 0)).show(rentedShowSearchList.length > 0);
 
 	if(rentedShowSearchList.length > 0)
 	{
@@ -9914,8 +10023,7 @@ function NowPlayingScreen(/*Array*/ rentedShowSearchList)
 	}
 	else
 	{
-		oControl = this.getControl(NowPlayingScreen.ShowListID);
-		oControl.show(false);
+		(new ContainerControl(NowPlayingScreen.BodyID, 0, 0)).show(false);
 		this.deleteControl(NowPlayingScreen.ShowListID);
 		this.deleteControl(NowPlayingScreen.SortByNameID);
 		this.deleteControl(NowPlayingScreen.SortByUntilID);
@@ -10480,6 +10588,20 @@ function AskAdultPINScreen()
 	if(statusCode == sc_Success)
 	{
 		MainApp.getThe().getScreen(PreferencesScreen.ScreenID).updateAdultAccess();
+
+		var oSession = MainApp.getThe().getSession();
+		this.Callback = AskAdultPINScreen.prototype.afterLoadSystemData;
+		oSession.loadSystemData(this);
+	}
+}
+
+/******************************************************************************/
+
+/*void*/ AskAdultPINScreen.prototype.afterLoadSystemData = function(/*object*/ data,
+	/*StatusCode*/ statusCode, /*string*/ statusMessage)
+{
+	if(statusCode == sc_Success)
+	{
 		this.close();
 	}
 }
