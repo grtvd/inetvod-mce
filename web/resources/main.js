@@ -8947,9 +8947,11 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
-	//TODO: show Rating
+	tempStr = "n/a";
+	if(this.fShowDetail.RatingID)
+		tempStr = oSession.getRatingName(this.fShowDetail.RatingID)
 	oControl = new TextControl(SearchDetailScreen.RatingID, this.ScreenID);
-	oControl.setText("n/a");
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
@@ -10258,17 +10260,15 @@ function RentedShowDetailScreen(/*RentedShow*/ rentedShow)
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
-	//TODO: show Rating
+	tempStr = "n/a";
+	if(this.fRentedShow.RatingID)
+		tempStr = oSession.getRatingName(this.fRentedShow.RatingID)
 	oControl = new TextControl(RentedShowDetailScreen.RatingID, this.ScreenID);
-	oControl.setText("n/a");
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.CategoryID, this.ScreenID);
 	oControl.setText(oSession.getCategoryNames(this.fRentedShow.CategoryIDList));
-	this.newControl(oControl);
-
-	oControl = new TextControl(RentedShowDetailScreen.ProviderID, this.ScreenID);
-	oControl.setText(oSession.getProviderName(this.fRentedShow.ProviderID));
 	this.newControl(oControl);
 
 	oControl = new TextControl(RentedShowDetailScreen.ProviderID, this.ScreenID);
