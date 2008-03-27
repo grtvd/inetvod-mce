@@ -93,9 +93,11 @@ function SearchDetailScreen(/*RentedShow*/ showDetail)
 	oControl.setText(tempStr);
 	this.newControl(oControl);
 
-	//TODO: show Rating
+	tempStr = "n/a";
+	if(this.fShowDetail.RatingID)
+		tempStr = oSession.getRatingName(this.fShowDetail.RatingID)
 	oControl = new TextControl(SearchDetailScreen.RatingID, this.ScreenID);
-	oControl.setText("n/a");
+	oControl.setText(tempStr);
 	this.newControl(oControl);
 
 	oControl = new TextControl(SearchDetailScreen.CategoryID, this.ScreenID);
