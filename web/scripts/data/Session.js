@@ -232,7 +232,7 @@ function Session()
 			this.fRememberPassword = false;
 	}
 
-	return testStrHasLen(this.fUserID);
+	return testStrHasLen(this.fUserID) && testStrIsAllNumbers(this.fUserID);
 }
 
 /******************************************************************************/
