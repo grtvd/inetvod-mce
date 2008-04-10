@@ -21,7 +21,7 @@ function tryit(m)
 function showMsg(msg)
 {
 
-	if(window.external.MediaCenter)
+	if(window.external && window.external.MediaCenter)
 		window.external.MediaCenter.Dialog(msg, "", 1, 5, false);
 	else
 		alert(msg);
@@ -54,7 +54,7 @@ function showError(loc, e)
 	if(!gShowErrors)
 		return;
 
-	if(window.external.MediaCenter)
+	if(window.external && window.external.MediaCenter)
 		window.external.MediaCenter.Dialog(msg, "Error", 1, 5, false);
 	else
 		alert(msg);
@@ -201,6 +201,13 @@ function validateStrHasLen(str, method)
 
 	if(str.length == 0)
 		throw testNull(method, "Unknown") + ":validateStrHasLen: length == 0";
+}
+
+/******************************************************************************/
+
+function testStrIsAllNumbers(str)
+{
+	return /^\d+$/.test(str);
 }
 
 /******************************************************************************/
@@ -382,6 +389,78 @@ function arrayRemoveByCmpr(arr, itemComparer)
 /******************************************************************************/
 /******************************************************************************/
 
+/*Event*/ function getEvent(/*Event*/ evt)
+{
+	if(isObject(evt))
+		return evt;
+	return event;
+}
+
+/******************************************************************************/
+
+/*Object*/ function getEventSource(/*Event*/ evt)
+{
+	if(isObject(evt))
+	{
+		if(isObject(evt.target))
+			return evt.target;
+		if(isObject(evt.srcElement))
+			return evt.srcElement;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+
+/*int*/ function getEventKeyCode(/*Event*/ evt)
+{
+	if(isObject(evt))
+	{
+		if(evt.keyCode)
+			return evt.keyCode;
+		if(evt.which)
+			return evt.which;
+	}
+
+	return 0;
+}
+
+/******************************************************************************/
+
+//TODO IE ONLY
+///*void*/ function setEventKeyCode(/*Event*/ evt, /*int*/ newKeyCode)
+//{
+//	if(isObject(evt))
+//	{
+//		if(evt.keyCode)
+//			evt.keyCode = newKeyCode;
+//		else if(evt.which)
+//			evt.which = newKeyCode;
+//	}
+//}
+
+/******************************************************************************/
+
+function isEventKeyCodeNavigation(/*int*/ key)
+{
+	return (key == ek_Backspace)
+		|| (key == ek_Tab)
+		|| (key == ek_Escape)
+		|| (key == ek_Select)
+		|| (key == ek_Back)
+		|| (key == ek_NextValue)
+		|| (key == ek_PrevValue)
+		|| (key == ek_UpButton)
+		|| (key == ek_DownButton)
+		|| (key == ek_LeftButton)
+		|| (key == ek_RightButton)
+		|| (key == ek_PageUp)
+		|| (key == ek_PageUp);
+}
+
+/******************************************************************************/
+
 function stopEventPropagation(evt)
 {
 	if(!isObject(evt) && isObject(event))
@@ -393,6 +472,144 @@ function stopEventPropagation(evt)
 		else if(isBoolean(evt.cancelBubble))
 			evt.cancelBubble = true;
 	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function getWindowInnerWidth()
+{
+	// all except Explorer
+	if(self && self.innerHeight)
+		return self.innerWidth;
+
+	// Explorer 6 Strict Mode
+	if(document.documentElement && document.documentElement.clientHeight)
+		return document.documentElement.clientWidth;
+
+	// other Explorers
+	if(document.body && document.body.clientWidth)
+		return document.body.clientWidth;
+
+	throw "getWindowInnerWidth: can't get width";
+}
+
+/******************************************************************************/
+
+function getWindowInnerHeight()
+{
+	// all except Explorer
+	if(self && self.innerHeight)
+		return self.innerHeight;
+
+	// Explorer 6 Strict Mode
+	if(document.documentElement && document.documentElement.clientHeight)
+		return document.documentElement.clientHeight;
+
+	// other Explorers
+	if(document.body)
+		return document.body.clientHeight;
+
+	throw "getWindowInnerHeight: can't get height";
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function getElementWidth(obj)
+{
+	if(!obj)
+		return 0;
+
+	if(window.getComputedStyle)
+	{
+		try
+		{
+			var objStyle = window.getComputedStyle(obj, null);
+			if(objStyle && objStyle.width && (objStyle.width.length > 0))
+			{
+				var pxPos = objStyle.width.lastIndexOf("px");
+				if(pxPos > 0)
+					return parseInt(objStyle.width.substring(0, pxPos));
+
+				return parseInt(objStyle.width);
+			}
+		}
+		catch(e)
+		{
+		}
+	}
+
+	if(obj.style && obj.style.pixelWidth)
+	{
+		return obj.style.pixelWidth;
+	}
+	
+	return 0;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+/*string*/ function determineFileExtFromURL(/*string*/ url)
+{
+	if(!testStrHasLen(url))
+		return null;
+
+	var dotPos = url.lastIndexOf(".");
+	if(dotPos < 0)
+		return null;
+
+	if(url.lastIndexOf("/") >= dotPos)
+		return null;
+
+	var paramPos = url.lastIndexOf("?");
+	if(paramPos >= dotPos)
+		return url.substring(dotPos, paramPos);
+
+	return url.substring(dotPos);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+/*XMLHttp*/ function createXMLHttpRequest()
+{
+	var xmlHttp = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
+	{
+		xmlHttp = new XMLHttpRequest();
+		if(xmlHttp.overrideMimeType)
+			xmlHttp.overrideMimeType('text/xml');
+	}
+
+	return xmlHttp;
+}
+
+/******************************************************************************/
+
+/*XMLDocument*/ function createXmlDocument(data)
+{
+	var xmlDoc = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(data);
+	}
+	else // others
+	{
+		var domParser = new DOMParser();
+		xmlDoc = domParser.parseFromString(data, "text/xml");
+	}
+
+	return xmlDoc;
 }
 
 /******************************************************************************/

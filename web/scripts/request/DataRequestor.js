@@ -104,6 +104,7 @@ function DataRequestor(/*string*/ sessionData)
 	}
 	catch(e)
 	{
+		showError("DataRequestor.sendRequestAsync", e);
 		this.callbackCaller(null);
 	}
 }
@@ -114,12 +115,18 @@ function DataRequestor(/*string*/ sessionData)
 {
 	try
 	{
-		var dataReader = new XmlDataReader(response);
-		var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
-		this.callbackCaller(this.parseHeader(requestable));
+		if(response)
+		{
+			var dataReader = new XmlDataReader(response);
+			var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+			this.callbackCaller(this.parseHeader(requestable));
+		}
+		else
+			this.callbackCaller(null);
 	}
 	catch(e)
 	{
+		showError("DataRequestor.parseResponse", e);
 		this.callbackCaller(null);
 	}
 }
@@ -136,6 +143,7 @@ function DataRequestor(/*string*/ sessionData)
 		}
 		catch(e)
 		{
+			showError("DataRequestor.callbackCaller", e);
 		}
 	}
 }

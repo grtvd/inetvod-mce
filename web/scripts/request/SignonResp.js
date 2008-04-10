@@ -3,6 +3,10 @@
 /******************************************************************************/
 /******************************************************************************/
 
+SignonResp.SessionDataMaxLength = 32767;
+
+/******************************************************************************/
+
 function SignonResp(reader)
 {
 	this.SessionData = null;
@@ -17,7 +21,7 @@ function SignonResp(reader)
 
 /*void*/ SignonResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.SessionData = reader.readString("SessionData");
+	this.SessionData = reader.readString("SessionData", SignonResp.SessionDataMaxLength);
 	this.SessionExpires = reader.readDateTime("SessionExpires");
 	this.MemberState = reader.readObject("MemberState", MemberState);
 }

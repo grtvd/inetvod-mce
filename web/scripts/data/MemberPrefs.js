@@ -19,4 +19,11 @@ function MemberPrefs(reader)
 }
 
 /******************************************************************************/
+
+/*void*/ MemberPrefs.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("IncludeAdult", this.IncludeAdult, IncludeAdultMaxLength);
+}
+
+/******************************************************************************/
 /******************************************************************************/

@@ -16,31 +16,11 @@ function HTTPRequestor()
 
 /******************************************************************************/
 
-/*XMLHttp*/ HTTPRequestor.prototype.createXMLHttp = function()
-{
-	var xmlHttp = null;
-
-	if (window.ActiveXObject) // IE
-	{
-		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
-	{
-		xmlHttp = new XMLHttpRequest();
-		if(xmlHttp.overrideMimeType)
-			xmlHttp.overrideMimeType('text/xml');
-	}
-
-	return xmlHttp;
-}
-
-/******************************************************************************/
-
 /*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
 {
 	var session = MainApp.getThe().getSession();
 
-	var xmlHttp = this.createXMLHttp();
+	var xmlHttp = createXMLHttpRequest();
 	xmlHttp.open("POST", session.getNetworkURL(), false);
 	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 	xmlHttp.send(request);
@@ -57,7 +37,7 @@ function HTTPRequestor()
 	{
 		var session = MainApp.getThe().getSession();
 
-		var xmlHttp = this.createXMLHttp();
+		var xmlHttp = createXMLHttpRequest();
 		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
 		xmlHttp.open("POST", session.getNetworkURL(), true);
 		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
@@ -114,9 +94,9 @@ function HTTPRequestor()
 {
 	var session = MainApp.getThe().getSession();
 
-	var xmlHttp = this.createXMLHttp();
+	var xmlHttp = createXMLHttpRequest();
 	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
-	xmlHttp.send();
+	xmlHttp.send(null);
 
 	return xmlHttp.responseText;
 }

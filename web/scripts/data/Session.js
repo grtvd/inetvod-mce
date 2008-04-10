@@ -203,7 +203,7 @@ function Session()
 
 			this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
 		}
-		catch(e) {}
+		catch(ignore) {}
 	}
 
 	return this.fDownloadServiceMgr != null;
@@ -296,6 +296,7 @@ function Session()
 		}
 		catch(e)
 		{
+			showError("Session.callbackCaller", e);
 		}
 	}
 	else if(isFunction(this.CallerCallback))
@@ -306,6 +307,7 @@ function Session()
 		}
 		catch(e)
 		{
+			showError("Session.callbackCaller", e);
 		}
 	}
 }
@@ -357,7 +359,6 @@ function Session()
 		throw "Session::signon: Missing UserPassword";
 
 	var signonRqst;
-	var signonResp;
 
 	signonRqst = SignonRqst.newInstance();
 	signonRqst.UserID = this.fUserID;
@@ -834,12 +835,14 @@ function Session()
 
 /******************************************************************************/
 
-/*void*/ Session.prototype.releaseShowResponse = function(/*WatchShowResp*/ releaseShowResp,
+/*void*/ Session.prototype.releaseShowResponse = function(/*ReleaseShowResp*/ releaseShowResp,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	WaitScreen_close();
 	if(statusCode == sc_Success)
 	{
+		if(this.fDownloadServiceMgr != null)
+			this.fDownloadServiceMgr.processNow();
 		this.callbackCaller(null, statusCode, statusMessage);
 		return;
 	}

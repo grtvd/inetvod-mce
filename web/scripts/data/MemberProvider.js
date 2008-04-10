@@ -30,4 +30,11 @@ function MemberProvider(reader)
 }
 
 /******************************************************************************/
+
+/*void*/ MemberProvider.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
+}
+
+/******************************************************************************/
 /******************************************************************************/
