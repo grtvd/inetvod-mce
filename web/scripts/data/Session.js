@@ -24,8 +24,8 @@ function Session()
 {
 	this.fDownloadServiceMgr = null;
 
-	this.fNetworkURL = "http://" + location.hostname + "/inetvod/playerapi/xml";
-	this.fCryptoAPIURL = "http://" + location.hostname + "/inetvod/cryptoapi";
+	this.fNetworkURL = "http://" + location.hostname + "/webapi/playerapi/xml";
+	this.fCryptoAPIURL = "http://" + location.hostname + "/webapi/cryptoapi";
 	this.CanPingServer = false;
 
 	this.fPlayer = null;
@@ -58,8 +58,12 @@ function Session()
 
 	this.fPlayer.ManufacturerID = "inetvod";
 	this.fPlayer.ModelNo = "mce";
-	this.fPlayer.SerialNo = "9876543210";
-	this.fPlayer.Version = "0.0.0001";
+	this.fPlayer.SerialNo = "1";
+	this.fPlayer.Version = "1.0.0000";
+
+	this.checkInstall();
+	if (this.fDownloadServiceMgr && this.fDownloadServiceMgr.getPlayerSerialNo())
+		this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
 }
 
 /******************************************************************************/
@@ -199,9 +203,7 @@ function Session()
 	{
 		try
 		{
-			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.MCE.Gateway.DownloadServiceMgr");
-
-			this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
+			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
 		}
 		catch(ignore) {}
 	}
