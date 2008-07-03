@@ -21,7 +21,7 @@ function tryit(m)
 function showMsg(msg)
 {
 
-	if(window.external.MediaCenter)
+	if(window.external && window.external.MediaCenter)
 		window.external.MediaCenter.Dialog(msg, "", 1, 5, false);
 	else
 		alert(msg);
@@ -54,7 +54,7 @@ function showError(loc, e)
 	if(!gShowErrors)
 		return;
 
-	if(window.external.MediaCenter)
+	if(window.external && window.external.MediaCenter)
 		window.external.MediaCenter.Dialog(msg, "Error", 1, 5, false);
 	else
 		alert(msg);
@@ -201,6 +201,13 @@ function validateStrHasLen(str, method)
 
 	if(str.length == 0)
 		throw testNull(method, "Unknown") + ":validateStrHasLen: length == 0";
+}
+
+/******************************************************************************/
+
+function testStrIsAllNumbers(str)
+{
+	return /^\d+$/.test(str);
 }
 
 /******************************************************************************/
@@ -382,6 +389,78 @@ function arrayRemoveByCmpr(arr, itemComparer)
 /******************************************************************************/
 /******************************************************************************/
 
+/*Event*/ function getEvent(/*Event*/ evt)
+{
+	if(isObject(evt))
+		return evt;
+	return event;
+}
+
+/******************************************************************************/
+
+/*Object*/ function getEventSource(/*Event*/ evt)
+{
+	if(isObject(evt))
+	{
+		if(isObject(evt.target))
+			return evt.target;
+		if(isObject(evt.srcElement))
+			return evt.srcElement;
+	}
+
+	return null;
+}
+
+/******************************************************************************/
+
+/*int*/ function getEventKeyCode(/*Event*/ evt)
+{
+	if(isObject(evt))
+	{
+		if(evt.keyCode)
+			return evt.keyCode;
+		if(evt.which)
+			return evt.which;
+	}
+
+	return 0;
+}
+
+/******************************************************************************/
+
+//TODO IE ONLY
+///*void*/ function setEventKeyCode(/*Event*/ evt, /*int*/ newKeyCode)
+//{
+//	if(isObject(evt))
+//	{
+//		if(evt.keyCode)
+//			evt.keyCode = newKeyCode;
+//		else if(evt.which)
+//			evt.which = newKeyCode;
+//	}
+//}
+
+/******************************************************************************/
+
+function isEventKeyCodeNavigation(/*int*/ key)
+{
+	return (key == ek_Backspace)
+		|| (key == ek_Tab)
+		|| (key == ek_Escape)
+		|| (key == ek_Select)
+		|| (key == ek_Back)
+		|| (key == ek_NextValue)
+		|| (key == ek_PrevValue)
+		|| (key == ek_UpButton)
+		|| (key == ek_DownButton)
+		|| (key == ek_LeftButton)
+		|| (key == ek_RightButton)
+		|| (key == ek_PageUp)
+		|| (key == ek_PageUp);
+}
+
+/******************************************************************************/
+
 function stopEventPropagation(evt)
 {
 	if(!isObject(evt) && isObject(event))
@@ -393,6 +472,144 @@ function stopEventPropagation(evt)
 		else if(isBoolean(evt.cancelBubble))
 			evt.cancelBubble = true;
 	}
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function getWindowInnerWidth()
+{
+	// all except Explorer
+	if(self && self.innerHeight)
+		return self.innerWidth;
+
+	// Explorer 6 Strict Mode
+	if(document.documentElement && document.documentElement.clientHeight)
+		return document.documentElement.clientWidth;
+
+	// other Explorers
+	if(document.body && document.body.clientWidth)
+		return document.body.clientWidth;
+
+	throw "getWindowInnerWidth: can't get width";
+}
+
+/******************************************************************************/
+
+function getWindowInnerHeight()
+{
+	// all except Explorer
+	if(self && self.innerHeight)
+		return self.innerHeight;
+
+	// Explorer 6 Strict Mode
+	if(document.documentElement && document.documentElement.clientHeight)
+		return document.documentElement.clientHeight;
+
+	// other Explorers
+	if(document.body)
+		return document.body.clientHeight;
+
+	throw "getWindowInnerHeight: can't get height";
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+function getElementWidth(obj)
+{
+	if(!obj)
+		return 0;
+
+	if(window.getComputedStyle)
+	{
+		try
+		{
+			var objStyle = window.getComputedStyle(obj, null);
+			if(objStyle && objStyle.width && (objStyle.width.length > 0))
+			{
+				var pxPos = objStyle.width.lastIndexOf("px");
+				if(pxPos > 0)
+					return parseInt(objStyle.width.substring(0, pxPos));
+
+				return parseInt(objStyle.width);
+			}
+		}
+		catch(e)
+		{
+		}
+	}
+
+	if(obj.style && obj.style.pixelWidth)
+	{
+		return obj.style.pixelWidth;
+	}
+	
+	return 0;
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+/*string*/ function determineFileExtFromURL(/*string*/ url)
+{
+	if(!testStrHasLen(url))
+		return null;
+
+	var dotPos = url.lastIndexOf(".");
+	if(dotPos < 0)
+		return null;
+
+	if(url.lastIndexOf("/") >= dotPos)
+		return null;
+
+	var paramPos = url.lastIndexOf("?");
+	if(paramPos >= dotPos)
+		return url.substring(dotPos, paramPos);
+
+	return url.substring(dotPos);
+}
+
+/******************************************************************************/
+/******************************************************************************/
+
+/*XMLHttp*/ function createXMLHttpRequest()
+{
+	var xmlHttp = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
+	{
+		xmlHttp = new XMLHttpRequest();
+		if(xmlHttp.overrideMimeType)
+			xmlHttp.overrideMimeType('text/xml');
+	}
+
+	return xmlHttp;
+}
+
+/******************************************************************************/
+
+/*XMLDocument*/ function createXmlDocument(data)
+{
+	var xmlDoc = null;
+
+	if (window.ActiveXObject) // IE
+	{
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(data);
+	}
+	else // others
+	{
+		var domParser = new DOMParser();
+		xmlDoc = domParser.parseFromString(data, "text/xml");
+	}
+
+	return xmlDoc;
 }
 
 /******************************************************************************/
@@ -4438,8 +4655,8 @@ function Session()
 {
 	this.fDownloadServiceMgr = null;
 
-	this.fNetworkURL = "http://" + location.hostname + "/inetvod/playerapi/xml";
-	this.fCryptoAPIURL = "http://" + location.hostname + "/inetvod/cryptoapi";
+	this.fNetworkURL = "http://" + location.hostname + "/webapi/playerapi/xml";
+	this.fCryptoAPIURL = "http://" + location.hostname + "/webapi/cryptoapi";
 	this.CanPingServer = false;
 
 	this.fPlayer = null;
@@ -4472,8 +4689,12 @@ function Session()
 
 	this.fPlayer.ManufacturerID = "inetvod";
 	this.fPlayer.ModelNo = "mce";
-	this.fPlayer.SerialNo = "9876543210";
-	this.fPlayer.Version = "0.0.0001";
+	this.fPlayer.SerialNo = "1";
+	this.fPlayer.Version = "1.0.0000";
+
+	this.checkInstall();
+	if (this.fDownloadServiceMgr && this.fDownloadServiceMgr.getPlayerSerialNo())
+		this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
 }
 
 /******************************************************************************/
@@ -4613,11 +4834,9 @@ function Session()
 	{
 		try
 		{
-			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.MCE.Gateway.DownloadServiceMgr");
-
-			this.fPlayer.SerialNo = this.fDownloadServiceMgr.getPlayerSerialNo();
+			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
 		}
-		catch(e) {}
+		catch(ignore) {}
 	}
 
 	return this.fDownloadServiceMgr != null;
@@ -4646,7 +4865,7 @@ function Session()
 			this.fRememberPassword = false;
 	}
 
-	return testStrHasLen(this.fUserID);
+	return testStrHasLen(this.fUserID) && testStrIsAllNumbers(this.fUserID);
 }
 
 /******************************************************************************/
@@ -4710,6 +4929,7 @@ function Session()
 		}
 		catch(e)
 		{
+			showError("Session.callbackCaller", e);
 		}
 	}
 	else if(isFunction(this.CallerCallback))
@@ -4720,6 +4940,7 @@ function Session()
 		}
 		catch(e)
 		{
+			showError("Session.callbackCaller", e);
 		}
 	}
 }
@@ -4771,7 +4992,6 @@ function Session()
 		throw "Session::signon: Missing UserPassword";
 
 	var signonRqst;
-	var signonResp;
 
 	signonRqst = SignonRqst.newInstance();
 	signonRqst.UserID = this.fUserID;
@@ -5248,12 +5468,14 @@ function Session()
 
 /******************************************************************************/
 
-/*void*/ Session.prototype.releaseShowResponse = function(/*WatchShowResp*/ releaseShowResp,
+/*void*/ Session.prototype.releaseShowResponse = function(/*ReleaseShowResp*/ releaseShowResp,
 	/*StatusCode*/ statusCode, /*string*/ statusMessage)
 {
 	WaitScreen_close();
 	if(statusCode == sc_Success)
 	{
+		if(this.fDownloadServiceMgr != null)
+			this.fDownloadServiceMgr.processNow();
 		this.callbackCaller(null, statusCode, statusMessage);
 		return;
 	}
@@ -5386,6 +5608,13 @@ function MemberPrefs(reader)
 /*void*/ MemberPrefs.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	this.IncludeAdult = reader.readString("IncludeAdult", IncludeAdultMaxLength);
+}
+
+/******************************************************************************/
+
+/*void*/ MemberPrefs.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("IncludeAdult", this.IncludeAdult, IncludeAdultMaxLength);
 }
 
 /******************************************************************************/
@@ -5543,6 +5772,13 @@ function MemberProvider(reader)
 /*void*/ MemberProvider.prototype.readFrom = function(/*DataReader*/ reader)
 {
 	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
+}
+
+/******************************************************************************/
+
+/*void*/ MemberProvider.prototype.writeTo = function(/*DataWriter*/ writer)
+{
+	writer.writeString("ProviderID", this.ProviderID, ProviderIDMaxLength);
 }
 
 /******************************************************************************/
@@ -6038,31 +6274,11 @@ function HTTPRequestor()
 
 /******************************************************************************/
 
-/*XMLHttp*/ HTTPRequestor.prototype.createXMLHttp = function()
-{
-	var xmlHttp = null;
-
-	if (window.ActiveXObject) // IE
-	{
-		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	else if(window.XMLHttpRequest) // Mozilla, Safari, ...
-	{
-		xmlHttp = new XMLHttpRequest();
-		if(xmlHttp.overrideMimeType)
-			xmlHttp.overrideMimeType('text/xml');
-	}
-
-	return xmlHttp;
-}
-
-/******************************************************************************/
-
 /*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
 {
 	var session = MainApp.getThe().getSession();
 
-	var xmlHttp = this.createXMLHttp();
+	var xmlHttp = createXMLHttpRequest();
 	xmlHttp.open("POST", session.getNetworkURL(), false);
 	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 	xmlHttp.send(request);
@@ -6079,7 +6295,7 @@ function HTTPRequestor()
 	{
 		var session = MainApp.getThe().getSession();
 
-		var xmlHttp = this.createXMLHttp();
+		var xmlHttp = createXMLHttpRequest();
 		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
 		xmlHttp.open("POST", session.getNetworkURL(), true);
 		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
@@ -6136,9 +6352,9 @@ function HTTPRequestor()
 {
 	var session = MainApp.getThe().getSession();
 
-	var xmlHttp = this.createXMLHttp();
+	var xmlHttp = createXMLHttpRequest();
 	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
-	xmlHttp.send();
+	xmlHttp.send(null);
 
 	return xmlHttp.responseText;
 }
@@ -6251,6 +6467,7 @@ function DataRequestor(/*string*/ sessionData)
 	}
 	catch(e)
 	{
+		showError("DataRequestor.sendRequestAsync", e);
 		this.callbackCaller(null);
 	}
 }
@@ -6261,12 +6478,18 @@ function DataRequestor(/*string*/ sessionData)
 {
 	try
 	{
-		var dataReader = new XmlDataReader(response);
-		var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
-		this.callbackCaller(this.parseHeader(requestable));
+		if(response)
+		{
+			var dataReader = new XmlDataReader(response);
+			var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+			this.callbackCaller(this.parseHeader(requestable));
+		}
+		else
+			this.callbackCaller(null);
 	}
 	catch(e)
 	{
+		showError("DataRequestor.parseResponse", e);
 		this.callbackCaller(null);
 	}
 }
@@ -6283,6 +6506,7 @@ function DataRequestor(/*string*/ sessionData)
 		}
 		catch(e)
 		{
+			showError("DataRequestor.callbackCaller", e);
 		}
 	}
 }
@@ -6556,6 +6780,10 @@ function SignonRqst()
 /******************************************************************************/
 /******************************************************************************/
 
+SignonResp.SessionDataMaxLength = 32767;
+
+/******************************************************************************/
+
 function SignonResp(reader)
 {
 	this.SessionData = null;
@@ -6570,7 +6798,7 @@ function SignonResp(reader)
 
 /*void*/ SignonResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.SessionData = reader.readString("SessionData");
+	this.SessionData = reader.readString("SessionData", SignonResp.SessionDataMaxLength);
 	this.SessionExpires = reader.readDateTime("SessionExpires");
 	this.MemberState = reader.readObject("MemberState", MemberState);
 }
