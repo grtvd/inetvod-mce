@@ -42,7 +42,7 @@ function onRemoteEvent(keyCode)
 
 function onScaleEvent(vScale)
 {
-	if(!window.external.MediaCenter)
+	if(!isMediaCenter())
 		document.getElementById("ScaleText").innerHTML = vScale;
 	if(isString(document.body.style.zoom))
 		document.body.style.zoom = vScale;
@@ -121,7 +121,7 @@ function MainApp()
 	document.onkeypress = MainAppOnKeyPress;
 	window.onresize = MainAppOnResize;
 
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 		window.external.MediaCenter.BGColor = "#002651";
 	document.body.scroll = "no";
 	document.body.focus();
@@ -131,7 +131,7 @@ function MainApp()
 	this.fScreenTitleImageDiv = document.getElementById("ScreenTitleImageDiv");
 	this.fScreenTitleImage = document.getElementById("ScreenTitleImage");
 
-	if(!window.external.MediaCenter)
+	if(!isMediaCenter())
 	{
 		DoShowSVP(false);
 		setStyleDisplay(document.getElementById("ShowSVPDiv"), true);
@@ -139,7 +139,7 @@ function MainApp()
 		setStyleDisplay(document.getElementById("ScaleDiv"), true);
 	}
 
-	enableErrors(!window.external.MediaCenter);
+	enableErrors(!isMediaCenter());
 	window.setTimeout("MainAppIdle()", 500);
 	StartScreen.newInstance();
 }

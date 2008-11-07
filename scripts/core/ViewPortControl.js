@@ -27,17 +27,14 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /*boolean*/ ViewPortControl.canOpen = function()
 {
-	if(window.external.MediaCenter)
-		return true;
-
-	return false;
+	return isMediaCenter();
 }
 
 /******************************************************************************/
 
 /*boolean*/ ViewPortControl.isOpen = function()
 {
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 	{
 		return window.external.MediaCenter.SharedViewPort.Visible;
 	}
@@ -56,7 +53,7 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 	{
 		if(document.activeElement.id != this.fUIObj.id)
 		{
-			if(window.external.MediaCenter)
+			if(isMediaCenter())
 				window.external.MediaCenter.SharedViewPort.Focus();
 		}
 
@@ -69,7 +66,7 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /*void*/ ViewPortControl.prototype.playMedia = function(/*string*/ url)
 {
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 	{
 		window.external.MediaCenter.playMedia(this.getMediaType(url), url);
 		window.external.MediaCenter.Experience.GoToFullScreen();
