@@ -12,6 +12,8 @@ var gWaitScreenCount = 0;
 
 WaitScreen.newInstance = function()
 {
+	if(!document.getElementById(WaitScreen.ScreenID))	//is WaitScreen available
+		return null;
 	if(gWaitScreenCount == 0)
 		gWaitScreen = new WaitScreen();
 	gWaitScreenCount++;

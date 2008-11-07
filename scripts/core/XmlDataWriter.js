@@ -38,9 +38,9 @@ function XmlDataWriter()
 /*string*/ XmlDataWriter.prototype.escapeString = function(str)
 {
 	if(str.indexOf("&") >= 0)
-		str = str.replace("&", "&amp;");
+		str = str.replace(/\&/g, "&amp;");
 	if(str.indexOf("<") >= 0)
-		str = str.replace("<", "&lt;");
+		str = str.replace(/</g, "&lt;");
 
 	return str;
 }
@@ -119,9 +119,45 @@ function XmlDataWriter()
 {
 	var len = testStrHasLen(data) ? data.length : 0;
 	if(len > maxLength)
-		throw new Exception("invalid len(" + len + "), maxLength(" + maxLength + ")");
+		throw new String("invalid len(" + len + "), maxLength(" + maxLength + ")");
 
 	this.writeElement(fieldName, data);
+}
+
+/******************************************************************************/
+/* Write a date, no Time component */
+
+/*void*/ XmlDataWriter.prototype.writeDate = function(/*string*/ fieldName,
+	/*Date*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, dateTimeToString(data, dtf_ISO8601_Date));
+}
+
+/******************************************************************************/
+/* Write a Date with a Time component */
+
+/*void*/ XmlDataWriter.prototype.writeDateTime = function(/*string*/ fieldName,
+	/*Date*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, dateTimeToString(data, dtf_ISO8601_DateTime));
+}
+
+/******************************************************************************/
+/* Write a Boolean */
+
+/*void*/ XmlDataWriter.prototype.writeBoolean = function(/*string*/ fieldName,
+	/*int*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, data ? "true" : "false");
 }
 
 /******************************************************************************/
@@ -136,6 +172,16 @@ function XmlDataWriter()
 	this.writeStartElement(fieldName);
 	data.writeTo(this);
 	this.writeEndElement(fieldName);
+}
+
+/******************************************************************************/
+/* Write a list of complex Objects */
+
+/*void*/ XmlDataWriter.prototype.writeList = function(/*String*/ fieldName,
+	/*Array*/ data)
+{
+	for(var i = 0; i < data.length; i++)
+		this.writeObject(fieldName, data[i]);
 }
 
 /******************************************************************************/

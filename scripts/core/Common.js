@@ -18,6 +18,21 @@ function tryit(m)
 
 /******************************************************************************/
 
+function isMediaCenter()
+{
+	try
+	{
+		if(window.external.MediaCenter)
+			return true;
+	}
+	catch(ignore)
+	{
+	}
+	return false;
+}
+
+/******************************************************************************/
+
 function showMsg(msg)
 {
 	if(isMediaCenter())
@@ -210,6 +225,33 @@ function testStrIsAllNumbers(str)
 }
 
 /******************************************************************************/
+
+function ltrim(str)
+{
+	if(!isString(str))
+		return str;
+
+	return str.replace( /^\s*/, "" )
+}
+
+/******************************************************************************/
+
+function rtrim(str)
+{
+	if(!isString(str))
+		return str;
+
+	return str.replace( /\s*$/, "" );
+}
+
+/******************************************************************************/
+
+function trim(str)
+{
+	return rtrim(ltrim(str));
+}
+
+/******************************************************************************/
 /******************************************************************************/
 
 function getClassNameBase(curr)
@@ -284,6 +326,17 @@ function checkClassName(obj, classNameExt)
 }
 
 /******************************************************************************/
+
+/*void*/ function setStyleProperty(/*object*/ oObj, /*string*/ property, /*strung*/ value)
+{
+	if(oObj && oObj.style)
+		if (oObj.style.setAttribute)	// IE
+			oObj.style.setAttribute(property, value);
+		else
+			oObj.style.setProperty(property, value, "");
+}
+
+/******************************************************************************/
 /******************************************************************************/
 
 function compareStrings(lhs, rhs)
@@ -328,13 +381,13 @@ function compareNumbers(lhs, rhs)
 function compareDates(lhs, rhs)
 {
 	if(!lhs)
-		lhs = (new Date());
+		lhs = (new Date(0));
 	if(!rhs)
-		rhs = (new Date());
+		rhs = (new Date(0));
 
-	if(lhs == rhs)
+	if(lhs.getTime() == rhs.getTime())
 		return 0;
-	if(lhs < rhs)
+	if(lhs.getTime() < rhs.getTime())
 		return -1;
 	return 1;
 }

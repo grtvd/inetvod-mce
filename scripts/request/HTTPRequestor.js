@@ -16,22 +16,22 @@ function HTTPRequestor()
 
 /******************************************************************************/
 
-/*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
+/*XMLHttpRequest*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ url,
+	/*string*/ request)
 {
-	var session = MainApp.getThe().getSession();
 
 	var xmlHttp = createXMLHttpRequest();
-	xmlHttp.open("POST", session.getNetworkURL(), false);
+	xmlHttp.open("POST", url, false);
 	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 	xmlHttp.send(request);
 
-	return xmlHttp.responseText;
+	return xmlHttp;
 }
 
 /******************************************************************************/
 
-/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ request,
-	/*object*/ callbackObj)
+/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ url,
+	/*string*/ request, /*object*/ callbackObj)
 {
 	try
 	{
@@ -39,11 +39,11 @@ function HTTPRequestor()
 
 		var xmlHttp = createXMLHttpRequest();
 		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
-		xmlHttp.open("POST", session.getNetworkURL(), true);
+		xmlHttp.open("POST", url, true);
 		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 		xmlHttp.send(request);
 	}
-	catch(e)
+	catch(ignore)
 	{
 		HTTPRequestor_callback(callbackObj, null);
 	}
@@ -60,11 +60,11 @@ function HTTPRequestor()
 		{
 			if(xmlHttp.status == 200)
 			{
-				HTTPRequestor_callback(callbackObj, xmlHttp.responseXML);
+				HTTPRequestor_callback(callbackObj, xmlHttp);
 				return;
 			}
 		}
-		catch(e)
+		catch(ignore)
 		{
 		}
 
@@ -76,7 +76,7 @@ function HTTPRequestor()
 
 /*void*/ function HTTPRequestor_callback(/*object*/ callbackObj, /*object*/ data)
 {
-	if(callbackObj && callbackObj.Callback)
+	if(isObject(callbackObj) && isFunction(callbackObj.Callback))
 	{
 		try
 		{
@@ -84,21 +84,31 @@ function HTTPRequestor()
 		}
 		catch(e)
 		{
+			showError("HTTPRequestor_callback", e);
+		}
+	}
+	else if(isFunction(callbackObj))
+	{
+		try
+		{
+			callbackObj(data);
+		}
+		catch(e)
+		{
+			showError("HTTPRequestor_callback", e);
 		}
 	}
 }
 
 /******************************************************************************/
 
-/*string*/ HTTPRequestor.prototype.sendGet = function(/*string*/ request)
+/*XMLHttpRequest*/ HTTPRequestor.prototype.sendGet = function(/*string*/ url)
 {
-	var session = MainApp.getThe().getSession();
-
 	var xmlHttp = createXMLHttpRequest();
-	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
+	xmlHttp.open("GET", url, false);
 	xmlHttp.send(null);
 
-	return xmlHttp.responseText;
+	return xmlHttp;
 }
 
 /******************************************************************************/

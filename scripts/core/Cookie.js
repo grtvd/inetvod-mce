@@ -7,7 +7,7 @@ function setCookie(name, value, sessionOnly, expires, path, domain, secure)
 {
 	var tenYearExpires = new Date((new Date()).getTime() + 315360000000);	//expires in 10 years
 
-	var curCookie = name + "=" + escape(value);
+	var curCookie = name + "=" + encodeURIComponent(value);
 
 	if(!sessionOnly)
 		curCookie += ("; expires=" + ((expires)
@@ -41,7 +41,7 @@ function getCookie(name)
 	if(end == -1)
 		end = dc.length;
 
-	return unescape(dc.substring(begin + prefix.length, end));
+	return decodeURIComponent(dc.substring(begin + prefix.length, end));
 }
 
 /******************************************************************************/

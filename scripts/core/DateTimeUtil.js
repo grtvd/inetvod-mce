@@ -5,8 +5,8 @@
 
 
 /* DateTimeFormat */
-//var dtf_ISO8601_Date = 0;
-//var dtf_ISO8601_DateTime = 1;
+var dtf_ISO8601_Date = 0;			// CCYY-MM-DD
+var dtf_ISO8601_DateTime = 1;		// CCYY-MM-DDThh:mm:ss
 //var dtf_M_D_YY = 2;				// 2/3/04
 var dtf_M_D_YYYY = 3;				// 2/3/2004
 var dtf_M_YY = 4;					// 2/04
@@ -29,6 +29,34 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 /******************************************************************************/
 
+/*Date*/ function today()
+{
+	return dateOnly(new Date());
+}
+
+/******************************************************************************/
+
+/*Date*/ function now()
+{
+	return new Date();
+}
+
+/******************************************************************************/
+
+/*Date*/ function dateOnly(dateTime)
+{
+	if(!isDate(dateTime))
+		return null;
+
+	var year = dateTime.getFullYear();
+	var month = dateTime.getMonth();
+	var day = dateTime.getDate();
+
+	return new Date(year, month, day);
+}
+
+/******************************************************************************/
+
 /*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format, /*boolean*/ showInUTC)
 {
 	if(!isDate(dateTime))
@@ -39,9 +67,13 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	var day;
 	var hour;
 	var minute;
+	var secs;
 	var isPM;
 	var timeStr;
 	var minStr;
+
+	if((format == dtf_ISO8601_Date) || (format == dtf_ISO8601_DateTime))
+		showInUTC = true;
 
 	if(showInUTC)
 	{
@@ -51,6 +83,7 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 		hour = dateTime.getUTCHours();
 		minute = dateTime.getUTCMinutes();
+		secs = dateTime.getUTCSeconds();
 	}
 	else
 	{
@@ -60,21 +93,31 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 		hour = dateTime.getHours();
 		minute = dateTime.getMinutes();
+		secs = dateTime.getSeconds();
 	}
 
 	isPM = (hour >= 12);
+	if(format != dtf_ISO8601_DateTime)
+	{
 	if(hour == 0)
 		hour = 12;
 	else if(hour > 12)
 		hour -= 12;
+	}
 
-	if(minute < 10)
-		minStr = "0" + minute;
-	else
-		minStr = "" + minute;
+	minStr = prefixZeroToNum(minute);
 
 	switch(format)
 	{
+		case dtf_ISO8601_Date:
+			timeStr = year + "-" + prefixZeroToNum(month) + "-" + prefixZeroToNum(day);
+			break;
+
+		case dtf_ISO8601_DateTime:
+			timeStr = year + "-" + prefixZeroToNum(month) + "-" + prefixZeroToNum(day) + "T" + prefixZeroToNum(hour)
+				+ ":" + minStr + ":" + prefixZeroToNum(secs) + "Z";
+			break;
+
 		case dtf_M_D_YYYY:
 			timeStr = month + DateSeparator + day + DateSeparator + year;
 			break;
@@ -117,6 +160,16 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	if(isPM)
 		return (longFormat) ? "pm" : "p";
 	return (longFormat) ? "am" : "a";
+}
+
+/******************************************************************************/
+
+/*string*/ function prefixZeroToNum(/*int*/ num)
+{
+	if(num < 10)
+		return "0" + num;
+
+	return "" + num;
 }
 
 /******************************************************************************/
@@ -226,6 +279,8 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 				return tzValue * -1;
 		}
 	}
+
+	return 0;
 }
 
 /******************************************************************************/

@@ -3,6 +3,24 @@
 /******************************************************************************/
 /******************************************************************************/
 
+function ShowSearchToIDCmpr(showID)
+{
+	this.ShowID = showID;
+}
+
+/******************************************************************************/
+
+/*int*/ ShowSearchToIDCmpr.prototype.compare = function(oShowSearch)
+{
+	if(this.ShowID == oShowSearch.ShowID)
+		return 0;
+	if(this.ShowID < oShowSearch.ShowID)
+		return -1;
+	return 1;
+}
+
+/******************************************************************************/
+
 function ShowSearchByNameCmpr(lhs, rhs)
 {
 	var rc = compareStringsIgnoreCase(lhs.Name, rhs.Name);
