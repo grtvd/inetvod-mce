@@ -35,7 +35,7 @@ function ShowDetail(reader)
 	this.EpisodeName = reader.readString("EpisodeName", 64);
 	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
 
-	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedOn = reader.readDateTime("ReleasedOn");
 	this.ReleasedYear = reader.readShort("ReleasedYear");
 	this.Description = reader.readString("Description", 4096);	//TODO:
 	this.RunningMins = reader.readShort("RunningMins");
