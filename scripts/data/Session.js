@@ -24,8 +24,9 @@ function Session()
 {
 	this.fDownloadServiceMgr = null;
 
-	this.fNetworkURL = "http://" + location.hostname + "/webapi/playerapi/xml";
-	this.fCryptoAPIURL = "http://" + location.hostname + "/webapi/cryptoapi";
+	this.fNetworkURL = location.protocol + "//" + location.hostname + "/webapi/playerapi/xml";
+	this.fCryptoAPIURL = location.protocol + "//" + location.hostname + "/webapi/cryptoapi";
+
 	this.CanPingServer = false;
 
 	this.fPlayer = null;
@@ -86,6 +87,8 @@ function Session()
 {
 	return this.fIsUserLoggedOn;
 }
+
+/******************************************************************************/
 
 /*boolean*/ Session.prototype.haveUserID = function()
 {
@@ -203,9 +206,14 @@ function Session()
 	{
 		try
 		{
-			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
+//			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
+			this.fDownloadServiceMgr = document.getElementById("DownloadServiceMgr");
+			this.fDownloadServiceMgr.getPlayerSerialNo();	//force test to validate, throwing execption if fails
 		}
-		catch(ignore) {}
+		catch(ignore)
+		{
+			this.fDownloadServiceMgr = null;
+		}
 	}
 
 	return this.fDownloadServiceMgr != null;
