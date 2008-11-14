@@ -5071,7 +5071,7 @@ function Session()
 /*void*/ Session.prototype.showRequestError = function(/*string*/ message)
 {
 	if(!testStrHasLen(message))
-		showMsg("An error occurred trying to communicate with the iNetVOD servers. Please check you network connection and try again.");
+		showMsg("An error occurred trying to communicate with the Storm servers. Please try again.");
 	else
 		showMsg(message);
 }
@@ -7932,7 +7932,7 @@ function WelcomeScreen()
 	else if(controlID == WelcomeScreen.SearchByNameID)
 		oTextControl.setText("Use \"Search by Title\" to find shows by a partial show title.");
 	else if(controlID == WelcomeScreen.PreferencesID)
-		oTextControl.setText("\"Preferences\" allows you to update your iNetVOD settings.");
+		oTextControl.setText("\"Preferences\" allows you to update your Storm Media Player settings.");
 	else
 		oTextControl.setText("");
 }
@@ -8075,7 +8075,7 @@ function NotInstalledScreen()
 		StartupInitialCheck();
 	}
 	else
-		showMsg("iNetVOD has not yet been installed.");
+		showMsg("Storm Media Player has not yet been installed.");
 }
 
 /******************************************************************************/
@@ -10188,7 +10188,7 @@ function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	var tempStr;
 
 	oControl = this.getControl(NeedProviderControl.MemberTextID);
-	tempStr = "Your iNetVOD membership information will be used to create a new FREE membership at ";
+	tempStr = "Your Storm membership information will be used to create a new FREE membership at ";
 	tempStr += oRentData.getProviderName();
 	tempStr += ".  Your credit card information, if on file, will not be sent to ";
 	tempStr += oRentData.getProviderName();
@@ -10197,7 +10197,7 @@ function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 	oControl = this.getControl(NeedProviderControl.PlanTextID);
 	tempStr = oRentData.getProviderName();
-	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the iNetVOD web site at www.inetvod.com for more information.";
+	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the Storm web site at stormmp.com for more information.";
 	oControl.setText(tempStr);
 
 	return true;
