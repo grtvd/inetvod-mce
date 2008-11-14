@@ -1,0 +1,16 @@
+<application
+	title="Storm Media Player (Dev)"
+	id="{68D9B2B0-8E13-4552-B845-90335BCB4232}"
+	companyName="iNetVOD"
+	bgColor="RGB(0,38,81)"
+	>
+	<entrypoint
+		id="{7890E3CE-674B-4C75-82E0-061DAD30212A}"
+		url="http://localhost:81/mce/index.htm"
+		title="Storm Media Player (Dev)"
+		thumbnailUrl="http://stormmediaplayer.com/mce/images/logo_mce.png"
+		>
+		<category category="More Programs"/>
+		<category category="Services\TV"/>
+	</entrypoint>
+</application>
