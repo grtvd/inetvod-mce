@@ -288,7 +288,7 @@ function Session()
 /*void*/ Session.prototype.showRequestError = function(/*string*/ message)
 {
 	if(!testStrHasLen(message))
-		showMsg("An error occurred trying to communicate with the iNetVOD servers. Please check you network connection and try again.");
+		showMsg("An error occurred trying to communicate with the Storm servers. Please try again.");
 	else
 		showMsg(message);
 }

@@ -44,7 +44,7 @@ function NotInstalledScreen()
 		StartupInitialCheck();
 	}
 	else
-		showMsg("iNetVOD has not yet been installed.");
+		showMsg("Storm Media Player has not yet been installed.");
 }
 
 /******************************************************************************/

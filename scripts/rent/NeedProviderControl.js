@@ -46,7 +46,7 @@ function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 	var tempStr;
 
 	oControl = this.getControl(NeedProviderControl.MemberTextID);
-	tempStr = "Your iNetVOD membership information will be used to create a new FREE membership at ";
+	tempStr = "Your Storm membership information will be used to create a new FREE membership at ";
 	tempStr += oRentData.getProviderName();
 	tempStr += ".  Your credit card information, if on file, will not be sent to ";
 	tempStr += oRentData.getProviderName();
@@ -55,7 +55,7 @@ function NeedProviderControl(/*int*/ controlID, /*int*/ left, /*int*/ top)
 
 	oControl = this.getControl(NeedProviderControl.PlanTextID);
 	tempStr = oRentData.getProviderName();
-	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the iNetVOD web site at www.inetvod.com for more information.";
+	tempStr += " may have various member subscription plans that may be of interest to you.  Please visit the Storm web site at stormmp.com for more information.";
 	oControl.setText(tempStr);
 
 	return true;

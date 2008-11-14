@@ -109,7 +109,7 @@ function WelcomeScreen()
 	else if(controlID == WelcomeScreen.SearchByNameID)
 		oTextControl.setText("Use \"Search by Title\" to find shows by a partial show title.");
 	else if(controlID == WelcomeScreen.PreferencesID)
-		oTextControl.setText("\"Preferences\" allows you to update your iNetVOD settings.");
+		oTextControl.setText("\"Preferences\" allows you to update your Storm Media Player settings.");
 	else
 		oTextControl.setText("");
 }
