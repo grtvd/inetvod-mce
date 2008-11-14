@@ -18,10 +18,24 @@ function tryit(m)
 
 /******************************************************************************/
 
+function isMediaCenter()
+{
+	try
+	{
+		if(window.external.MediaCenter)
+			return true;
+	}
+	catch(ignore)
+	{
+	}
+	return false;
+}
+
+/******************************************************************************/
+
 function showMsg(msg)
 {
-
-	if(window.external && window.external.MediaCenter)
+	if(isMediaCenter())
 		window.external.MediaCenter.Dialog(msg, "", 1, 5, false);
 	else
 		alert(msg);
@@ -54,7 +68,7 @@ function showError(loc, e)
 	if(!gShowErrors)
 		return;
 
-	if(window.external && window.external.MediaCenter)
+	if(isMediaCenter())
 		window.external.MediaCenter.Dialog(msg, "Error", 1, 5, false);
 	else
 		alert(msg);
@@ -211,6 +225,33 @@ function testStrIsAllNumbers(str)
 }
 
 /******************************************************************************/
+
+function ltrim(str)
+{
+	if(!isString(str))
+		return str;
+
+	return str.replace( /^\s*/, "" )
+}
+
+/******************************************************************************/
+
+function rtrim(str)
+{
+	if(!isString(str))
+		return str;
+
+	return str.replace( /\s*$/, "" );
+}
+
+/******************************************************************************/
+
+function trim(str)
+{
+	return rtrim(ltrim(str));
+}
+
+/******************************************************************************/
 /******************************************************************************/
 
 function getClassNameBase(curr)
@@ -285,6 +326,17 @@ function checkClassName(obj, classNameExt)
 }
 
 /******************************************************************************/
+
+/*void*/ function setStyleProperty(/*object*/ oObj, /*string*/ property, /*strung*/ value)
+{
+	if(oObj && oObj.style)
+		if (oObj.style.setAttribute)	// IE
+			oObj.style.setAttribute(property, value);
+		else
+			oObj.style.setProperty(property, value, "");
+}
+
+/******************************************************************************/
 /******************************************************************************/
 
 function compareStrings(lhs, rhs)
@@ -329,13 +381,13 @@ function compareNumbers(lhs, rhs)
 function compareDates(lhs, rhs)
 {
 	if(!lhs)
-		lhs = (new Date());
+		lhs = (new Date(0));
 	if(!rhs)
-		rhs = (new Date());
+		rhs = (new Date(0));
 
-	if(lhs == rhs)
+	if(lhs.getTime() == rhs.getTime())
 		return 0;
-	if(lhs < rhs)
+	if(lhs.getTime() < rhs.getTime())
 		return -1;
 	return 1;
 }
@@ -683,8 +735,8 @@ function DebugClear()
 
 
 /* DateTimeFormat */
-//var dtf_ISO8601_Date = 0;
-//var dtf_ISO8601_DateTime = 1;
+var dtf_ISO8601_Date = 0;			// CCYY-MM-DD
+var dtf_ISO8601_DateTime = 1;		// CCYY-MM-DDThh:mm:ss
 //var dtf_M_D_YY = 2;				// 2/3/04
 var dtf_M_D_YYYY = 3;				// 2/3/2004
 var dtf_M_YY = 4;					// 2/04
@@ -707,6 +759,34 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 /******************************************************************************/
 
+/*Date*/ function today()
+{
+	return dateOnly(new Date());
+}
+
+/******************************************************************************/
+
+/*Date*/ function now()
+{
+	return new Date();
+}
+
+/******************************************************************************/
+
+/*Date*/ function dateOnly(dateTime)
+{
+	if(!isDate(dateTime))
+		return null;
+
+	var year = dateTime.getFullYear();
+	var month = dateTime.getMonth();
+	var day = dateTime.getDate();
+
+	return new Date(year, month, day);
+}
+
+/******************************************************************************/
+
 /*string*/ function dateTimeToString(/*Date*/ dateTime, /*DateTimeFormat*/ format, /*boolean*/ showInUTC)
 {
 	if(!isDate(dateTime))
@@ -717,9 +797,13 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	var day;
 	var hour;
 	var minute;
+	var secs;
 	var isPM;
 	var timeStr;
 	var minStr;
+
+	if((format == dtf_ISO8601_Date) || (format == dtf_ISO8601_DateTime))
+		showInUTC = true;
 
 	if(showInUTC)
 	{
@@ -729,6 +813,7 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 		hour = dateTime.getUTCHours();
 		minute = dateTime.getUTCMinutes();
+		secs = dateTime.getUTCSeconds();
 	}
 	else
 	{
@@ -738,21 +823,31 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 
 		hour = dateTime.getHours();
 		minute = dateTime.getMinutes();
+		secs = dateTime.getSeconds();
 	}
 
 	isPM = (hour >= 12);
+	if(format != dtf_ISO8601_DateTime)
+	{
 	if(hour == 0)
 		hour = 12;
 	else if(hour > 12)
 		hour -= 12;
+	}
 
-	if(minute < 10)
-		minStr = "0" + minute;
-	else
-		minStr = "" + minute;
+	minStr = prefixZeroToNum(minute);
 
 	switch(format)
 	{
+		case dtf_ISO8601_Date:
+			timeStr = year + "-" + prefixZeroToNum(month) + "-" + prefixZeroToNum(day);
+			break;
+
+		case dtf_ISO8601_DateTime:
+			timeStr = year + "-" + prefixZeroToNum(month) + "-" + prefixZeroToNum(day) + "T" + prefixZeroToNum(hour)
+				+ ":" + minStr + ":" + prefixZeroToNum(secs) + "Z";
+			break;
+
 		case dtf_M_D_YYYY:
 			timeStr = month + DateSeparator + day + DateSeparator + year;
 			break;
@@ -795,6 +890,16 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 	if(isPM)
 		return (longFormat) ? "pm" : "p";
 	return (longFormat) ? "am" : "a";
+}
+
+/******************************************************************************/
+
+/*string*/ function prefixZeroToNum(/*int*/ num)
+{
+	if(num < 10)
+		return "0" + num;
+
+	return "" + num;
 }
 
 /******************************************************************************/
@@ -904,6 +1009,8 @@ var MillsPerDay = (24 * 60 * 60 * 1000);
 				return tzValue * -1;
 		}
 	}
+
+	return 0;
 }
 
 /******************************************************************************/
@@ -917,7 +1024,7 @@ function setCookie(name, value, sessionOnly, expires, path, domain, secure)
 {
 	var tenYearExpires = new Date((new Date()).getTime() + 315360000000);	//expires in 10 years
 
-	var curCookie = name + "=" + escape(value);
+	var curCookie = name + "=" + encodeURIComponent(value);
 
 	if(!sessionOnly)
 		curCookie += ("; expires=" + ((expires)
@@ -951,7 +1058,7 @@ function getCookie(name)
 	if(end == -1)
 		end = dc.length;
 
-	return unescape(dc.substring(begin + prefix.length, end));
+	return decodeURIComponent(dc.substring(begin + prefix.length, end));
 }
 
 /******************************************************************************/
@@ -1152,7 +1259,7 @@ function onRemoteEvent(keyCode)
 
 function onScaleEvent(vScale)
 {
-	if(!window.external.MediaCenter)
+	if(!isMediaCenter())
 		document.getElementById("ScaleText").innerHTML = vScale;
 	if(isString(document.body.style.zoom))
 		document.body.style.zoom = vScale;
@@ -1231,7 +1338,7 @@ function MainApp()
 	document.onkeypress = MainAppOnKeyPress;
 	window.onresize = MainAppOnResize;
 
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 		window.external.MediaCenter.BGColor = "#002651";
 	document.body.scroll = "no";
 	document.body.focus();
@@ -1241,7 +1348,7 @@ function MainApp()
 	this.fScreenTitleImageDiv = document.getElementById("ScreenTitleImageDiv");
 	this.fScreenTitleImage = document.getElementById("ScreenTitleImage");
 
-	if(!window.external.MediaCenter)
+	if(!isMediaCenter())
 	{
 		DoShowSVP(false);
 		setStyleDisplay(document.getElementById("ShowSVPDiv"), true);
@@ -1249,7 +1356,7 @@ function MainApp()
 		setStyleDisplay(document.getElementById("ScaleDiv"), true);
 	}
 
-	enableErrors(!window.external.MediaCenter);
+	enableErrors(!isMediaCenter());
 	window.setTimeout("MainAppIdle()", 500);
 	StartScreen.newInstance();
 }
@@ -3744,17 +3851,14 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /*boolean*/ ViewPortControl.canOpen = function()
 {
-	if(window.external.MediaCenter)
-		return true;
-
-	return false;
+	return isMediaCenter();
 }
 
 /******************************************************************************/
 
 /*boolean*/ ViewPortControl.isOpen = function()
 {
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 	{
 		return window.external.MediaCenter.SharedViewPort.Visible;
 	}
@@ -3773,7 +3877,7 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 	{
 		if(document.activeElement.id != this.fUIObj.id)
 		{
-			if(window.external.MediaCenter)
+			if(isMediaCenter())
 				window.external.MediaCenter.SharedViewPort.Focus();
 		}
 
@@ -3786,7 +3890,7 @@ function ViewPortControl(/*string*/ controlID, /*string*/ screenID)
 
 /*void*/ ViewPortControl.prototype.playMedia = function(/*string*/ url)
 {
-	if(window.external.MediaCenter)
+	if(isMediaCenter())
 	{
 		window.external.MediaCenter.playMedia(this.getMediaType(url), url);
 		window.external.MediaCenter.Experience.GoToFullScreen();
@@ -4106,9 +4210,9 @@ function XmlDataWriter()
 /*string*/ XmlDataWriter.prototype.escapeString = function(str)
 {
 	if(str.indexOf("&") >= 0)
-		str = str.replace("&", "&amp;");
+		str = str.replace(/\&/g, "&amp;");
 	if(str.indexOf("<") >= 0)
-		str = str.replace("<", "&lt;");
+		str = str.replace(/</g, "&lt;");
 
 	return str;
 }
@@ -4187,9 +4291,45 @@ function XmlDataWriter()
 {
 	var len = testStrHasLen(data) ? data.length : 0;
 	if(len > maxLength)
-		throw new Exception("invalid len(" + len + "), maxLength(" + maxLength + ")");
+		throw new String("invalid len(" + len + "), maxLength(" + maxLength + ")");
 
 	this.writeElement(fieldName, data);
+}
+
+/******************************************************************************/
+/* Write a date, no Time component */
+
+/*void*/ XmlDataWriter.prototype.writeDate = function(/*string*/ fieldName,
+	/*Date*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, dateTimeToString(data, dtf_ISO8601_Date));
+}
+
+/******************************************************************************/
+/* Write a Date with a Time component */
+
+/*void*/ XmlDataWriter.prototype.writeDateTime = function(/*string*/ fieldName,
+	/*Date*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, dateTimeToString(data, dtf_ISO8601_DateTime));
+}
+
+/******************************************************************************/
+/* Write a Boolean */
+
+/*void*/ XmlDataWriter.prototype.writeBoolean = function(/*string*/ fieldName,
+	/*int*/ data)
+{
+	if(isNull(data) || isUndefined(data))
+		return;
+
+	this.writeElement(fieldName, data ? "true" : "false");
 }
 
 /******************************************************************************/
@@ -4204,6 +4344,16 @@ function XmlDataWriter()
 	this.writeStartElement(fieldName);
 	data.writeTo(this);
 	this.writeEndElement(fieldName);
+}
+
+/******************************************************************************/
+/* Write a list of complex Objects */
+
+/*void*/ XmlDataWriter.prototype.writeList = function(/*String*/ fieldName,
+	/*Array*/ data)
+{
+	for(var i = 0; i < data.length; i++)
+		this.writeObject(fieldName, data[i]);
 }
 
 /******************************************************************************/
@@ -4232,6 +4382,8 @@ var gWaitScreenCount = 0;
 
 WaitScreen.newInstance = function()
 {
+	if(!document.getElementById(WaitScreen.ScreenID))	//is WaitScreen available
+		return null;
 	if(gWaitScreenCount == 0)
 		gWaitScreen = new WaitScreen();
 	gWaitScreenCount++;
@@ -4655,8 +4807,9 @@ function Session()
 {
 	this.fDownloadServiceMgr = null;
 
-	this.fNetworkURL = "http://" + location.hostname + "/webapi/playerapi/xml";
-	this.fCryptoAPIURL = "http://" + location.hostname + "/webapi/cryptoapi";
+	this.fNetworkURL = location.protocol + "//" + location.hostname + "/webapi/playerapi/xml";
+	this.fCryptoAPIURL = location.protocol + "//" + location.hostname + "/webapi/cryptoapi";
+
 	this.CanPingServer = false;
 
 	this.fPlayer = null;
@@ -4717,6 +4870,8 @@ function Session()
 {
 	return this.fIsUserLoggedOn;
 }
+
+/******************************************************************************/
 
 /*boolean*/ Session.prototype.haveUserID = function()
 {
@@ -4834,9 +4989,14 @@ function Session()
 	{
 		try
 		{
-			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
+//			this.fDownloadServiceMgr = new ActiveXObject("iNetVOD.DLS.Gateway.DownloadServiceMgr");
+			this.fDownloadServiceMgr = document.getElementById("DownloadServiceMgr");
+			this.fDownloadServiceMgr.getPlayerSerialNo();	//force test to validate, throwing execption if fails
 		}
-		catch(ignore) {}
+		catch(ignore)
+		{
+			this.fDownloadServiceMgr = null;
+		}
 	}
 
 	return this.fDownloadServiceMgr != null;
@@ -5506,9 +5666,10 @@ function CryptoAPI()
 
 /*string*/ CryptoAPI.prototype.digest = function(/*string*/ data)
 {
+	var session = MainApp.getThe().getSession();
 	var httpRequestor = HTTPRequestor.newInstance();
 
-	return httpRequestor.sendGet("/digest/" + data);
+	return httpRequestor.sendGet(session.getCryptoAPIURL() + "/digest/" + data).responseText;
 }
 
 /******************************************************************************/
@@ -5809,7 +5970,7 @@ function ShowSearch(reader)
 	this.ShowID = reader.readString("ShowID", ShowIDMaxLength);
 	this.Name = reader.readString("Name", 64);
 	this.EpisodeName = reader.readString("EpisodeName", 64);
-	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedOn = reader.readDateTime("ReleasedOn");
 	this.ReleasedYear = reader.readShort("ReleasedYear");
 	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
 	this.ShowProviderList = reader.readList("ShowProvider", ShowProvider);
@@ -5820,6 +5981,24 @@ function ShowSearch(reader)
 /* ShowSearchCmprs.js */
 
 /******************************************************************************/
+/******************************************************************************/
+
+function ShowSearchToIDCmpr(showID)
+{
+	this.ShowID = showID;
+}
+
+/******************************************************************************/
+
+/*int*/ ShowSearchToIDCmpr.prototype.compare = function(oShowSearch)
+{
+	if(this.ShowID == oShowSearch.ShowID)
+		return 0;
+	if(this.ShowID < oShowSearch.ShowID)
+		return -1;
+	return 1;
+}
+
 /******************************************************************************/
 
 function ShowSearchByNameCmpr(lhs, rhs)
@@ -5918,7 +6097,7 @@ function ShowDetail(reader)
 	this.EpisodeName = reader.readString("EpisodeName", 64);
 	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
 
-	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedOn = reader.readDateTime("ReleasedOn");
 	this.ReleasedYear = reader.readShort("ReleasedYear");
 	this.Description = reader.readString("Description", 4096);	//TODO:
 	this.RunningMins = reader.readShort("RunningMins");
@@ -6062,7 +6241,10 @@ function RentedShowSearch(reader)
 	this.ProviderID = null;
 	this.Name = null;
 	this.EpisodeName = null;
+	this.ReleasedOn = null;
+	this.ReleasedYear = null;
 	this.PictureURL = null;
+	this.RentedOn = null;
 	this.AvailableUntil = null;
 
 	if(reader != undefined)
@@ -6078,7 +6260,10 @@ function RentedShowSearch(reader)
 	this.ProviderID = reader.readString("ProviderID", ProviderIDMaxLength);
 	this.Name = reader.readString("Name", 64);
 	this.EpisodeName = reader.readString("EpisodeName", 64);
+	this.ReleasedOn = reader.readDateTime("ReleasedOn");
+	this.ReleasedYear = reader.readShort("ReleasedYear");
 	this.PictureURL = reader.readString("PictureURL", 4096);	//TODO:
+	this.RentedOn = reader.readDateTime("RentedOn");
 	this.AvailableUntil = reader.readDateTime("AvailableUntil");
 }
 
@@ -6115,14 +6300,81 @@ function RentedShowSearchByNameCmpr(lhs, rhs)
 	if(rc != 0)
 		return rc;
 
+	return compareDates(lhs.ReleasedOn, rhs.ReleasedOn);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByNameDescCmpr(lhs, rhs)
+{
+	var rc = compareStringsIgnoreCase(rhs.Name, lhs.Name);	// reversed
+
+	if(rc != 0)
+		return rc;
+
 	return compareDates(rhs.ReleasedOn, lhs.ReleasedOn);	// reversed
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByReleasedOnCmpr(lhs, rhs)
+{
+	var rc = compareDates(lhs.ReleasedOn, rhs.ReleasedOn);
+
+	if(rc != 0)
+		return rc;
+
+	return compareStringsIgnoreCase(lhs.Name, rhs.Name);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByReleasedOnDescCmpr(lhs, rhs)
+{
+	var rc = compareDates(rhs.ReleasedOn, lhs.ReleasedOn);	// reversed
+
+	if(rc != 0)
+		return rc;
+
+	return compareStringsIgnoreCase(rhs.Name, lhs.Name);	// reversed
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByRentedOnCmpr(lhs, rhs)
+{
+	return compareDates(lhs.RentedOn, rhs.RentedOn);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByRentedOnDescCmpr(lhs, rhs)
+{
+	return compareDates(rhs.RentedOn, lhs.RentedOn);	// reversed
 }
 
 /******************************************************************************/
 
 function RentedShowSearchByAvailableUntilCmpr(lhs, rhs)
 {
-	return compareDates(lhs.AvailableUntil, rhs.AvailableUntil);
+	var rc = compareDates(lhs.AvailableUntil, rhs.AvailableUntil);
+
+	if(rc != 0)
+		return rc;
+
+	return RentedShowSearchByNameCmpr(lhs, rhs);
+}
+
+/******************************************************************************/
+
+function RentedShowSearchByAvailableUntilDescCmpr(lhs, rhs)
+{
+	var rc = compareDates(rhs.AvailableUntil, lhs.AvailableUntil);	// reversed
+
+	if(rc != 0)
+		return rc;
+
+	return RentedShowSearchByNameDescCmpr(lhs, rhs);
 }
 
 /******************************************************************************/
@@ -6172,7 +6424,7 @@ function RentedShow(reader)
 	this.EpisodeName = reader.readString("EpisodeName", 64);
 	this.EpisodeNumber = reader.readString("EpisodeNumber", 32);
 
-	this.ReleasedOn = reader.readDate("ReleasedOn");
+	this.ReleasedOn = reader.readDateTime("ReleasedOn");
 	this.ReleasedYear = reader.readShort("ReleasedYear");
 	this.Description = reader.readString("Description", 4096);	//TODO:
 	this.RunningMins = reader.readShort("RunningMins");
@@ -6274,22 +6526,22 @@ function HTTPRequestor()
 
 /******************************************************************************/
 
-/*string*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ request)
+/*XMLHttpRequest*/ HTTPRequestor.prototype.sendRequest = function(/*string*/ url,
+	/*string*/ request)
 {
-	var session = MainApp.getThe().getSession();
 
 	var xmlHttp = createXMLHttpRequest();
-	xmlHttp.open("POST", session.getNetworkURL(), false);
+	xmlHttp.open("POST", url, false);
 	xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 	xmlHttp.send(request);
 
-	return xmlHttp.responseText;
+	return xmlHttp;
 }
 
 /******************************************************************************/
 
-/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ request,
-	/*object*/ callbackObj)
+/*void*/ HTTPRequestor.prototype.sendRequestAsync = function(/*string*/ url,
+	/*string*/ request, /*object*/ callbackObj)
 {
 	try
 	{
@@ -6297,11 +6549,11 @@ function HTTPRequestor()
 
 		var xmlHttp = createXMLHttpRequest();
 		xmlHttp.onreadystatechange = function() { HTTPRequestor_checkRequest(xmlHttp, callbackObj); };
-		xmlHttp.open("POST", session.getNetworkURL(), true);
+		xmlHttp.open("POST", url, true);
 		xmlHttp.setRequestHeader("Content-Type", "text/xml;charset=UTF-8");
 		xmlHttp.send(request);
 	}
-	catch(e)
+	catch(ignore)
 	{
 		HTTPRequestor_callback(callbackObj, null);
 	}
@@ -6318,11 +6570,11 @@ function HTTPRequestor()
 		{
 			if(xmlHttp.status == 200)
 			{
-				HTTPRequestor_callback(callbackObj, xmlHttp.responseXML);
+				HTTPRequestor_callback(callbackObj, xmlHttp);
 				return;
 			}
 		}
-		catch(e)
+		catch(ignore)
 		{
 		}
 
@@ -6334,7 +6586,7 @@ function HTTPRequestor()
 
 /*void*/ function HTTPRequestor_callback(/*object*/ callbackObj, /*object*/ data)
 {
-	if(callbackObj && callbackObj.Callback)
+	if(isObject(callbackObj) && isFunction(callbackObj.Callback))
 	{
 		try
 		{
@@ -6342,21 +6594,31 @@ function HTTPRequestor()
 		}
 		catch(e)
 		{
+			showError("HTTPRequestor_callback", e);
+		}
+	}
+	else if(isFunction(callbackObj))
+	{
+		try
+		{
+			callbackObj(data);
+		}
+		catch(e)
+		{
+			showError("HTTPRequestor_callback", e);
 		}
 	}
 }
 
 /******************************************************************************/
 
-/*string*/ HTTPRequestor.prototype.sendGet = function(/*string*/ request)
+/*XMLHttpRequest*/ HTTPRequestor.prototype.sendGet = function(/*string*/ url)
 {
-	var session = MainApp.getThe().getSession();
-
 	var xmlHttp = createXMLHttpRequest();
-	xmlHttp.open("GET", session.getCryptoAPIURL() + request, false);
+	xmlHttp.open("GET", url, false);
 	xmlHttp.send(null);
 
-	return xmlHttp.responseText;
+	return xmlHttp;
 }
 
 /******************************************************************************/
@@ -6429,6 +6691,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /*Streamable*/ DataRequestor.prototype.sendRequest = function(/*Streamable*/ payload)
 {
+	var session = MainApp.getThe().getSession();
 	var httpRequestor = HTTPRequestor.newInstance();
 
 	// build the request header
@@ -6438,8 +6701,8 @@ function DataRequestor(/*string*/ sessionData)
 	var dataWriter = new XmlDataWriter();
 	dataWriter.writeObject("INetVODPlayerRqst", request);
 
-	var response = httpRequestor.sendRequest(dataWriter.toString());
-	var dataReader = new XmlDataReader(response);
+	var xmlHttp = httpRequestor.sendRequest(session.getNetworkURL(), dataWriter.toString());
+	var dataReader = new XmlDataReader(xmlHttp.responseXML);
 
 	var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
 	return this.parseHeader(requestable);
@@ -6452,6 +6715,7 @@ function DataRequestor(/*string*/ sessionData)
 {
 	try
 	{
+		var session = MainApp.getThe().getSession();
 		var httpRequestor = HTTPRequestor.newInstance();
 
 		// build the request header
@@ -6463,7 +6727,7 @@ function DataRequestor(/*string*/ sessionData)
 
 		this.Callback = DataRequestor.prototype.parseResponse;
 		this.CallerCallback = callbackObj;
-		httpRequestor.sendRequestAsync(dataWriter.toString(), this);
+		httpRequestor.sendRequestAsync(session.getNetworkURL(), dataWriter.toString(), this);
 	}
 	catch(e)
 	{
@@ -6474,13 +6738,13 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*void*/ DataRequestor.prototype.parseResponse = function(/*Streamable*/ response)
+/*void*/ DataRequestor.prototype.parseResponse = function(/*XMLHttpRequest*/ xmlHttp)
 {
 	try
 	{
-		if(response)
+		if(xmlHttp)
 		{
-			var dataReader = new XmlDataReader(response);
+			var dataReader = new XmlDataReader(xmlHttp.responseXML);
 			var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
 			this.callbackCaller(this.parseHeader(requestable));
 		}
