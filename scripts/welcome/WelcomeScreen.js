@@ -103,7 +103,7 @@ function WelcomeScreen()
 	if(controlID == WelcomeScreen.NowPlayingID)
 		oTextControl.setText("\"Now Playing\" lists the shows that you have previously rented and have available for viewing.");
 	else if(controlID == WelcomeScreen.FeaturedID)
-		oTextControl.setText("\"Featured\" lists shows that are currently featured.");
+		oTextControl.setText("\"New Releases\" lists the most recently released shows.");
 	else if(controlID == WelcomeScreen.SearchByCategoryID)
 		oTextControl.setText("Use \"Search by Category\" to find shows by a specific category.");
 	else if(controlID == WelcomeScreen.SearchByNameID)
