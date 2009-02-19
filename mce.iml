@@ -15,11 +15,7 @@
           <setting name="EXPLODED_ENABLED" value="false" />
           <setting name="JAR_URL" value="file://$MODULE_DIR$/mce.war" />
           <setting name="JAR_ENABLED" value="false" />
-          <setting name="BUILD_MODULE_ON_FRAME_DEACTIVATION" value="false" />
-          <setting name="BUILD_EXTERNAL_DEPENDENCIES" value="false" />
           <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-          <setting name="RUN_JASPER_VALIDATION" value="false" />
-          <setting name="BUILD_ONLY_WEB_RESOURCES" value="false" />
         </building>
         <packaging>
           <containerElement type="module" name="mce">
@@ -42,7 +38,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntryProperties />
   </component>
 </module>
 
