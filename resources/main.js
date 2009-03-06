@@ -6650,14 +6650,13 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*INetVODPlayerRqst*/ DataRequestor.prototype.createHeader = function(/*Streamable*/ payload)
+/*PlayerRqst*/ DataRequestor.prototype.createHeader = function(/*Streamable*/ payload)
 {
 	var request;
 	var requestData;
 
-	request = INetVODPlayerRqst.newInstance();
+	request = PlayerRqst.newInstance();
 	request.setVersion("1.0.0");	//TODO:
-	request.setRequestID("1");	//TODO:
 	request.setSessionData(this.fSessionData);
 
 	requestData = RequestData.newInstance();
@@ -6669,7 +6668,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*Streamable*/ DataRequestor.prototype.parseHeader = function(/*INetVODPlayerResp*/ response)
+/*Streamable*/ DataRequestor.prototype.parseHeader = function(/*PlayerResp*/ response)
 {
 	this.fStatusCode = response.StatusCode;
 	this.fStatusMessage = response.StatusMessage;
@@ -6699,12 +6698,12 @@ function DataRequestor(/*string*/ sessionData)
 
 	// build request data
 	var dataWriter = new XmlDataWriter();
-	dataWriter.writeObject("INetVODPlayerRqst", request);
+	dataWriter.writeObject("PlayerRqst", request);
 
 	var xmlHttp = httpRequestor.sendRequest(session.getNetworkURL(), dataWriter.toString());
 	var dataReader = new XmlDataReader(xmlHttp.responseXML);
 
-	var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+	var requestable = dataReader.readObject("PlayerResp", PlayerResp);
 	return this.parseHeader(requestable);
 }
 
@@ -6723,7 +6722,7 @@ function DataRequestor(/*string*/ sessionData)
 
 		// build request data
 		var dataWriter = new XmlDataWriter();
-		dataWriter.writeObject("INetVODPlayerRqst", request);
+		dataWriter.writeObject("PlayerRqst", request);
 
 		this.Callback = DataRequestor.prototype.parseResponse;
 		this.CallerCallback = callbackObj;
@@ -6745,7 +6744,7 @@ function DataRequestor(/*string*/ sessionData)
 		if(xmlHttp)
 		{
 			var dataReader = new XmlDataReader(xmlHttp.responseXML);
-			var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+			var requestable = dataReader.readObject("PlayerResp", PlayerResp);
 			this.callbackCaller(this.parseHeader(requestable));
 		}
 		else
@@ -6785,64 +6784,54 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 /******************************************************************************/
-/* INetVODPlayerRqst.js */
+/* PlayerRqst.js */
 
 /******************************************************************************/
 /******************************************************************************/
 
-INetVODPlayerRqst.newInstance = function()
+PlayerRqst.newInstance = function()
 {
-	return new INetVODPlayerRqst();
+	return new PlayerRqst();
 }
 
 /******************************************************************************/
 
-function INetVODPlayerRqst()
+function PlayerRqst()
 {
 	this.VersionMaxLength = 16;
-	this.RequestIDMaxLength = 64;
 	this.SessionDataMaxLength = 32768;
 
 	this.fVersion = null;
-	this.fRequestID = 0;
 	this.fSessionData = null;
 	this.fRequestData = null;
 }
 
 /******************************************************************************/
 
-/*void*/ INetVODPlayerRqst.prototype.setVersion = function(/*string*/ version)
+/*void*/ PlayerRqst.prototype.setVersion = function(/*string*/ version)
 {
 	this.fVersion = version;
 }
 
 /******************************************************************************/
 
-/*void*/ INetVODPlayerRqst.prototype.setRequestID = function(/*string*/ requestID)
-{
-	this.fRequestID = requestID;
-}
-
-/******************************************************************************/
-
-/*void*/ INetVODPlayerRqst.prototype.setSessionData = function(/*string*/ sessionData)
+/*void*/ PlayerRqst.prototype.setSessionData = function(/*string*/ sessionData)
 {
 	this.fSessionData = sessionData;
 }
 
 /******************************************************************************/
 
-/*void*/ INetVODPlayerRqst.prototype.setRequestData = function(/*RequestData*/ requestData)
+/*void*/ PlayerRqst.prototype.setRequestData = function(/*RequestData*/ requestData)
 {
 	this.fRequestData = requestData;
 }
 
 /******************************************************************************/
 
-/*void*/ INetVODPlayerRqst.prototype.writeTo = function(/*DataWriter*/ writer)
+/*void*/ PlayerRqst.prototype.writeTo = function(/*DataWriter*/ writer)
 {
 	writer.writeString("Version", this.fVersion, this.VersionMaxLength);
-	writer.writeString("RequestID", this.fRequestID, this.RequestIDMaxLength);
 	writer.writeString("SessionData", this.fSessionData, this.SessionDataMaxLength);
 
 	writer.writeObject("RequestData", this.fRequestData);
@@ -6850,17 +6839,15 @@ function INetVODPlayerRqst()
 
 /******************************************************************************/
 /******************************************************************************/
-/* INetVODPlayerResp */
+/* PlayerResp */
 
 /******************************************************************************/
 /******************************************************************************/
 
-function INetVODPlayerResp(reader)
+function PlayerResp(reader)
 {
-	this.RequestIDMaxLength = 64;
 	this.StatusMessageMaxLength = 1024;
 
-	this.RequestID = null;
 	this.StatusCode = 0;
 	this.StatusMessage = null;
 	this.ResponseData = null;
@@ -6871,9 +6858,8 @@ function INetVODPlayerResp(reader)
 
 /******************************************************************************/
 
-/*void*/ INetVODPlayerResp.prototype.readFrom = function(/*DataReader*/ reader)
+/*void*/ PlayerResp.prototype.readFrom = function(/*DataReader*/ reader)
 {
-	this.RequestID = reader.readString("RequestID", this.RequestIDMaxLength);
 	this.StatusCode = reader.readInt("StatusCode");
 	this.StatusMessage = reader.readString("StatusMessage", this.StatusMessageMaxLength);
 	this.ResponseData = reader.readObject("ResponseData", ResponseData);
