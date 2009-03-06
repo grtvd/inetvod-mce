@@ -25,14 +25,13 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*INetVODPlayerRqst*/ DataRequestor.prototype.createHeader = function(/*Streamable*/ payload)
+/*PlayerRqst*/ DataRequestor.prototype.createHeader = function(/*Streamable*/ payload)
 {
 	var request;
 	var requestData;
 
-	request = INetVODPlayerRqst.newInstance();
+	request = PlayerRqst.newInstance();
 	request.setVersion("1.0.0");	//TODO:
-	request.setRequestID("1");	//TODO:
 	request.setSessionData(this.fSessionData);
 
 	requestData = RequestData.newInstance();
@@ -44,7 +43,7 @@ function DataRequestor(/*string*/ sessionData)
 
 /******************************************************************************/
 
-/*Streamable*/ DataRequestor.prototype.parseHeader = function(/*INetVODPlayerResp*/ response)
+/*Streamable*/ DataRequestor.prototype.parseHeader = function(/*PlayerResp*/ response)
 {
 	this.fStatusCode = response.StatusCode;
 	this.fStatusMessage = response.StatusMessage;
@@ -74,12 +73,12 @@ function DataRequestor(/*string*/ sessionData)
 
 	// build request data
 	var dataWriter = new XmlDataWriter();
-	dataWriter.writeObject("INetVODPlayerRqst", request);
+	dataWriter.writeObject("PlayerRqst", request);
 
 	var xmlHttp = httpRequestor.sendRequest(session.getNetworkURL(), dataWriter.toString());
 	var dataReader = new XmlDataReader(xmlHttp.responseXML);
 
-	var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+	var requestable = dataReader.readObject("PlayerResp", PlayerResp);
 	return this.parseHeader(requestable);
 }
 
@@ -98,7 +97,7 @@ function DataRequestor(/*string*/ sessionData)
 
 		// build request data
 		var dataWriter = new XmlDataWriter();
-		dataWriter.writeObject("INetVODPlayerRqst", request);
+		dataWriter.writeObject("PlayerRqst", request);
 
 		this.Callback = DataRequestor.prototype.parseResponse;
 		this.CallerCallback = callbackObj;
@@ -120,7 +119,7 @@ function DataRequestor(/*string*/ sessionData)
 		if(xmlHttp)
 		{
 			var dataReader = new XmlDataReader(xmlHttp.responseXML);
-			var requestable = dataReader.readObject("INetVODPlayerResp", INetVODPlayerResp);
+			var requestable = dataReader.readObject("PlayerResp", PlayerResp);
 			this.callbackCaller(this.parseHeader(requestable));
 		}
 		else

@@ -63,8 +63,8 @@
 				<file name="StatusCode.js" />
 				<file name="HTTPRequestor.js" />
 				<file name="DataRequestor.js" />
-				<file name="INetVODPlayerRqst.js" />
-				<file name="INetVODPlayerResp.js" />
+				<file name="PlayerRqst.js" />
+				<file name="PlayerResp.js" />
 				<file name="RequestData.js" />
 				<file name="ResponseData.js" />
 				<file name="PingRqst.js" />
